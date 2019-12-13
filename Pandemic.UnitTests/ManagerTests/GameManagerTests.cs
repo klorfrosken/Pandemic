@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
-namespace Pandemic.UnitTests.Managers
+namespace Pandemic.UnitTests.ManagerTests
 {
     public class GameManagerTests
     {

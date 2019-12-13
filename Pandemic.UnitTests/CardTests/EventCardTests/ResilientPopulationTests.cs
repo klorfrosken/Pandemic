@@ -1,7 +1,7 @@
 ﻿using Xunit;
 using Pandemic.Cards.EventCards;
 
-namespace Pandemic.UnitTests.Cards
+namespace Pandemic.UnitTests.CardTests
 {
     public class ResilientPopulationTests
     {

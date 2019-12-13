@@ -9,7 +9,7 @@ using Pandemic.Cards.EventCards;
 using Pandemic.Game_Elements.Roles;
 using Pandemic.Exceptions;
 
-namespace Pandemic.UnitTests.Managers
+namespace Pandemic.UnitTests.ManagerTests
 {
     public class StateManagerTests
     {
@@ -162,7 +162,7 @@ namespace Pandemic.UnitTests.Managers
         {
             StateManager State = new StateManager(
                 Testing: true, 
-                CitiesFilePath: @"C:\Users\inger.skjarholt\source\repos\Pandemic\Pandemic.UnitTests\Managers\GameManager_TestFile.txt");
+                CitiesFilePath: @"C:\Users\inger.skjarholt\source\repos\Pandemic\Pandemic.UnitTests\ManagerTests\GameManager_TestFile.txt");
 
             List<string> InputStrings = State.TestGetInput();
 

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Pandemic.UnitTests.Cards
+namespace Pandemic.UnitTests.CardTests
 {
-    class ForecastTests
+    class OneQuetNightTests
     {
     }
 }

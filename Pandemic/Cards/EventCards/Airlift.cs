@@ -16,20 +16,30 @@ namespace Pandemic.Cards.EventCards
         {
             if (!playerWithCard.CardInHand(eventName)){
                 throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {eventName} in their hand to play.");
-            }
+            } 
             else
             {
                 int playerChoice = TextManager.ChooseItemFromList(state.Roles, "move");
                 Role playerToMove = state.Roles[playerChoice];
+                if(playerToMove == null)
+                {
+                    throw new UnexpectedBehaviourException("The player you chose could not be found. That's very unexpected and it means the program crashes... Sorry!");
+                } else
+                {
+                    List<City> EligibleCities = new List<City>(state.Cities);
+                    EligibleCities.Remove(playerToMove.CurrentCity);
+                    int cityChoice = TextManager.ChooseItemFromList(EligibleCities, $"move the {playerToMove} to");
+                    City nextCity = state.Cities[cityChoice];
 
-                List<City> EligibleCities = new List<City>(state.Cities);
-                EligibleCities.Remove(playerToMove.CurrentCity);
-                int cityChoice = TextManager.ChooseItemFromList(EligibleCities, $"move the {playerToMove} to");
-                City nextCity = state.Cities[cityChoice];
-
-                playerToMove.ChangeCity(nextCity, state);
+                    if(nextCity == null)
+                    {
+                        throw new UnexpectedBehaviourException("The city you chose could not be found. That's very unexpected and it means the program crashes... Sorry!");
+                    } else
+                    {
+                        playerToMove.ChangeCity(nextCity, state);
+                    }
+                }
             }
-
         }
     }
 }
