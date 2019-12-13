@@ -1,0 +1,41 @@
+public void AsertionExamples()
+        {
+            Console.WriteLine("AccountTests.AsertionExamples()");
+ 
+            Assert.Contains("n", "FNZ", StringComparison.CurrentCultureIgnoreCase);
+            Assert.Contains("a", new List<String> { "A", "B" }, StringComparer.CurrentCultureIgnoreCase);
+ 
+            Assert.DoesNotContain("n", "FNZ", StringComparison.CurrentCulture);
+            Assert.DoesNotContain("a", new List<String> { "A", "B" }, StringComparer.CurrentCulture);
+ 
+            Assert.Empty(new List<String>());
+            Assert.NotEmpty(new List<String> { "A", "B" });
+ 
+            Assert.Equal(1, 1);
+            Assert.Equal(1.13, 1.12, 1); // Precsions Num DP
+            Assert.Equal(new List<String> { "A", "B" }, new List<String> { "a", "b" }, StringComparer.CurrentCultureIgnoreCase);
+            Assert.Equal(GetFoo(1, "A Name"), GetFoo(1, "a name"), new FooComparer());
+ 
+            Assert.NotEqual(1, 2);
+            Assert.NotEqual(new List<String> { "A", "B" }, new List<String> { "a", "b" }, StringComparer.CurrentCulture);
+ 
+            Assert.False(false);
+            Assert.NotNull(false);
+            Assert.Null(null);
+            Assert.True(true);
+ 
+            Assert.InRange(1, 0, 10);
+            Assert.NotInRange(-1, 0, 10);
+ 
+            Assert.IsType(Type.GetType("System.Int32"), 1);
+            Assert.IsNotType(Type.GetType("System.Double"), 1);
+ 
+            var foo = new object();
+            var moo = new object();
+ 
+            Assert.Same(foo, foo);
+            Assert.NotSame(foo, moo);
+ 
+            Assert.Throws<Exception>(() => { throw new Exception(); });
+            Assert.True(true);
+        }

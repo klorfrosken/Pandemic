@@ -1,0 +1,60 @@
+﻿*README
+*Stars are ignored, use them for comments
+*Do not change color order. This will cause cities to be assigned wrong colors in the game. 
+*Data is: <CityName> - <ConnectedCities>
+
+// Yellow Cities
+Los Angeles - San Francisco, Chicago, Sydney, Mexico City
+Mexico City - Chicago, Los Angeles, Miami, Bogota, Lima
+Miami - Atlanta, Washington, Mexico City, Bogota
+Bogota - Mexico City, Miami, Lima, Buenos Aires, Sao Paulo
+Lima - Mexico City, Bogota, Santiago
+Santiago - Lima
+Buenos Aires - Bogota, Sao Paulo
+Sao Paulo - Bogota, Madrid, Lagos, Buenos Aires
+Lagos - Khartoum, Sao Paulo, Kinshasa
+Khartoum - Cairo, Lagos, Kinshasa, Johannesburg
+Kinshasa - Lagos, Khartoum, Johannesburg
+Johannesburg - Kinshasa, Khartoum
+
+// Red Cities
+Bangkok - Kolkata, Hong Kong, Chennai, Jakarta, Ho Chi Minh City
+Jakarta - Chennai, Bangkok, Ho Chi Minh City, Sydney
+Hong Kong - Kolkata, Shanghai, Taipei, Bangkok, Ho Chi Minh City, Manila
+Ho Chi Minh City - Bangkok, Hong Kong, Manila, Jakarta
+Shanghai - Beijing, Seoul, Tokyo, Hong Kong, Taipei
+Beijing - Shanghai, Seoul
+Seoul - Beijing, Shanghai, Tokyo
+Tokyo - Seoul, Shanghai, San Francisco
+Osaka - Tokyo, Taipei
+Taipei - Shanghai, Osaka, Hong Kong, Manila
+Manila - Ho Chi Minh City, Hong Kong, Taipei, San Francisco, Sydney
+Sydney - Jakarta, Manila, Los Angeles
+
+// Blue Cities
+San Francisco - Tokyo, Manila, Chicago, Los Angeles
+Chicago - San Francisco, Montreal, Los Angeles, Mexico City, Atlanta
+Atlanta - Chicago, Washington, Miami
+Montreal - Chicago, New York, Washington
+New York - Montreal, London, Washington, Madrid
+Washington - Atlanta, Montreal, New York
+London - New York, Essen, Paris, Madrid
+Madrid - New York, London, Paris, Sao Paulo, Algiers
+Paris - London, Essen, Milan, Madrid, Algiers
+Essen - London, St. Petersburg, Milan, Paris
+Milan - Essen, Paris, Istanbul
+St. Petersburg - Essen, Istanbul, Moscow
+
+// Black Cities
+Algiers - Madrid, Paris, Istanbul, Cairo
+Istanbul - Milan, St. Petersburg, Moscow, Algiers, Cairo, Baghdad
+Cairo - Algiers, Istanbul, Baghdad, Khartoum, Riyadh
+Moscow - St. Petersburg, Istanbul, Tehran
+Baghdad - Istanbul, Tehran, Cairo, Riyadh, Karachi
+Riyadh - Cairo, Baghdad, Karachi
+Tehran - Moscow, Baghdad, Karachi, Delhi
+Karachi - Baghdad, Tehran, Delhi, Riyadh, Mumbai
+Mumbai - Karachi, Delhi, Chennai
+Delhi - Tehran, Kolkata, Karachi, Mumbai, Chennai
+Chennai - Mumbai, Delhi, Kolkata, Bangkok, Jakarta
+Kolkata - Delhi, Chennai, Bangkok, Hong Kong
