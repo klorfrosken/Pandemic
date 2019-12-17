@@ -8,16 +8,16 @@ namespace Pandemic.Cards.EventCards
 {
     public class Forecast : EventCard
     {
-        readonly static string eventName = "Forecast";
-        readonly static string eventDesctiption = $"Allows the player to rearrange the top 6 cards of the Infection Deck.";
+        readonly static string _eventName = "Forecast";
+        readonly static string _eventDesctiption = $"Allows the player to rearrange the top 6 cards of the Infection Deck.";
 
-        public Forecast() : base (eventName, eventDesctiption) { }
+        public Forecast() : base (_eventName, _eventDesctiption) { }
 
         public override void Play(Role playerWithCard, StateManager state)
         {
-            if (!playerWithCard.CardInHand(eventName))
+            if (!playerWithCard.CardInHand(_eventName))
             {
-                throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {eventName} in their hand to play.");
+                throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {_eventName} in their hand to play.");
             } else
             {
                 TextManager.PrintEventDescription(this);

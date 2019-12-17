@@ -7,16 +7,16 @@ namespace Pandemic.Cards.EventCards
 {
     public class OneQuietNight : EventCard
     {
-        readonly static string eventName = "One Quiet Night";
-        readonly static string eventDesctiption = $"Skip the infection stage of one turn.";
+        readonly static string _eventName = "One Quiet Night";
+        readonly static string _eventDesctiption = $"Skip the infection stage of one turn.";
 
-        public OneQuietNight() : base (eventName, eventDesctiption) { }
+        public OneQuietNight() : base (_eventName, _eventDesctiption) { }
 
         public override void Play(Role playerWithCard, StateManager state)
         {
-            if (!playerWithCard.CardInHand(eventName))
+            if (!playerWithCard.CardInHand(_eventName))
             {
-                throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {eventName} in their hand to play.");
+                throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {_eventName} in their hand to play.");
             } else
             {
                 throw new OneQuietNightException($"Thanks to the {playerWithCard.RoleName} it was a calm and quiet night.");

@@ -6,11 +6,11 @@ using Pandemic.Exceptions;
 
 namespace Pandemic.Cards
 {
-    public class EpidemicCard : Card
+    public class EpidemicCard : PlayerCard
     {
-        readonly static string CardName = "Epidemic";
+        readonly static string _name = "Epidemic";
 
-        public EpidemicCard() : base(CardName, Colors.None) { }
+        public EpidemicCard() : base(_name, Colors.None) { }
 
         public override void Play(Role playerWithCard, StateManager state)
         {

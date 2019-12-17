@@ -405,7 +405,7 @@ namespace Pandemic.Managers
                 int CardsInEachPile = PlayerDeck.Count() / NumberOfEpidemics;
                 int Remainder = PlayerDeck.Count() % NumberOfEpidemics;
 
-                PlayerDeck TempPile = new PlayerDeck();
+                PlayerDeck currentPile = new PlayerDeck();
                 for (int i=0; i<NumberOfEpidemics; i++)
                 {
                     int CardsInCurrentPile = CardsInEachPile;
@@ -415,12 +415,12 @@ namespace Pandemic.Managers
                         Remainder--;
                     }
 
-                    TempPile.AddCards(PlayerDeck.Draw(CardsInCurrentPile));
-                    TempPile.AddCard(new EpidemicCard());
-                    TempPile.Shuffle();
+                    currentPile.AddCards(PlayerDeck.Draw(CardsInCurrentPile));
+                    currentPile.AddCard(new EpidemicCard());
+                    currentPile.Shuffle();
 
-                    PlayerDeck.CombineDecks(TempPile);
-                    TempPile.Clear();
+                    PlayerDeck.CombineDecks(currentPile);
+                    currentPile.Clear();
                 }
             }
         }

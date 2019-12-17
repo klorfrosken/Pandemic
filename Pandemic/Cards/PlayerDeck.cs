@@ -8,6 +8,7 @@ namespace Pandemic.Cards
     public class PlayerDeck : Deck
     {
         public PlayerDeck() { }
+
         public PlayerDeck(List<Card> CardsInDeck)
         {
             _cards.AddRange(CardsInDeck);
@@ -15,7 +16,7 @@ namespace Pandemic.Cards
 
         public void AddCard(Card temp)
         {
-            if (temp is CityCard || temp is EventCard || temp is EpidemicCard)
+            if (temp is PlayerCard)
             {
                 _cards.Add(temp);
             } else

@@ -7,15 +7,15 @@ namespace Pandemic.Cards.EventCards
 {
     public class Airlift : EventCard
     {
-        readonly static string eventName = "Airlift";
-        readonly static string eventDescription = $"Move any player to any city";
+        readonly static string _eventName = "Airlift";
+        readonly static string _eventDescription = $"Move any player to any city";
 
-        public Airlift() : base (eventName, eventDescription) { }
+        public Airlift() : base (_eventName, _eventDescription) { }
 
         public override void Play(Role playerWithCard, StateManager state)
         {
-            if (!playerWithCard.CardInHand(eventName)){
-                throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {eventName} in their hand to play.");
+            if (!playerWithCard.CardInHand(_eventName)){
+                throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {_eventName} in their hand to play.");
             }
             else
             {

@@ -8,20 +8,20 @@ namespace Pandemic.Cards.EventCards
 {
     public class ResilientPopulation : EventCard
     {
-        readonly static string eventName = "Resilient Population";
-        readonly static string eventDescription = $"pick a card from the discard pile for the infection deck. Remove that card form the game.";
+        readonly static string _eventName = "Resilient Population";
+        readonly static string _eventDescription = $"pick a card from the discard pile for the infection deck. Remove that card form the game.";
 
-        public ResilientPopulation() : base (eventName, eventDescription) { }
+        public ResilientPopulation() : base (_eventName, _eventDescription) { }
 
         public override void Play(Role playerWithCard, StateManager state)
         {
             if (state.InfectionDiscard.Count() == 0)
             {
-                throw new IllegalMoveException($"There are no cards in the discard pile for the infection deck for you to use {eventName} on");
+                throw new IllegalMoveException($"There are no cards in the discard pile for the infection deck for you to use {_eventName} on");
             }
-            else if (!playerWithCard.CardInHand(eventName))
+            else if (!playerWithCard.CardInHand(_eventName))
             {
-                throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {eventName} in their hand to play.");
+                throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {_eventName} in their hand to play.");
             }
             else
             {

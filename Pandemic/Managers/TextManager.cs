@@ -24,6 +24,7 @@ namespace Pandemic.Managers
             {
                 Console.WriteLine($"{CurrentUser.UserName} - {CurrentUser.CurrentRole}");
             }
+            Console.WriteLine();
         }
 
         public static void PrintStatus(StateManager State)
