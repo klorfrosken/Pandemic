@@ -126,6 +126,7 @@ namespace Pandemic.Game
                             {
                                 DiseaseCubes[Color]++;
                                 State.CubePools[Color]--;
+                                TextManager.PrintInfection(this, Color);
                             }
                         }
                     }

@@ -12,6 +12,10 @@ namespace Pandemic.Game_Elements.Roles
     {
         readonly static string Title = "Operations Expert";
         public bool UsedSpecialAbility = false;
+        public string[] SpecialActionDescription = new string[]
+        {
+
+        };
 
         public OperationsExpert(City StartingCity, int PlayerID): base(PlayerID, Title, StartingCity)
         {

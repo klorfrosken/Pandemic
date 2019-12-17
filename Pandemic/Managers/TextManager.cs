@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Pandemic.Game;
 using Pandemic.Cards;
 using Pandemic.Cards.EventCards;
+using Pandemic.Game_Elements.Roles;
 
 namespace Pandemic.Managers
 {
@@ -11,28 +11,8 @@ namespace Pandemic.Managers
     {
         public static readonly int AvailableStandardActions = 8;
         
-        public static int GetDifficulty()
-        {
-            Console.WriteLine("What difficulty would you like for the game?");
-            Console.WriteLine("1: Introductory (4 epidemic cards)");
-            Console.WriteLine("2: Standard (5 epidemic cards)");
-            Console.WriteLine("3: Heroic (6 epidemic cards)");
-
-            int UserInput = GetValidInteger(1, 3);
-
-            if (UserInput == 1)
-            {
-                return 4;
-            } else if (UserInput == 2)
-            {
-                return 5;
-            } else
-            {
-                return 6;
-            }
-        }
-
-        public static void BeginGame(StateManager State, List<User> Users)
+        //Print methods
+        public static void PrintBeginGame(StateManager State, List<User> Users)
         {
             Console.WriteLine("|---------------------------------------------------------------------------------------|");  
             Console.WriteLine("|     Welcome to Pandemic! The cooperative game where the world (most likely) dies.     |");
@@ -44,13 +24,11 @@ namespace Pandemic.Managers
             {
                 Console.WriteLine($"{CurrentUser.UserName} - {CurrentUser.CurrentRole}");
             }
-
-            PrintStatus(State);
         }
 
         public static void PrintStatus(StateManager State)
         {
-            Console.WriteLine($"\nThere have been {State.Outbreaks} outbreaks up till now.");
+            Console.WriteLine($"There have been {State.Outbreaks} outbreaks up till now.");
             Console.WriteLine($"The current infection rate is {State.InfectionRates[State.InfectionIndex]}.");
             Console.WriteLine("\nThe following cities are infected with diseases:");
 
@@ -116,6 +94,12 @@ namespace Pandemic.Managers
             Console.WriteLine($"{card.Name} allows you to {card.description}");
         }
 
+        public static void PrintNewTurn(Role currentRole, StateManager state)
+        {
+            Console.WriteLine("|---------------------------------------------------------------------------------------|");
+            PrintStatus(state);
+        }
+
         public static void AvailableActions(Role currentRole)
         {
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
@@ -138,6 +122,7 @@ namespace Pandemic.Managers
             currentRole.PrintSpecialAbilities();
 
             Console.WriteLine("--------------------------------------------------------");
+            Console.WriteLine($"You are in {currentRole.CurrentCity} and have {currentRole.RemainingActions} actions left.");
             PrintHand(currentRole);
             Console.WriteLine("\nWhich one of the above would you like to do?");
         }
@@ -160,6 +145,70 @@ namespace Pandemic.Managers
             return ChooseItemFromList(Hand, screenText);
         }
 
+        public static void PrintPlayerMoved(Role movedRole, City newCity)
+        {
+            Console.WriteLine($"{movedRole} was moved to {newCity}");
+        }
+
+        public static void PrintResearchStationBuilt(Role currentRole)
+        {
+            Console.WriteLine($"A research station was built in {currentRole.CurrentCity}");
+        }
+
+        public static void PrintDiseaseTreated(Role currentRole, City treatedCity, Colors cubeColor, StateManager state)
+        {
+            if (state.Cures[cubeColor] || currentRole is Medic)
+            {
+                Console.WriteLine($"All the {cubeColor} cubes were removed from {treatedCity}");
+            } else
+            {
+                Console.WriteLine($"A {cubeColor} cube was removed from {treatedCity}");
+            }
+        }
+
+        public static void PrintCureDiscovered(Role currentRole)
+        {
+            Console.WriteLine($"{currentRole} discovered a cure.");
+        }
+
+        public static void PrintKnowledgeShared(Role currentRole, Role otherPlayer)
+        {
+            Console.WriteLine($"Knowledge was shared between the {currentRole} and the {otherPlayer}");
+        }
+
+        public static void PrintUsedSpecialAbility(Role currentRole)
+        {
+            Console.WriteLine($"The {currentRole} used their special ability");
+        }
+
+        public static void PrintInfection(City currentCity, Colors cubeColor)
+        {
+            Console.WriteLine($"{currentCity} was just infected by a {cubeColor} cube");
+        }
+
+        //Choice methods
+        public static int GetDifficulty()
+        {
+            Console.WriteLine("What difficulty would you like for the game?");
+            Console.WriteLine("1: Introductory (4 epidemic cards)");
+            Console.WriteLine("2: Standard (5 epidemic cards)");
+            Console.WriteLine("3: Heroic (6 epidemic cards)");
+
+            int UserInput = GetValidInteger(1, 3);
+
+            if (UserInput == 1)
+            {
+                return 4;
+            }
+            else if (UserInput == 2)
+            {
+                return 5;
+            }
+            else
+            {
+                return 6;
+            }
+        }
         public static int ShareKnowledgeWithScientist()
         {
             Console.WriteLine("Which one of you will be receiving a card?");

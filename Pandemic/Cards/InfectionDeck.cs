@@ -15,6 +15,7 @@ namespace Pandemic.Cards
         {
             InfectionCard topCard = this.Draw() as InfectionCard;
             topCard.Infect(state);
+
         }
 
         public void AddCard(InfectionCard temp)

@@ -9,5 +9,10 @@ namespace Pandemic.Cards.EventCards
     {
         public string description { get; private set; }
         public EventCard(string eventName, string description) : base(eventName, Colors.None) { }
+
+        public override string ToString()
+        {
+            return $"{Name}";
+        }
     }
 }
