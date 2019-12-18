@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Pandemic.Managers;
-using Pandemic.Cards;
 using Pandemic.Exceptions;
 using Pandemic.Game_Elements.Roles;
 
@@ -152,32 +151,17 @@ namespace Pandemic.Game
             }
         }
 
-        //hva er egentlig best practice her? Skal jeg legge inn en return false for hver eller er det innafor sånn som det står nå?
         public override bool Equals(object obj)
         {
             if(obj is City)
             {
-                City other = obj as City;
-                if (other.Name == this.Name)
-                {
-                    return true;
-                }
-            } else if (obj is CityCard)
+                City otherCity = obj as City;
+                return (otherCity.Name == this.Name && otherCity.Color == this.Color);
+
+            } else
             {
-                CityCard other = obj as CityCard;
-                if (other.Name == this.Name)
-                {
-                    return true;
-                }
-            } else if (obj is InfectionCard)
-            {
-                InfectionCard other = obj as InfectionCard;
-                if (other.Name == this.Name)
-                {
-                    return true;
-                }
+                return false;
             }
-            return false;
         }
 
         //kopiert fra https://github.com/loganfranken/overriding-equals-in-c-sharp/blob/master/OverridingEquals/PhoneNumber.cs
@@ -192,10 +176,6 @@ namespace Pandemic.Game
                 int hash = HashingBase;
                 hash = (hash * HashingMultiplier) ^ (!Object.ReferenceEquals(null, Name) ? Name.GetHashCode() : 0);
                 hash = (hash * HashingMultiplier) ^ (!Object.ReferenceEquals(null, Color) ? Color.GetHashCode() : 0);
-                hash = (hash * HashingMultiplier) ^ (!Object.ReferenceEquals(null, ResearchStation) ? ResearchStation.GetHashCode() : 0);
-                hash = (hash * HashingMultiplier) ^ (!Object.ReferenceEquals(null, MultipleDiseases) ? MultipleDiseases.GetHashCode() : 0);
-                hash = (hash * HashingMultiplier) ^ (!Object.ReferenceEquals(null, DiseaseCubes) ? DiseaseCubes.GetHashCode() : 0);
-                hash = (hash * HashingMultiplier) ^ (!Object.ReferenceEquals(null, ConnectedCities) ? ConnectedCities.GetHashCode() : 0);
 
                 return hash;
             }

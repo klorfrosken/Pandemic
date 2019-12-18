@@ -8,6 +8,8 @@ using Pandemic.Cards;
 using Pandemic.Cards.EventCards;
 using Pandemic.Game_Elements.Roles;
 using Pandemic.Exceptions;
+using System.IO;
+using System.Reflection;
 
 namespace Pandemic.UnitTests.Managers
 {
@@ -149,8 +151,7 @@ namespace Pandemic.UnitTests.Managers
                 {
                     new User(0, "Testperson 1"),
                     new User(1, "Testperson 2")
-                }
-                );
+                });
 
             Boolean NumberOfPlayersUpdated = State.NumberOfPlayers == 2;
 
@@ -160,12 +161,10 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void GetInput_FileImportedCorrectly_Succeeds()
         {
-            StateManager State = new StateManager(
-                Testing: true, 
-                CitiesFilePath: @"C:\Users\inger.skjarholt\source\repos\Pandemic\Pandemic.UnitTests\Managers\GameManager_TestFile.txt");
-
-            List<string> InputStrings = State.TestGetInput();
-
+            string CitiesFilePath = "Pandemic.UnitTests.Managers.GameManager_TestFile.txt";
+            Stream CitiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(CitiesFilePath);
+            StateManager State = new StateManager(Testing: true);
+            
             List<string> ActualStrings = new List<string>
             {
                 "*",
@@ -180,6 +179,8 @@ namespace Pandemic.UnitTests.Managers
                 "TestCity2 - ConnCity1, ConnCity2, ConnCity3, ConnCity4"
             };
 
+            List<string> InputStrings = State.TestGetInput(CitiesResource);
+
             Assert.True(InputStrings.SequenceEqual(ActualStrings));
         }
 
@@ -190,17 +191,19 @@ namespace Pandemic.UnitTests.Managers
                 Testing: true,
                 CitiesFilePath: @"C:\WrongFileName.txt");
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestGetInput());
+            Assert.Throws<UnexpectedBehaviourException>(() => State.TestGetInput(null));
         }
 
         [Fact]
         public void GetInput_FileIsEmpty_ThorwsException()
         {
+            string CitiesFilePath = "Pandemic.UnitTests.Managers.GameManager_EmptyFile.txt";
+            Stream CitiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(CitiesFilePath);
             StateManager State = new StateManager(
                 Testing: true,
-                CitiesFilePath: @"C:\Users\inger.skjarholt\source\repos\Pandemic\Pandemic.UnitTests\Managers\GameManager_EmptyFile.txt");
+                CitiesFilePath: "Pandemic.UnitTests.Managers.GameManager_EmptyFile.txt");
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestGetInput());
+            Assert.Throws<UnexpectedBehaviourException>(() => State.TestGetInput(CitiesResource));
         }
 
         [Fact]

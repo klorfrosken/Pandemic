@@ -6,6 +6,6 @@ namespace Pandemic.Exceptions
     {
         public UnexpectedBehaviourException() { }
 
-        public UnexpectedBehaviourException(string message) : base(message) { }
+        public UnexpectedBehaviourException(string message, Exception InnerException = null) : base(message, InnerException) { }
     }
 }

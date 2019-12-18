@@ -9,4 +9,12 @@
     <Compile Remove="Game Elements\Color.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Managers\Cities.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Managers\Cities.txt" />
+  </ItemGroup>
+
 </Project>

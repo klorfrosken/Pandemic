@@ -7,6 +7,7 @@ using Pandemic.Game;
 using Pandemic.Cards.EventCards;
 using Pandemic.Game_Elements.Roles;
 using Pandemic.Exceptions;
+using System.Reflection;
 
 namespace Pandemic.Managers
 {
@@ -53,7 +54,7 @@ namespace Pandemic.Managers
         public PlayerDeck PlayerDiscard = new PlayerDeck();
 
         public StateManager(
-            string CitiesFilePath = @"C:\Users\inger.skjarholt\source\repos\Pandemic\Pandemic\Managers\Cities.txt",
+            string CitiesFilePath = "Pandemic.Managers.Cities.txt",
             string StartingCityName = "Atlanta",
             int NumberOfEpidemics = 5,
             bool RandomRoles = true,
@@ -66,6 +67,7 @@ namespace Pandemic.Managers
             int RemainingResearchStations = 6,
             int CurrentInfectionRateIndex = 0,
             int Outbreaks = 0,
+
             List<City> Cities = null,
             Dictionary<Colors, bool> Cures = null,
             List<City> OutbreakThisChain = null,
@@ -141,25 +143,29 @@ namespace Pandemic.Managers
             AddEpidemicsToDeck();
         }
 
-        List<string> GetInput()
+        List<string> GetInput(Stream CitiesResource = null)
         {
-            List<string> InputStrings = new List<string>();
+            if (CitiesResource == null)
+            {
+                CitiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(CitiesFilePath);
+            }
 
+            List<string> InputStrings = new List<string>();
             try
             {
-                StreamReader sr = new StreamReader(CitiesFilePath);
-                using (sr)
+                StreamReader stream = new StreamReader(CitiesResource);
+                using (stream)
                 {
                     string Line;
-                    while(sr.Peek() > 0)
+                    while(stream.Peek() > 0)
                     {
-                        Line = sr.ReadLine();
+                        Line = stream.ReadLine();
                         InputStrings.Add(Line);
                     }
                 }
-            } catch (Exception)
+            } catch (Exception ex)
             {
-                throw new UnexpectedBehaviourException("There was an error in reading the file of cities... Error in GetInput of StateManager");
+                throw new UnexpectedBehaviourException("There was an error in reading the file of cities... Error in GetInput of StateManager", ex);
             }
 
             if (InputStrings.Count == 0)
@@ -510,9 +516,9 @@ namespace Pandemic.Managers
 
 
         //Unit Test methods
-        public List<string> TestGetInput()
+        public List<string> TestGetInput(Stream CitiesResource)
         {
-            return GetInput();
+            return GetInput(CitiesResource);
         }
 
         public void TestCleanInput(List<string> InputStrings)

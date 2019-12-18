@@ -20,9 +20,15 @@ namespace Pandemic.Cards
             throw new IllegalMoveException($"{Name} is not a playable card");
         }
 
+        public virtual bool IsFor(City city)
+        {
+            return this.Name == city.Name;
+        }
+
         public override string ToString()
         {
             return $"{Name}, {Color}";
         }
+
     }
 }
