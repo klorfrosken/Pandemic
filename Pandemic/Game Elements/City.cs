@@ -20,11 +20,13 @@ namespace Pandemic.Game
             {Colors.Black, 0 }
         };
         public List<City> ConnectedCities = new List<City>();
+        StateManager _state;
 
-        public City(string Name, Colors Color)
+        public City(string Name, Colors Color, StateManager state)
         {
             this.Name = Name;
             this.Color = Color;
+            _state = state; 
         }
 
         public Boolean IsConnectedTo(City otherCity)
@@ -45,7 +47,7 @@ namespace Pandemic.Game
             }            
         }
 
-        public void TreatDisease(Colors Color, StateManager State)
+        public void TreatDisease(Colors Color)
         {
             if (!DiseaseCubes.ContainsKey(Color))
             {
@@ -56,25 +58,25 @@ namespace Pandemic.Game
             } else
             {
                 DiseaseCubes[Color]--;
-                State.CubePools[Color]++;
+                _state.CubePools[Color]++;
             }
         }
 
-        public Boolean DiseaseIsEradicated(Colors Color, StateManager State)
+        public Boolean DiseaseIsEradicated(Colors Color)
         {
-            bool CubePoolIsFull = State.CubePools[Color] == State.MaxCubesInCubePool;
-            bool CureIsFound = State.Cures[Color];
+            bool CubePoolIsFull = _state.CubePools[Color] == _state.MaxCubesInCubePool;
+            bool CureIsFound = _state.Cures[Color];
             return (CubePoolIsFull && CureIsFound);
         }
 
-        public Boolean InfectionPreventedByQuarantineSpecialist(StateManager State)
+        public Boolean InfectionPreventedByQuarantineSpecialist()
         {
-            if (!State.QuarantineSpecialistInGame)
+            if (!_state.QuarantineSpecialistInGame)
             {
                 return false;
             } else
             {
-                Role QuarantineSpecialist = State.Roles.Find(Player => Player is QuarantineSpecialist);
+                Role QuarantineSpecialist = _state.Roles.Find(Player => Player is QuarantineSpecialist);
                 Boolean QSisHere = (QuarantineSpecialist.CurrentCity == this);
                 Boolean QSisInConnectedCity = ConnectedCities.Exists(City => QuarantineSpecialist.CurrentCity == City);
 
@@ -82,32 +84,32 @@ namespace Pandemic.Game
             }
         }
 
-        public Boolean InfectionPreventedByMedic(Colors Color, StateManager State)
+        public Boolean InfectionPreventedByMedic(Colors Color)
         {
-            if (!State.MedicInGame)
+            if (!_state.MedicInGame)
             {
                 return false;
             } else
             {
-                Role Medic = State.Roles.Find(Player => Player is Medic);
-                Boolean CureFound = State.Cures[Color];
+                Role Medic = _state.Roles.Find(Player => Player is Medic);
+                Boolean CureFound = _state.Cures[Color];
 
                 return (Medic.CurrentCity == this && CureFound);
             }
         }
 
-        public void InfectCity(Colors Color, StateManager State)
+        public void InfectCity(Colors Color)
         {
-            if (!DiseaseIsEradicated(Color, State))
+            if (!DiseaseIsEradicated(Color))
             {
-                if (!InfectionPreventedByQuarantineSpecialist(State))
+                if (!InfectionPreventedByQuarantineSpecialist())
                 {
-                    if (!InfectionPreventedByMedic(Color, State))
+                    if (!InfectionPreventedByMedic(Color))
                     {
-                        Boolean OutbreakThisChain = State.OutbreakThisChain.Exists(City => City == this);
+                        Boolean OutbreakThisChain = _state.OutbreakThisChain.Exists(City => City == this);
                         if (DiseaseCubes[Color] == 3 && !OutbreakThisChain)
                         {
-                            Outbreak(Color, State);
+                            Outbreak(Color);
                             //blir dette helt riktig? kan den bryte ut på nytt hvis en annen by får den til å gjøre det?
                         }
                         else
@@ -117,14 +119,14 @@ namespace Pandemic.Game
                                 MultipleDiseases = true;
                             }
 
-                            if (State.CubePools[Color] == 0)
+                            if (_state.CubePools[Color] == 0)
                             {
                                 throw new TheWorldIsDeadException($"There are no more {Color} cubes left. The disease has spread too much.");
                             }
                             else
                             {
                                 DiseaseCubes[Color]++;
-                                State.CubePools[Color]--;
+                                _state.CubePools[Color]--;
                                 TextManager.PrintInfection(this, Color);
                             }
                         }
@@ -133,20 +135,20 @@ namespace Pandemic.Game
             }
         }
 
-        public void Outbreak(Colors Color, StateManager State)
+        public void Outbreak(Colors Color)
         {
-            State.Outbreaks++;
+            _state.Outbreaks++;
 
-            if (State.Outbreaks == State.MaxOutbreaks)
+            if (_state.Outbreaks == _state.MaxOutbreaks)
             {
                 throw new TheWorldIsDeadException("There was 8 outbreaks. There is a worldwide panic and it's your fault.");
             } else
             {
-                State.OutbreakThisChain.Add(this);
+                _state.OutbreakThisChain.Add(this);
 
                 foreach (City City in ConnectedCities)
                 {
-                    City.InfectCity(Color, State);
+                    City.InfectCity(Color);
                 }
             }
         }

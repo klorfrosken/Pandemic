@@ -11,7 +11,7 @@ namespace Pandemic.Game_Elements.Roles
     {
         readonly static string Title = "Researcher";
 
-        public Researcher(City StartingCity, int PlayerID) : base(PlayerID, Title, StartingCity) { }
+        public Researcher(City StartingCity, int PlayerID, StateManager state) : base(PlayerID, Title, StartingCity, state) { }
 
         public override void PrintSpecialAbilities()
         {
@@ -20,7 +20,7 @@ namespace Pandemic.Game_Elements.Roles
             Console.WriteLine("The transfer _must_ be from the researcher's hand, but can occur on either player's turn.");
         }
 
-        public override void ShareKnowledge(Role OtherPlayer, StateManager state)
+        public override void ShareKnowledge(Role OtherPlayer)
         {
             //Dette sjekkes jo når jeg tar ibruk funksjonen, men kanskje greit å ha en ekstra sjekk allikevel?
             if (OtherPlayer.CurrentCity != CurrentCity)
@@ -46,11 +46,11 @@ namespace Pandemic.Game_Elements.Roles
                 throw new UnexpectedBehaviourException("An error occured in ShareKnowledge while deciding who should be receiving a card");
             }
            
-            GivingPlayer.GiveCard(ReceivingPlayer, state);
+            GivingPlayer.GiveCard(ReceivingPlayer);
             RemainingActions--;
         }
 
-        public override void GiveCard(Role OtherPlayer, StateManager state)
+        public override void GiveCard(Role OtherPlayer)
         {
             List<Card> EligibleCards = Hand.FindAll(Card => Card is CityCard);
             int Choice = TextManager.ChooseItemFromList(EligibleCards, "give");
@@ -61,7 +61,7 @@ namespace Pandemic.Game_Elements.Roles
             }
 
             Hand.Remove(CardToGive);
-            OtherPlayer.ReceiveCard(CardToGive, state);
+            OtherPlayer.ReceiveCard(CardToGive);
         }
     }
 }

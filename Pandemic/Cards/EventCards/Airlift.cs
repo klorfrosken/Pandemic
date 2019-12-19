@@ -10,24 +10,24 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "Airlift";
         readonly static string _eventDescription = $"Move any player to any city";
 
-        public Airlift() : base (_eventName, _eventDescription) { }
+        public Airlift(StateManager state) : base (_eventName, _eventDescription, state) { }
 
-        public override void Play(Role playerWithCard, StateManager state)
+        public override void Play(Role playerWithCard)
         {
             if (!playerWithCard.CardInHand(_eventName)){
                 throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {_eventName} in their hand to play.");
             }
             else
             {
-                int playerChoice = TextManager.ChooseItemFromList(state.Roles, "move");
-                Role playerToMove = state.Roles[playerChoice];
+                int playerChoice = TextManager.ChooseItemFromList(_state.Roles, "move");
+                Role playerToMove = _state.Roles[playerChoice];
 
-                Dictionary<string, City> EligibleCities = new Dictionary<string, City>(state.Cities);
+                Dictionary<string, City> EligibleCities = new Dictionary<string, City>(_state.Cities);
                 EligibleCities.Remove(playerToMove.CurrentCity.Name);
                 int cityChoice = TextManager.ChooseItemFromList(EligibleCities.Values, $"move the {playerToMove} to");
-                City nextCity = state.GetCity(cityChoice);
+                City nextCity = _state.GetCity(cityChoice);
 
-                playerToMove.ChangeCity(nextCity, state);
+                playerToMove.ChangeCity(nextCity);
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Pandemic.Cards;
 using Pandemic.Managers;
 using Pandemic.Game;
@@ -17,7 +16,7 @@ namespace Pandemic.Game_Elements.Roles
 
         };
 
-        public OperationsExpert(City StartingCity, int PlayerID): base(PlayerID, Title, StartingCity)
+        public OperationsExpert(City StartingCity, int PlayerID, StateManager state): base(PlayerID, Title, StartingCity, state)
         {
             SpecialActions = 1;
         }
@@ -30,18 +29,18 @@ namespace Pandemic.Game_Elements.Roles
             Console.WriteLine($"Build a research station in your current city, _without_ discarding a City card.");
         }
 
-        public override void PlayFirstSpecialAbility(StateManager State)
+        public override void PlayFirstSpecialAbility()
         {
-            CharterFlightFromResearchStation(State);
+            CharterFlightFromResearchStation();
         }
 
-        public override void BuildResearchStation(StateManager State)
+        public override void BuildResearchStation()
         {
             if (!CurrentCity.ResearchStation)
             {
                 CurrentCity.BuildResearchStation();
                 RemainingActions--;
-                State.BuildResearchStation();
+                _state.BuildResearchStation();
             }
             else
             {
@@ -49,7 +48,7 @@ namespace Pandemic.Game_Elements.Roles
             }
         }
 
-        void CharterFlightFromResearchStation(StateManager State)
+        void CharterFlightFromResearchStation()
         {
             int Choice = -1;
             if (!CurrentCity.ResearchStation)
@@ -65,10 +64,10 @@ namespace Pandemic.Game_Elements.Roles
             }
             else
             {
-                Choice = TextManager.ChooseItemFromList(State.Cities.Values, "go to");
+                Choice = TextManager.ChooseItemFromList(_state.Cities.Values, "go to");
             }
 
-            City NextCity = State.GetCity(Choice);
+            City NextCity = _state.GetCity(Choice);
 
             List<Card> EligibleCards = Hand.FindAll(Card => Card is CityCard);
             Choice = TextManager.ChooseItemFromList(EligibleCards, "discard");

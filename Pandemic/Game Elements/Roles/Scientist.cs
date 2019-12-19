@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Pandemic.Game;
 using Pandemic.Managers;
-using Pandemic.Cards;
-using Pandemic.Exceptions;
 
 namespace Pandemic.Game_Elements.Roles 
 {
     public class Scientist : Role
     {
         readonly static string Title = "Scientist";
-        public Scientist(City StartingCity, int PlayerID) : base(PlayerID, Title, StartingCity)
+        public Scientist(City StartingCity, int PlayerID, StateManager state) : base(PlayerID, Title, StartingCity, state)
         {
             CardsNecessaryForCure = 4;
         }

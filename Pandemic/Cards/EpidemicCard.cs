@@ -10,32 +10,32 @@ namespace Pandemic.Cards
     {
         readonly static string _name = "Epidemic";
 
-        public EpidemicCard() : base(_name, Colors.None) { }
+        public EpidemicCard(StateManager state) : base(_name, Colors.None, state) { }
 
-        public override void Play(Role playerWithCard, StateManager state)
+        public override void Play(Role playerWithCard)
         {
-            Increase(state);
-            Infect(state);
-            Intensify(state);
+            Increase();
+            Infect();
+            Intensify();
         }
 
-        void Increase(StateManager state)
+        void Increase()
         {
-            state.IncreaseInfectionRate();
+            _state.IncreaseInfectionRate();
         }
 
-        void Infect(StateManager state)
+        void Infect()
         {
-            InfectionCard bottomCard = state.InfectionDeck.RemoveBottomCard();
-            bottomCard.Infect(state);
-            bottomCard.Infect(state);
-            bottomCard.Infect(state);
+            InfectionCard bottomCard = _state.InfectionDeck.RemoveBottomCard();
+            bottomCard.Infect(_state);
+            bottomCard.Infect(_state);
+            bottomCard.Infect(_state);
         }
 
-        void Intensify(StateManager state)
+        void Intensify()
         {
-            state.InfectionDiscard.Shuffle();
-            state.InfectionDeck.InsertOnTop(state.InfectionDiscard);
+            _state.InfectionDiscard.Shuffle();
+            _state.InfectionDeck.InsertOnTop(_state.InfectionDiscard);
         }
     }
 }

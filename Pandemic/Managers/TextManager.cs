@@ -10,6 +10,12 @@ namespace Pandemic.Managers
     public class TextManager
     {
         public static readonly int AvailableStandardActions = 8;
+        StateManager _state;
+
+        public TextManager(StateManager state)
+        {
+            _state = state;
+        }
         
         //Print methods
         public static void PrintBeginGame(StateManager State, List<User> Users)
@@ -27,14 +33,14 @@ namespace Pandemic.Managers
             Console.WriteLine();
         }
 
-        public static void PrintStatus(StateManager State)
+        public static void PrintStatus(StateManager _state)
         {
-            Console.WriteLine($"There have been {State.Outbreaks} outbreaks up till now.");
-            Console.WriteLine($"The current infection rate is {State.InfectionRates[State.InfectionIndex]}.");
+            Console.WriteLine($"There have been {_state.Outbreaks} outbreaks up till now.");
+            Console.WriteLine($"The current infection rate is {_state.InfectionRates[_state.InfectionIndex]}.");
             Console.WriteLine("\nThe following cities are infected with diseases:");
 
             //Cities with infection
-            foreach(City CurrentCity in State.Cities.Values)
+            foreach(City CurrentCity in _state.Cities.Values)
             {
                 if (!CurrentCity.MultipleDiseases)
                 {
@@ -95,10 +101,10 @@ namespace Pandemic.Managers
             Console.WriteLine($"{card.Name} allows you to {card.description}");
         }
 
-        public static void PrintNewTurn(Role currentRole, StateManager state)
+        public static void PrintNewTurn(Role currentRole, StateManager _state)
         {
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
-            PrintStatus(state);
+            PrintStatus(_state);
         }
 
         public static void AvailableActions(Role currentRole)
@@ -156,9 +162,9 @@ namespace Pandemic.Managers
             Console.WriteLine($"A research station was built in {currentRole.CurrentCity}");
         }
 
-        public static void PrintDiseaseTreated(Role currentRole, City treatedCity, Colors cubeColor, StateManager state)
+        public static void PrintDiseaseTreated(Role currentRole, City treatedCity, Colors cubeColor, StateManager _state)
         {
-            if (state.Cures[cubeColor] || currentRole is Medic)
+            if (_state.Cures[cubeColor] || currentRole is Medic)
             {
                 Console.WriteLine($"All the {cubeColor} cubes were removed from {treatedCity}");
             } else

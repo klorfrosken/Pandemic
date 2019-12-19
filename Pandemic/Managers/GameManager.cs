@@ -8,7 +8,9 @@ namespace Pandemic.Managers
 {
     class GameManager
     {
-        StateManager State;
+        StateManager state;
+        TextManager textManager;
+
         List<User> Users = new List<User>
         {
             new User(0, "Ragna Rekkverk"),
@@ -25,12 +27,12 @@ namespace Pandemic.Managers
         void InitiateGame()
         {
             int NumberOfEpidemics = TextManager.GetDifficulty();
-            State = new StateManager(NumberOfEpidemics: NumberOfEpidemics, Users: Users);
-            TextManager.PrintBeginGame(State, Users);
+            state = new StateManager(NumberOfEpidemics: NumberOfEpidemics, Users: Users);
+            TextManager.PrintBeginGame(state, Users);
 
             try
             {
-                PlayGame(State);
+                PlayGame(state);
             }
             catch (GameWonException ex)
             {
@@ -68,8 +70,8 @@ namespace Pandemic.Managers
                     try
                     {
                         DoActions(CurrentUser.CurrentRole);
-                        CurrentUser.CurrentRole.Draw(State);
-                        CurrentUser.CurrentRole.Draw(State);
+                        CurrentUser.CurrentRole.Draw();
+                        CurrentUser.CurrentRole.Draw();
 
                         int infectionRate = State.InfectionRates[State.InfectionIndex];
                         for (int i = 0; i<infectionRate; i++)
@@ -88,7 +90,7 @@ namespace Pandemic.Managers
 
         void DoActions(Role CurrentPlayer)
         {
-            TextManager.PrintNewTurn(CurrentPlayer, State);
+            TextManager.PrintNewTurn(CurrentPlayer, state);
 
             do
             {
@@ -143,7 +145,7 @@ namespace Pandemic.Managers
             {
                 int Choice = TextManager.ChooseItemFromList(currentRole.CurrentCity.ConnectedCities, "go to");
                 City NextCity = currentRole.CurrentCity.ConnectedCities[Choice];
-                currentRole.DriveFerry(NextCity, State);
+                currentRole.DriveFerry(NextCity);
                 TextManager.PrintPlayerMoved(currentRole, NextCity);
             }
             catch (IllegalMoveException ex)
@@ -180,8 +182,8 @@ namespace Pandemic.Managers
                     Choice = TextManager.ChooseItemFromList(EligibleCards, "go to");
                 }
 
-                City NextCity = State.GetCity(EligibleCards[Choice]);
-                CurrentPlayer.DirectFlight(NextCity, State);
+                City NextCity = state.GetCity(EligibleCards[Choice]);
+                CurrentPlayer.DirectFlight(NextCity);
                 TextManager.PrintPlayerMoved(CurrentPlayer, NextCity);
             }
             catch (IllegalMoveException ex)
@@ -197,9 +199,9 @@ namespace Pandemic.Managers
             {
                 if (CurrentPlayer.CardInHand(CurrentPlayer.CurrentCity.Name))
                 {
-                    int Choice = TextManager.ChooseItemFromList(State.Cities.Values, "go to");
-                    City NextCity = State.GetCity(Choice);
-                    CurrentPlayer.CharterFlight(NextCity, State);
+                    int Choice = TextManager.ChooseItemFromList(state.Cities.Values, "go to");
+                    City NextCity = state.GetCity(Choice);
+                    CurrentPlayer.CharterFlight(NextCity);
                     TextManager.PrintPlayerMoved(CurrentPlayer, NextCity);
                 }
                 else
@@ -218,7 +220,7 @@ namespace Pandemic.Managers
             //SHUTTLE FLIGHT - Move from a city with a research station to any other city that has a research station
             try
             {
-                List<City> ResearchStations = State.GetCitiesWithResearchStation();
+                List<City> ResearchStations = state.GetCitiesWithResearchStation();
 
                 if (ResearchStations.Count == 0)
                 {
@@ -231,8 +233,8 @@ namespace Pandemic.Managers
                 else
                 {
                     int Choice = TextManager.ChooseItemFromList(ResearchStations, "go to");
-                    City NextCity = State.GetCity(CurrentPlayer.Hand[Choice]);
-                    CurrentPlayer.ShuttleFlight(NextCity, State);
+                    City NextCity = state.GetCity(CurrentPlayer.Hand[Choice]);
+                    CurrentPlayer.ShuttleFlight(NextCity);
                     TextManager.PrintPlayerMoved(CurrentPlayer, NextCity);
                 }
 
@@ -248,7 +250,7 @@ namespace Pandemic.Managers
             //BUILD A RESEARCH STATION - Discard the city card that _matches_ the city that you are in to place a research station there
             try
             {
-                CurrentPlayer.BuildResearchStation(State);
+                CurrentPlayer.BuildResearchStation();
                 TextManager.PrintResearchStationBuilt(CurrentPlayer);
             }
             catch (IllegalMoveException ex)
@@ -264,8 +266,8 @@ namespace Pandemic.Managers
             {
                 if (!CurrentPlayer.CurrentCity.MultipleDiseases)
                 {
-                    CurrentPlayer.TreatDisease(CurrentPlayer.CurrentCity.Color, State);
-                    TextManager.PrintDiseaseTreated(CurrentPlayer, CurrentPlayer.CurrentCity, CurrentPlayer.CurrentCity.Color, State);
+                    CurrentPlayer.TreatDisease(CurrentPlayer.CurrentCity.Color);
+                    TextManager.PrintDiseaseTreated(CurrentPlayer, CurrentPlayer.CurrentCity, CurrentPlayer.CurrentCity.Color, state);
 
                 }
                 else
@@ -285,8 +287,8 @@ namespace Pandemic.Managers
                     }
 
                     int Choice = TextManager.ChooseItemFromList(PrintLines, "cure");
-                    CurrentPlayer.TreatDisease(DiseaseColors[Choice], State);
-                    TextManager.PrintDiseaseTreated(CurrentPlayer, CurrentPlayer.CurrentCity, DiseaseColors[Choice], State);
+                    CurrentPlayer.TreatDisease(DiseaseColors[Choice]);
+                    TextManager.PrintDiseaseTreated(CurrentPlayer, CurrentPlayer.CurrentCity, DiseaseColors[Choice], state);
                 }
             }
             catch (IllegalMoveException ex)
@@ -306,7 +308,7 @@ namespace Pandemic.Managers
                 }
                 else
                 {
-                    CurrentPlayer.DiscoverCure(State);
+                    CurrentPlayer.DiscoverCure();
                     TextManager.PrintCureDiscovered(CurrentPlayer);
                 }
             }
@@ -322,7 +324,7 @@ namespace Pandemic.Managers
             try
             {
                 List<Role> PlayersInCity = new List<Role>();
-                foreach (Role currentOtherPlayer in State.Roles)
+                foreach (Role currentOtherPlayer in state.Roles)
                 {
                     if (currentOtherPlayer.CurrentCity == CurrentPlayer.CurrentCity)
                     {
@@ -348,7 +350,7 @@ namespace Pandemic.Managers
                     otherPlayer = PlayersInCity[Choice];
                 }
 
-                CurrentPlayer.ShareKnowledge(otherPlayer, State);
+                CurrentPlayer.ShareKnowledge(otherPlayer);
                 TextManager.PrintKnowledgeShared(CurrentPlayer, otherPlayer);
             }
             catch (IllegalMoveException ex)
@@ -362,7 +364,7 @@ namespace Pandemic.Managers
             //First special ability
             try
             {
-                CurrentPlayer.PlayFirstSpecialAbility(State);
+                CurrentPlayer.PlayFirstSpecialAbility();
                 TextManager.PrintUsedSpecialAbility(CurrentPlayer);
             }
             catch (IllegalMoveException ex)
@@ -376,7 +378,7 @@ namespace Pandemic.Managers
             //Second special ability
             try
             {
-                CurrentPlayer.PlaySecondSpecialAbility(State);
+                CurrentPlayer.PlaySecondSpecialAbility();
                 TextManager.PrintUsedSpecialAbility(CurrentPlayer);
             }
             catch (IllegalMoveException ex)

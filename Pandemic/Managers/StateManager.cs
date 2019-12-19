@@ -243,7 +243,7 @@ namespace Pandemic.Managers
                     string[] SplitLine = currentString.Split(" - ");
                     string cityName = SplitLine[0];
 
-                    City newCity = new City(cityName, currentColor);
+                    City newCity = new City(cityName, currentColor, this);
                     cities.Add(cityName, newCity);
                 }
             }
@@ -288,10 +288,10 @@ namespace Pandemic.Managers
                 string currentName = currentCity.Name;
                 Colors currentColor = currentCity.Color;
 
-                CityCard cityCard = new CityCard(currentName, currentColor);
+                CityCard cityCard = new CityCard(currentName, currentColor, this);
                 PlayerDeck.AddCard(cityCard);
 
-                InfectionCard infectionCard = new InfectionCard(currentName, currentColor);
+                InfectionCard infectionCard = new InfectionCard(currentName, currentColor, this);
                 InfectionDeck.AddCard(infectionCard);
             }
         }
@@ -300,11 +300,11 @@ namespace Pandemic.Managers
         {
             List<Card> EventCards = new List<Card>
             {
-                new Airlift(),
-                new Forecast(),
-                new GovernmentGrant(),
-                new OneQuietNight(),
-                new ResilientPopulation()
+                new Airlift(this),
+                new Forecast(this),
+                new GovernmentGrant(this),
+                new OneQuietNight(this),
+                new ResilientPopulation(this)
             };
 
             PlayerDeck.AddCards(EventCards);
@@ -328,31 +328,31 @@ namespace Pandemic.Managers
                     switch (CurrentRoleIndex)
                     {
                         case 0:
-                            CurrentRole = new ContingencyPlanner(StartingCity, CurrentUser.UserID);
+                            CurrentRole = new ContingencyPlanner(StartingCity, CurrentUser.UserID, this);
                             Roles.Add(CurrentRole);
                             break;
                         case 1:
-                            CurrentRole = new Dispatcher(StartingCity, CurrentUser.UserID);
+                            CurrentRole = new Dispatcher(StartingCity, CurrentUser.UserID, this);
                             Roles.Add(CurrentRole);
                             break;
                         case 2:
-                            CurrentRole = new Medic(StartingCity, CurrentUser.UserID);
+                            CurrentRole = new Medic(StartingCity, CurrentUser.UserID, this);
                             Roles.Add(CurrentRole);
                             break;
                         case 3:
-                            CurrentRole = new OperationsExpert(StartingCity, CurrentUser.UserID);
+                            CurrentRole = new OperationsExpert(StartingCity, CurrentUser.UserID, this);
                             Roles.Add(CurrentRole);
                             break;
                         case 4:
-                            CurrentRole = new QuarantineSpecialist(StartingCity, CurrentUser.UserID);
+                            CurrentRole = new QuarantineSpecialist(StartingCity, CurrentUser.UserID, this);
                             Roles.Add(CurrentRole);
                             break;
                         case 5:
-                            CurrentRole = new Researcher(StartingCity, CurrentUser.UserID);
+                            CurrentRole = new Researcher(StartingCity, CurrentUser.UserID, this);
                             Roles.Add(CurrentRole);
                             break;
                         case 6:
-                            CurrentRole = new Scientist(StartingCity, CurrentUser.UserID);
+                            CurrentRole = new Scientist(StartingCity, CurrentUser.UserID, this);
                             Roles.Add(CurrentRole);
                             break;
                         default:
@@ -422,7 +422,7 @@ namespace Pandemic.Managers
                     }
 
                     currentPile.AddCards(PlayerDeck.Draw(CardsInCurrentPile));
-                    currentPile.AddCard(new EpidemicCard());
+                    currentPile.AddCard(new EpidemicCard(this));
                     currentPile.Shuffle();
 
                     PlayerDeck.CombineDecks(currentPile);

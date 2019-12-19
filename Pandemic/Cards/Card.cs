@@ -9,13 +9,16 @@ namespace Pandemic.Cards
         public string Name { get; private set; }
         public Colors Color { get; private set; }
 
-        public Card(string name, Colors color)
+        protected internal StateManager _state;
+
+        public Card(string name, Colors color, StateManager state)
         {
             Name = name;
             Color = color;
+            _state = state;
         }
 
-        public virtual void Play(Role playerWithCard, StateManager state)
+        public virtual void Play(Role playerWithCard)
         {
             throw new IllegalMoveException($"{Name} is not a playable card");
         }

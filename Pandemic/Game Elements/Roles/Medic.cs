@@ -10,7 +10,7 @@ namespace Pandemic.Game_Elements.Roles
     public class Medic : Role
     {
         readonly static string Title = "Medic";
-        public Medic(City StartingCity, int PlayerID) : base (PlayerID, Title, StartingCity) { }
+        public Medic(City StartingCity, int PlayerID, StateManager state) : base (PlayerID, Title, StartingCity, state) { }
 
         public override void PrintSpecialAbilities()
         {
@@ -19,20 +19,20 @@ namespace Pandemic.Game_Elements.Roles
             Console.WriteLine("If a disease has been cured, all cubes of that color are automatically removed from a city when the Medic enters or is located in that city.");
             Console.WriteLine("Automatic removal of cubes can occur on other players' turns. It does not cost an action, regardless of who's turn it is.");
         }
-        public override void ChangeCity(City NextCity, StateManager State)
+        public override void ChangeCity(City NextCity)
         {
             CurrentCity = NextCity;
-            AutoCure(State);
+            AutoCure();
         }
 
-        public override void TreatDisease(Colors Color, StateManager State)
+        public override void TreatDisease(Colors Color)
         {
             Boolean NotCleared = true;
             do
             {
                 try
                 {
-                    CurrentCity.TreatDisease(Color, State);
+                    CurrentCity.TreatDisease(Color);
                 }
                 catch (IllegalMoveException)
                 {
@@ -41,25 +41,25 @@ namespace Pandemic.Game_Elements.Roles
                 catch (UnexpectedBehaviourException) { throw; }
             } while (NotCleared);
 
-            if (!State.Cures[CurrentCity.Color])
+            if (!_state.Cures[CurrentCity.Color])
             {
                 RemainingActions--;
             }
         }
 
-        void AutoCure(StateManager State)
+        void AutoCure()
         {
             Boolean CureDiscovered;
             Boolean CubesToCureInCity;
             for (int i = 1; i < 5; i++)
             {
-                CureDiscovered = State.Cures[(Colors)i];
+                CureDiscovered = _state.Cures[(Colors)i];
                 CubesToCureInCity = CurrentCity.DiseaseCubes[(Colors)i] > 0;
                 if (CureDiscovered && CubesToCureInCity)
                 {
                     try
                     {
-                        TreatDisease((Colors)i, State);
+                        TreatDisease((Colors)i);
                     }
                     catch { throw; }
                 }

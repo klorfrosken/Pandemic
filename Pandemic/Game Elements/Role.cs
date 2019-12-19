@@ -18,22 +18,24 @@ namespace Pandemic.Game
         public int RemainingActions { get; private protected set; } 
         public City CurrentCity { get; private protected set; }
         public List<Card> Hand = new List<Card>();
+        protected internal StateManager _state;
 
-        public Role (int PlayerID, String RoleName, City StartingCity)
+        public Role (int PlayerID, String RoleName, City StartingCity, StateManager state)
         {
             this.PlayerID = PlayerID;
             this.RoleName = RoleName;
             CurrentCity = StartingCity;
             RemainingActions = MaxActions;
+            _state = state;
         }
 
-        public void Draw(StateManager state)
+        public void Draw()
         {
-            Card drawnCard = state.PlayerDeck.Draw();
+            Card drawnCard = _state.PlayerDeck.Draw();
 
             if (drawnCard is EpidemicCard)
             {
-                drawnCard.Play(this, state);
+                drawnCard.Play(this);
             } else
             {
                 Hand.Add(drawnCard);
@@ -45,12 +47,12 @@ namespace Pandemic.Game
             Hand.AddRange(Deck.Draw(NumberOfCards));
         }
 
-        public virtual void ChangeCity(City NextCity, StateManager State)
+        public virtual void ChangeCity(City NextCity)
         {
             CurrentCity = NextCity;
         }
 
-        public void DriveFerry(City NextCity, StateManager State)
+        public void DriveFerry(City NextCity)
         {
             if (CurrentCity.IsConnectedTo(NextCity)){
                 CurrentCity = NextCity;
@@ -61,11 +63,11 @@ namespace Pandemic.Game
             }
         }
 
-        public void DirectFlight(City NextCity, StateManager State)
+        public void DirectFlight(City NextCity)
         {
             if (CardInHand(NextCity.Name))
             {
-                ChangeCity(NextCity, State);
+                ChangeCity(NextCity);
                 Discard(NextCity.Name);
                 RemainingActions--;
             } else {
@@ -73,12 +75,12 @@ namespace Pandemic.Game
             }
         }
 
-        public void CharterFlight(City NextCity, StateManager State)
+        public void CharterFlight(City NextCity)
         {
             if (CardInHand(CurrentCity.Name))
             {
                 Discard(CurrentCity.Name);
-                ChangeCity(NextCity, State);
+                ChangeCity(NextCity);
                 RemainingActions--;
             } else 
             {
@@ -86,11 +88,11 @@ namespace Pandemic.Game
             }
         }
 
-        public void ShuttleFlight(City NextCity, StateManager State)
+        public void ShuttleFlight(City NextCity)
         {
             if (CurrentCity.ResearchStation && NextCity.ResearchStation)
             {
-                ChangeCity(NextCity, State);
+                ChangeCity(NextCity);
                 RemainingActions--;
             } else
             {
@@ -98,7 +100,7 @@ namespace Pandemic.Game
             }
         }
 
-        public virtual void BuildResearchStation(StateManager State)
+        public virtual void BuildResearchStation()
         {
             if (!CurrentCity.ResearchStation)
             {
@@ -107,7 +109,7 @@ namespace Pandemic.Game
                     CurrentCity.BuildResearchStation();
                     Discard(CurrentCity.Name);
                     RemainingActions--;
-                    State.BuildResearchStation();
+                    _state.BuildResearchStation();
                 } else
                 {
                     throw new IllegalMoveException($"You need to have the city card for {CurrentCity.Name} in your hand, in order to build a research station in this city");
@@ -118,16 +120,16 @@ namespace Pandemic.Game
             }
         }
 
-        public virtual void TreatDisease(Colors Color, StateManager State)
+        public virtual void TreatDisease(Colors Color)
         {
             try
             {
-                CurrentCity.TreatDisease(Color, State);
+                CurrentCity.TreatDisease(Color);
                 RemainingActions--;
             } catch { throw; }      //unexpectedbehaviour exception if Colors == None || illegalmoveexception if no cubes of that color
         }
 
-        public void DiscoverCure(StateManager State)
+        public void DiscoverCure()
         {
             List<Card> CardsOfSameColor = new List<Card>();
             int[] CardCount = new int[5];
@@ -145,7 +147,7 @@ namespace Pandemic.Game
             {
                 throw new IllegalMoveException($"You don't have enough cards of the same color in your hand. You need {CardsNecessaryForCure} cards of the same color, to discover a cure.");
             }
-            else if(State.Cures[CureColor] == true)
+            else if(_state.Cures[CureColor] == true)
             {
                 throw new IllegalMoveException($"The {CureColor} cure has already been discovered");
             }
@@ -167,8 +169,8 @@ namespace Pandemic.Game
                 }
 
                 Discard(AvailableCardsForCure);
-                State.Cures[CureColor] = true;
-                if (GameWon(State))
+                _state.Cures[CureColor] = true;
+                if (GameWon())
                 {
                     throw new GameWonException();
                 }
@@ -179,7 +181,7 @@ namespace Pandemic.Game
             }
         }
 
-        public virtual void ShareKnowledge(Role OtherPlayer, StateManager state)
+        public virtual void ShareKnowledge(Role OtherPlayer)
         {
             //Dette sjekkes jo når jeg tar ibruk funksjonen, men kanskje greit å ha en ekstra sjekk allikevel?
             if (OtherPlayer.CurrentCity != CurrentCity)
@@ -223,11 +225,11 @@ namespace Pandemic.Game
                 }
             }
 
-            GivingPlayer.GiveCard(ReceivingPlayer, state);
+            GivingPlayer.GiveCard(ReceivingPlayer);
             RemainingActions--;
         }
 
-        public virtual void GiveCard(Role OtherPlayer, StateManager state)
+        public virtual void GiveCard(Role OtherPlayer)
         {
             Card CardToGive = Hand.Find(Card => Card.Name == CurrentCity.Name);
             if (CardToGive == null)
@@ -236,16 +238,16 @@ namespace Pandemic.Game
             }
 
             Hand.Remove(CardToGive);
-            OtherPlayer.ReceiveCard(CardToGive, state);
+            OtherPlayer.ReceiveCard(CardToGive);
         }
 
-        public void ReceiveCard(Card Card, StateManager state)
+        public void ReceiveCard(Card Card)
         {
             Hand.Add(Card);
 
             if (Hand.Count > 7)
             {
-                Discard(state);
+                Discard();
             }
         }
 
@@ -267,13 +269,13 @@ namespace Pandemic.Game
             return Counter;
         }
 
-        void Discard(StateManager state)
+        void Discard()
         {
             int Choice = TextManager.DiscardOrPlay(Hand);
             
             if (Hand[Choice] is EventCard)
             {
-                Hand[Choice].Play(this, state);
+                Hand[Choice].Play(this);
             } else
             {
                 Discard(Choice);
@@ -304,12 +306,12 @@ namespace Pandemic.Game
             throw new Exception($"The PrintSpecialAbilities method for {RoleName} is missing");
         }
 
-        public virtual void PlayFirstSpecialAbility(StateManager State)
+        public virtual void PlayFirstSpecialAbility()
         {
             throw new IllegalMoveException($"The {RoleName} don't have any active special abilities to play");
         }
 
-        public virtual void PlaySecondSpecialAbility(StateManager State)
+        public virtual void PlaySecondSpecialAbility(  )
         {
             throw new IllegalMoveException($"The {RoleName} don't have any active special abilities to play");
         }
@@ -319,11 +321,11 @@ namespace Pandemic.Game
             RemainingActions = MaxActions;
         }
 
-        protected Boolean GameWon(StateManager State)
+        protected Boolean GameWon()
         {
             for (int i = 0; i<4; i++)
             {
-                if (!State.Cures[(Colors)i])
+                if (!_state.Cures[(Colors)i])
                 {
                     return false;
                 }

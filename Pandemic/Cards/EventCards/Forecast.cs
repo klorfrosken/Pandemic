@@ -11,9 +11,9 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "Forecast";
         readonly static string _eventDesctiption = $"Allows the player to rearrange the top 6 cards of the Infection Deck.";
 
-        public Forecast() : base (_eventName, _eventDesctiption) { }
+        public Forecast(StateManager state) : base (_eventName, _eventDesctiption, state) { }
 
-        public override void Play(Role playerWithCard, StateManager state)
+        public override void Play(Role playerWithCard)
         {
             if (!playerWithCard.CardInHand(_eventName))
             {
@@ -22,7 +22,7 @@ namespace Pandemic.Cards.EventCards
             {
                 TextManager.PrintEventDescription(this);
 
-                List<Card> cardsToRearrange = state.InfectionDeck.Draw(6);
+                List<Card> cardsToRearrange = _state.InfectionDeck.Draw(6);
                 List<InfectionCard> newOrder = new List<InfectionCard>();
                 int choice = -1;
                 for (int i=1; i<6; i++)
@@ -36,7 +36,7 @@ namespace Pandemic.Cards.EventCards
                 InfectionDeck tempDeck = new InfectionDeck();
                 tempDeck.AddCards(newOrder);
 
-                state.InfectionDeck.InsertOnTop(tempDeck);
+                _state.InfectionDeck.InsertOnTop(tempDeck);
             }
         }
     }

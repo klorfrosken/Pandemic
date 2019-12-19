@@ -14,7 +14,7 @@ namespace Pandemic.Game_Elements.Roles
         Boolean HasPickedEvent = false;
         EventCard StoredCard;
 
-        public ContingencyPlanner(City StartingCity, int PlayerID) : base (PlayerID, Title, StartingCity) 
+        public ContingencyPlanner(City StartingCity, int PlayerID, StateManager state) : base (PlayerID, Title, StartingCity, state) 
         {
             SpecialActions = 1;
         }
@@ -27,11 +27,11 @@ namespace Pandemic.Game_Elements.Roles
             Console.WriteLine("When the stored event card is played it is removed from the game instead of discarded.");
         }
 
-        public override void PlayFirstSpecialAbility(StateManager State)
+        public override void PlayFirstSpecialAbility()
         {
             try
             {
-                PickEventcardFromDiscard(State.PlayerDiscard);
+                PickEventcardFromDiscard(_state.PlayerDiscard);
             }
             catch { throw; }    //Throws illegalmoveexception if there are no event cards in the playerDiscard or haspickedevent
         }
@@ -70,7 +70,7 @@ namespace Pandemic.Game_Elements.Roles
             }
         }
 
-        public void UseStoredCard(StateManager state)
+        public void UseStoredCard()
         {
             if (StoredCard == null)
             {
@@ -78,7 +78,7 @@ namespace Pandemic.Game_Elements.Roles
             }
             else
             {
-                StoredCard.Play(this, state); //Consider whether the Play method should put the card in the discard pile. If so, the contingency planner must remove it again. 
+                StoredCard.Play(this); //Consider whether the Play method should put the card in the discard pile. If so, the contingency planner must remove it again. 
                 StoredCard = null;
                 HasPickedEvent = false;
             }

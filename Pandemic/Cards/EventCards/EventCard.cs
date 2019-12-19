@@ -9,7 +9,10 @@ namespace Pandemic.Cards.EventCards
     {
         public string description { get; private set; }
         
-        public EventCard(string eventName, string description) : base(eventName, Colors.None) { }
+        public EventCard(string eventName, string description, StateManager state) : base(eventName, Colors.None, state) 
+        {
+            this.description = description;
+        }
 
         public override string ToString()
         {
