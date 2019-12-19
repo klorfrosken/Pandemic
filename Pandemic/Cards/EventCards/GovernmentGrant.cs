@@ -24,18 +24,18 @@ namespace Pandemic.Cards.EventCards
             {
                 TextManager.PrintEventDescription(this);
 
-                List<City> EligibleCities = new List<City>();
-                foreach (City currentCity in state.Cities)
+                List<City> eligibleCities = new List<City>();
+                foreach (City currentCity in state.Cities.Values)
                 {
                     if (!currentCity.ResearchStation)
                     {
-                        EligibleCities.Add(currentCity);
+                        eligibleCities.Add(currentCity);
                     }
                 }
 
-                int Choice = TextManager.ChooseItemFromList(EligibleCities, "build a research station in");
-                City ChosenCity = EligibleCities[Choice];
-                ChosenCity.BuildResearchStation();
+                int choice = TextManager.ChooseItemFromList(eligibleCities, "build a research station in");
+                City chosenCity = eligibleCities[choice];
+                chosenCity.BuildResearchStation();
             }
         }
     }

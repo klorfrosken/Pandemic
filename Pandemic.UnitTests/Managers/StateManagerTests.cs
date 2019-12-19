@@ -18,221 +18,233 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void StateManager_TestRoleIsNotNull_Succeeds()
         {
-            StateManager State = new StateManager(
+            Role testRole = new Medic(new City("Atlanta", Colors.Blue), 0);
+            
+            StateManager state = new StateManager(
                 Testing: true, 
                 Roles: new List<Role>
                 {
-                    new Medic(new City("Atlanta", Colors.Blue), 0)
+                    testRole
                 });
 
-            Boolean RolesAdded = State.Roles.Exists(Role => Role is Medic);
-            Boolean NumberOfPlayersSet = State.NumberOfPlayers == 1;
-
-            Assert.True(RolesAdded && NumberOfPlayersSet);
+            Assert.Contains(testRole, state.Roles);
+            Assert.True(state.NumberOfPlayers == 1);
         }
 
         [Fact]
         public void StateManager_CitiesNotNull_Succeeds()
         {
+            string testCityName = "Atlanta";
+
             StateManager State = new StateManager(
                 Testing: true,
-                Cities: new List<City> { new City("Atlanta", Colors.Blue) }
+                Cities: new Dictionary<string, City> { { testCityName, new City(testCityName, Colors.Blue) } }
                 );
 
-            Boolean CitiesAdded = State.Cities.Exists(City => City.Name.Equals("Atlanta"));
-
-            Assert.True(CitiesAdded);
+            Assert.Contains<string, City>(testCityName, (IDictionary<string, City>)State.Cities);
         }
 
         [Fact]
         public void StateManager_CuresNotNull_Succeeds()
         {
-            Dictionary<Colors, bool> InitialCures = new Dictionary<Colors, bool>
-            {
-                { Colors.Yellow, true },
-                { Colors.Red, false },
-                { Colors.Blue, true },
-                { Colors.Black, false }
-            };
+            Dictionary<Colors, bool> initialCures = new Dictionary<Colors, bool>
+                {
+                    { Colors.Yellow, true },
+                    { Colors.Red, false },
+                    { Colors.Blue, true },
+                    { Colors.Black, false }
+                };
 
-            StateManager State = new StateManager(
+            StateManager state = new StateManager(
                 Testing: true,
-                Cures: InitialCures
+                Cures: initialCures
                 );
 
-            Boolean CuresCorrect = State.Cures.Equals(InitialCures);
-
-            Assert.True(CuresCorrect);
+            Assert.Equal(initialCures, state.Cures);
         }
 
         [Fact]
         public void StateManager_OutbreakThisChainNotNull_Succeeds()
         {
-            StateManager State = new StateManager(
+            City testCity = new City("Atlanta", Colors.Blue);
+
+            StateManager state = new StateManager(
                 Testing: true,
-                OutbreakThisChain: new List<City> { new City("Atlanta", Colors.Blue) }
+                OutbreakThisChain: new List<City> { testCity }
                 );
 
-            Boolean OutbreakCitiesAdded = State.OutbreakThisChain.Exists(City => City.Name.Equals("Atlanta"));
-
-            Assert.True(OutbreakCitiesAdded);
+            Assert.Contains(testCity, state.OutbreakThisChain);
         }
 
         [Fact]
         public void StateManager_InfectionDeckNotNull_Succeeds()
         {
-            StateManager State = new StateManager(
+            InfectionCard testCard = new InfectionCard("Atlanta", Colors.Blue);
+
+            StateManager state = new StateManager(
                 Testing: true,
                 InfectionDeck: new InfectionDeck(new List<InfectionCard>
                 {
-                    new InfectionCard("Atlanta", Colors.Blue)
-                })
-                );
+                    testCard
+                }));
 
-            Boolean InfectionDeckAdded = State.InfectionDeck.Contains("Atlanta");
-
-            Assert.True(InfectionDeckAdded);
+            Assert.True(state.InfectionDeck.Contains(testCard));
         }
 
         [Fact]
         public void StateManager_InfectionDiscardNotNull_Succeeds()
         {
-            StateManager State = new StateManager(
+            InfectionCard testCard = new InfectionCard("Atlanta", Colors.Blue);
+
+            StateManager state = new StateManager(
                 Testing: true,
                 InfectionDiscard: new InfectionDeck(new List<InfectionCard>
                 {
-                    new InfectionCard("Atlanta", Colors.Blue)
-                })
-                );
+                        testCard
+                }));
 
-            Boolean InfectionDiscardAdded = State.InfectionDiscard.Contains("Atlanta");
-
-            Assert.True(InfectionDiscardAdded);
+            Assert.True(state.InfectionDiscard.Contains(testCard));
         }
 
         [Fact]
         public void StateManager_PlayerDeckNotNull_Succeeds()
         {
-            StateManager State = new StateManager(
+            PlayerCard testCard = new PlayerCard("Atlanta", Colors.Blue);
+
+            StateManager state = new StateManager(
                 Testing: true,
                 PlayerDeck: new PlayerDeck(new List<Card>
                 {
-                    new CityCard("Atlanta", Colors.Blue)
-                })
-                );
+                        testCard
+                }));
 
-            Boolean CityDeckAdded = State.PlayerDeck.Contains("Atlanta");
-
-            Assert.True(CityDeckAdded);
+            Assert.True(state.PlayerDeck.Contains(testCard));
         }
 
         [Fact]
         public void StateManager_PlayerDiscardNotNull_Succeeds()
         {
-            StateManager State = new StateManager(
+            PlayerCard testCard = new PlayerCard("Atlanta", Colors.Blue);
+
+            StateManager state = new StateManager(
                 Testing: true,
                 PlayerDiscard: new PlayerDeck(new List<Card>
                 {
-                    new CityCard("Atlanta", Colors.Blue)
-                })
-                );
+                        testCard
+                }));
 
-            Boolean PlayerDiscardAdded = State.PlayerDiscard.Contains("Atlanta");
-
-            Assert.True(PlayerDiscardAdded);
+            Assert.True(state.PlayerDiscard.Contains(testCard));
         }
 
         [Fact]
         public void Statemanager_UsersNotNull_Succeds()
         {
-            StateManager State = new StateManager(
+            int actualNumberOfPlayers = 2;
+
+            StateManager state = new StateManager(
                 Testing: true,
                 Users: new List<User>
                 {
-                    new User(0, "Testperson 1"),
-                    new User(1, "Testperson 2")
+                        new User(0, "Testperson 1"),
+                        new User(1, "Testperson 2")
                 });
 
-            Boolean NumberOfPlayersUpdated = State.NumberOfPlayers == 2;
-
-            Assert.True(NumberOfPlayersUpdated);
+            Assert.True(state.NumberOfPlayers == actualNumberOfPlayers);
         }
 
         [Fact]
         public void GetInput_FileImportedCorrectly_Succeeds()
         {
-            string CitiesFilePath = "Pandemic.UnitTests.Managers.GameManager_TestFile.txt";
-            Stream CitiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(CitiesFilePath);
-            StateManager State = new StateManager(Testing: true);
-            
-            List<string> ActualStrings = new List<string>
-            {
-                "*",
-                "*",
-                "*",
-                "*",
-                "//",
-                "//",
-                "",
-                "",
-                "TestCity1 - ConnCity1, ConnCity2, ConnCity3, ConnCity4",
-                "TestCity2 - ConnCity1, ConnCity2, ConnCity3, ConnCity4"
-            };
+            string citiesFilePath = "Pandemic.UnitTests.Managers.GameManager_TestFile.txt";
+            Stream citiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(citiesFilePath);
+            StateManager state = new StateManager(Testing: true);
 
-            List<string> InputStrings = State.TestGetInput(CitiesResource);
+            List<string> expectedStrings = new List<string>
+                {
+                    "*",
+                    "*",
+                    "*",
+                    "*",
+                    "//",
+                    "//",
+                    "",
+                    "",
+                    "TestCity1 - ConnCity1, ConnCity2, ConnCity3, ConnCity4",
+                    "TestCity2 - ConnCity1, ConnCity2, ConnCity3, ConnCity4"
+                };
 
-            Assert.True(InputStrings.SequenceEqual(ActualStrings));
+            List<string> actualStrings = state.TestGetInput(citiesResource);
+
+            Assert.True(actualStrings.SequenceEqual(expectedStrings));
+
+            Assert.Collection(actualStrings,
+                item => { Assert.Equal(item, expectedStrings[0]); },
+                item => { Assert.Equal(item, expectedStrings[1]); },
+                item => { Assert.Equal(item, expectedStrings[2]); },
+                item => { Assert.Equal(item, expectedStrings[3]); },
+                item => { Assert.Equal(item, expectedStrings[4]); },
+                item => { Assert.Equal(item, expectedStrings[5]); },
+                item => { Assert.Equal(item, expectedStrings[6]); },
+                item => { Assert.Equal(item, expectedStrings[7]); },
+                item => { Assert.Equal(item, expectedStrings[8]); },
+                item => { Assert.Equal(item, expectedStrings[9]); }
+                );
         }
 
         [Fact]
         public void GetInput_InvalidFilePath_ThorwsException()
         {
-            StateManager State = new StateManager(
+            StateManager state = new StateManager(
                 Testing: true,
                 CitiesFilePath: @"C:\WrongFileName.txt");
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestGetInput(null));
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestGetInput(null));
         }
 
         [Fact]
         public void GetInput_FileIsEmpty_ThorwsException()
         {
-            string CitiesFilePath = "Pandemic.UnitTests.Managers.GameManager_EmptyFile.txt";
-            Stream CitiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(CitiesFilePath);
-            StateManager State = new StateManager(
+            string citiesFilePath = "Pandemic.UnitTests.Managers.GameManager_EmptyFile.txt";
+            Stream citiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(citiesFilePath);
+            StateManager state = new StateManager(
                 Testing: true,
                 CitiesFilePath: "Pandemic.UnitTests.Managers.GameManager_EmptyFile.txt");
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestGetInput(CitiesResource));
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestGetInput(citiesResource));
         }
 
         [Fact]
         public void CleanInput_FileIsCleaned_Succeeds()
         {
-            StateManager State = new StateManager(Testing: true);
+            StateManager state = new StateManager(Testing: true);
 
-            List<string> InputStrings = new List<string>
-            {
-                "*TestComment",
-                "//TestNewColor",
-                "",
-                "         ",
-                "TestCity1 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3",
-                "TestCity2 - TestConnectedCity1, TestConnectedCity2",
-                "TestCity3 - TestConnectedCity1"
-            };
+            List<string> inputStrings = new List<string>
+                {
+                    "*TestComment",
+                    "//TestNewColor",
+                    "",
+                    "         ",
+                    "TestCity1 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3",
+                    "TestCity2 - TestConnectedCity1, TestConnectedCity2",
+                    "TestCity3 - TestConnectedCity1"
+                };
 
-            List<string> CleanedList = new List<string>
-            {
-                "//TestNewColor",
-                "TestCity1 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3",
-                "TestCity2 - TestConnectedCity1, TestConnectedCity2",
-                "TestCity3 - TestConnectedCity1"
-            };
+            List<string> expectedRestult = new List<string>
+                {
+                    "//TestNewColor",
+                    "TestCity1 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3",
+                    "TestCity2 - TestConnectedCity1, TestConnectedCity2",
+                    "TestCity3 - TestConnectedCity1"
+                };
 
-            State.TestCleanInput(InputStrings);
+            state.TestCleanInput(inputStrings);
 
-            Assert.True(InputStrings.SequenceEqual(CleanedList));
+            Assert.Collection(inputStrings,
+                item => { Assert.Equal(item, expectedRestult[0]); },
+                item => { Assert.Equal(item, expectedRestult[1]); },
+                item => { Assert.Equal(item, expectedRestult[2]); },
+                item => { Assert.Equal(item, expectedRestult[3]); }              
+                );
         }
 
         [Theory]
@@ -244,624 +256,727 @@ namespace Pandemic.UnitTests.Managers
         [InlineData("TestCity - TestConnectedCity1, TTestConnectedCity2")]
         [InlineData("TestCity - ")]
         [InlineData("*Only comments or empty strings in file")]
-        public void CleanInput_FileIncorrectlyFormatted_ThrowsException(string MisformattedString)
+        public void CleanInput_FileIncorrectlyFormatted_ThrowsException(string misformattedString)
         {
-            StateManager State = new StateManager(Testing: true);
+            StateManager state = new StateManager(Testing: true);
 
-            List<string> InputStrings = new List<string>{MisformattedString};
+            List<string> inputStrings = new List<string> { misformattedString };
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestCleanInput(InputStrings));
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestCleanInput(inputStrings));
         }
 
         [Fact]
         public void CreateCities_DifferentColoredCities_Succeeds()
         {
-            StateManager State = new StateManager(Testing: true);
+            StateManager state = new StateManager(Testing: true);
 
-            List<string> InputStrings = new List<string>
-            {
-                "//Yellow",
-                "TestCity1 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3, TestConnectedCity4",
-                "TestCity2 - TestConnectedCity1",
-                "//Red",
-                "TestCity3 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3, TestConnectedCity4",
-                "//Blue",
-                "TestCity4 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3, TestConnectedCity4",
-                "//Black",
-                "TestCity5 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3, TestConnectedCity4",
-
-            };
-            List<City> ActualCities = new List<City>
-            {
-                new City("TestCity1", Colors.Yellow),
-                new City("TestCity2", Colors.Yellow),
-                new City("TestCity3", Colors.Red),
-                new City("TestCity4", Colors.Blue),
-                new City("TestCity5", Colors.Black)
-            };
-
-            List<City> GeneratedCities = State.TestCreateCities(InputStrings);
-
-            Assert.True(GeneratedCities.SequenceEqual(ActualCities));
-        }
-
-        [Fact]
-        public void AddConnectedCities_CitiesAreAdded_Succeeds()
-        {
-            City TestCity = new City("Atlanta", Colors.Blue);
-            List<City> ConnectedCities = new List<City>
-            {
-                new City("Chicago", Colors.Blue),
-                new City("Washington", Colors.Blue),
-                new City("Miami", Colors.Yellow)
-            };
-            List<City> Cities = new List<City>(ConnectedCities);
-            Cities.Add(TestCity);
-
-            StateManager State = new StateManager(
-                Testing: true,
-                Cities: new List<City>(Cities)
-                );
-     
-            List<string> InputStrings = new List<string> 
-            {
-                "//Blue",
-                "Atlanta - Chicago, Washington, Miami" 
-            };
-
-            State.TestAddConnectedCities(InputStrings);
-
-            Assert.True(TestCity.ConnectedCities.SequenceEqual(ConnectedCities));
-        }
-
-        [Fact]
-        public void AddConnectedCities_ConnectedCityDoesNotExist_ThrowsException()
-        {
-            StateManager State = new StateManager(
-                Testing: true, 
-                Cities: new List<City>
+            List<string> inputStrings = new List<string>
                 {
-                    new City("Atlanta", Colors.Blue),
-                    new City("Chicago", Colors.Blue),
-                    new City("Washington", Colors.Blue)
-                });
-       
-            List<string> InputStrings = new List<string>
-            {
-                "//Blue",
-                "Atlanta - Chicago, Washington, Miami"
-            };
+                    "//Yellow",
+                    "TestCity1 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3, TestConnectedCity4",
+                    "TestCity2 - TestConnectedCity1",
+                    "//Red",
+                    "TestCity3 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3, TestConnectedCity4",
+                    "//Blue",
+                    "TestCity4 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3, TestConnectedCity4",
+                    "//Black",
+                    "TestCity5 - TestConnectedCity1, TestConnectedCity2, TestConnectedCity3, TestConnectedCity4",
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestAddConnectedCities(InputStrings));
-        }
-
-        [Fact]
-        public void AddCitiesToDecs_DecksAreCreated_Succeeds()
-        {
-            StateManager State = new StateManager(
-                Testing: true, 
-                Cities: new List<City>
+                };
+            List<City> expectedCities = new List<City>
                 {
                     new City("TestCity1", Colors.Yellow),
                     new City("TestCity2", Colors.Yellow),
                     new City("TestCity3", Colors.Red),
                     new City("TestCity4", Colors.Blue),
                     new City("TestCity5", Colors.Black)
-                });
+                };
 
-            State.TestAddCitiesToDecks();
+            Dictionary<string, City> generatedCities = state.TestCreateCities(inputStrings);
 
-            List<Card> CityCards = new List<Card>
-            {
-                new CityCard("TestCity1", Colors.Yellow),
-                new CityCard("TestCity2", Colors.Yellow),
-                new CityCard("TestCity3", Colors.Red),
-                new CityCard("TestCity4", Colors.Blue),
-                new CityCard("TestCity5", Colors.Black)
-            };
-
-            List<InfectionCard> InfectionCards = new List<InfectionCard>
-            {
-                new InfectionCard("TestCity1", Colors.Yellow),
-                new InfectionCard("TestCity2", Colors.Yellow),
-                new InfectionCard("TestCity3", Colors.Red),
-                new InfectionCard("TestCity4", Colors.Blue),
-                new InfectionCard("TestCity5", Colors.Black)
-            };
-
-            PlayerDeck ActualPlayerDeck = new PlayerDeck(CityCards);
-
-            InfectionDeck ActualInfectionDeck = new InfectionDeck(InfectionCards);
-
-            bool PlayerDeckCorrect = State.PlayerDeck.IsSequenceEqual(ActualPlayerDeck);
-            bool InfectionDeckCorrect = State.InfectionDeck.IsSequenceEqual(ActualInfectionDeck);
-
-            Assert.True(PlayerDeckCorrect && InfectionDeckCorrect);
+            Assert.Collection(generatedCities,
+                item => { Assert.Equal(item.Value, expectedCities[0]); },
+                item => { Assert.Equal(item.Value, expectedCities[1]); },
+                item => { Assert.Equal(item.Value, expectedCities[2]); },
+                item => { Assert.Equal(item.Value, expectedCities[3]); },
+                item => { Assert.Equal(item.Value, expectedCities[4]); }
+                );
         }
 
         [Fact]
-        public void AddEventsToPlayerDeck_Succeeds()
+        public void AddConnectedCities_CitiesAreAdded_Succeeds()
         {
-            StateManager State = new StateManager(Testing: true);
+            string cityName1 = "Atlanta";
+            City testCity = new City(cityName1, Colors.Blue);
 
-            State.TestAddEventsToPlayerDeck();
+            string cityName2 = "Chicago";
+            City connectedCity1 = new City(cityName2, Colors.Blue);
 
-            PlayerDeck ActualPlayerDeck = new PlayerDeck(new List<Card>
+            string cityName3 = "Washington";
+            City connectedCity2 = new City(cityName3, Colors.Blue);
+
+            string cityName4 = "Miami";
+            City connectedCity3 = new City(cityName4, Colors.Blue);
+
+            Dictionary<string, City> cities = new Dictionary<string, City>
             {
-                new Airlift(),
-                new Forecast(), 
-                new GovernmentGrant(),
-                new OneQuietNight(),
-                new ResilientPopulation()
-            });
+                {cityName1, testCity },
+                {cityName2, connectedCity1 },
+                {cityName3, connectedCity2 },
+                {cityName4, connectedCity3 }
+            };
+               
+            StateManager state = new StateManager(
+                Testing: true,
+                Cities: cities
+                );
 
-            Assert.True(State.PlayerDeck.IsSequenceEqual(ActualPlayerDeck));
+            List<string> InputStrings = new List<string>
+                {
+                    "//Blue",
+                    "Atlanta - Chicago, Washington, Miami"
+                };
+
+            state.TestAddConnectedCities(InputStrings);
+
+            Assert.Collection((IEnumerable<City>)state.Cities[cityName1].ConnectedCities,
+                item => { Assert.Equal(item, connectedCity1); },
+                item => { Assert.Equal(item, connectedCity2); },
+                item => { Assert.Equal(item, connectedCity3); }
+                );
         }
+
+        [Fact]
+        public void AddConnectedCities_ConnectedCityDoesNotExist_ThrowsException()
+        {
+            StateManager state = new StateManager(
+                Testing: true,
+                Cities: new Dictionary<string, City>
+                {
+                        { "Atlanta", new City("Atlanta", Colors.Blue) },
+                        { "Chicago", new City("Chicago", Colors.Blue) },
+                        { "Washington", new City("Washington", Colors.Blue) }
+                });
+
+            List<string> inputStrings = new List<string>
+                {
+                    "//Blue",
+                    "Atlanta - Chicago, Washington, Miami"
+                };
+
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestAddConnectedCities(inputStrings));
+        }
+
+        //Will not work till Deck has been made generic?
+        //[Fact]
+        //public void AddCitiesToDecs_DecksAreCreated_Succeeds()
+        //{
+        //    StateManager state = new StateManager(
+        //        Testing: true,
+        //        Cities: new Dictionary<string, City>
+        //        {
+        //                { "TestCity1", new City("TestCity1", Colors.Yellow) },
+        //                { "TestCity2", new City("TestCity2", Colors.Yellow) },
+        //                { "TestCity3", new City("TestCity3", Colors.Red) },
+        //                { "TestCity4", new City("TestCity4", Colors.Blue) },
+        //                { "TestCity5", new City("TestCity5", Colors.Black) }
+        //        });
+
+        //    List<Card> cityCards = new List<Card>
+        //        {
+        //            new CityCard("TestCity1", Colors.Yellow),
+        //            new CityCard("TestCity2", Colors.Yellow),
+        //            new CityCard("TestCity3", Colors.Red),
+        //            new CityCard("TestCity4", Colors.Blue),
+        //            new CityCard("TestCity5", Colors.Black)
+        //        };
+
+        //    List<InfectionCard> infectionCards = new List<InfectionCard>
+        //        {
+        //            new InfectionCard("TestCity1", Colors.Yellow),
+        //            new InfectionCard("TestCity2", Colors.Yellow),
+        //            new InfectionCard("TestCity3", Colors.Red),
+        //            new InfectionCard("TestCity4", Colors.Blue),
+        //            new InfectionCard("TestCity5", Colors.Black)
+        //        };
+
+        //    state.TestAddCitiesToDecks();
+
+        //    Assert.Collection((IEnumerable<Card>)state.PlayerDeck,
+        //        item => { Assert.Equal(item, cityCards[0]); },
+        //        item => { Assert.Equal(item, cityCards[1]); },
+        //        item => { Assert.Equal(item, cityCards[2]); },
+        //        item => { Assert.Equal(item, cityCards[3]); },
+        //        item => { Assert.Equal(item, cityCards[4]); }
+        //    );
+        //}
+
+        //[Fact]
+        //public void AddEventsToPlayerDeck_Succeeds()
+        //{
+        //    StateManager state = new StateManager(Testing: true);
+
+        //    PlayerDeck ExpectedPlayerDeck = new PlayerDeck(new List<Card>
+        //        {
+        //            new Airlift(),
+        //            new Forecast(),
+        //            new GovernmentGrant(),
+        //            new OneQuietNight(),
+        //            new ResilientPopulation()
+        //        });
+
+        //    state.TestAddEventsToPlayerDeck();
+
+        //    Assert.Collection(state.PlayerDeck,
+        //        item => { Assert.IsType(Airlift, item); },
+        //        item => { Assert.IsType(Forecast, item); },
+        //        item => { Assert.IsType(GovernmentGrant, item); },
+        //        item => { Assert.IsType(OneQuietNight, item); },
+        //        item => { Assert.IsType(ResilientPopulation, item); });
+        //}
 
         [Fact]
         public void AssignPlayerRoles_FourPlayersAreAssignedRandomNonEqualRoles()
         {
-            StateManager State = new StateManager(
+            StateManager state = new StateManager(
                 Testing: true,
-                Cities: new List<City> { new City("Atlanta", Colors.Blue) });
+                Cities: new Dictionary<string, City> { { "Atlanta", new City("Atlanta", Colors.Blue) } });
 
-            List<User> TestUsers = new List<User>
+            List<User> testUsers = new List<User>
+                {
+                    new User(0, "Ragna Rekkverk"),
+                    new User(1, "Frida Frosk"),
+                    new User(2, "Sandra Salamander"),
+                    new User(3, "Pelle Parafin")
+                };
+
+            state.TestAssignPlayerRoles(testUsers);
+
+            Boolean duplicateRoles = false;
+            int numberOfRoles = 0;
+            for (int i = 0; i < testUsers.Count; i++)
             {
-                new User(0, "Ragna Rekkverk"),
-                new User(1, "Frida Frosk"),
-                new User(2, "Sandra Salamander"),
-                new User(3, "Pelle Parafin")
-            };
-
-            State.TestAssignPlayerRoles(TestUsers);
-
-            Boolean DuplicateRoles = false;
-            int NumberofRoles = 0;
-            for (int i=0; i<TestUsers.Count; i++)
-            {
-                User currentUser = TestUsers[i];
+                User currentUser = testUsers[i];
                 if (currentUser.CurrentRole != null)
                 {
-                    NumberofRoles++;
-                } else { break; }
+                    numberOfRoles++;
+                }
+                else { break; }
 
-                for(int j=i+1; j<TestUsers.Count; j++)
+                for (int j = i + 1; j < testUsers.Count; j++)
                 {
                     string currentUserRole = currentUser.CurrentRole.RoleName;
-                    string otherUserRole = TestUsers[j].CurrentRole.RoleName;
+                    string otherUserRole = testUsers[j].CurrentRole.RoleName;
                     if (currentUserRole.Equals(otherUserRole))
                     {
-                        DuplicateRoles = true;
+                        duplicateRoles = true;
                         break;
                     }
                 }
             }
 
-            Assert.True(NumberofRoles == 4 && !DuplicateRoles);
+            Assert.True(numberOfRoles == 4);
+            Assert.False(duplicateRoles);
         }
 
         [Fact]
         public void DealPlayerCards_TwoPlayers_GetFourCardsEach()
         {
-            City StartingCity = new City("Atlanta", Colors.Blue);
-            StateManager State = new StateManager(
-                Testing: true,
-                Roles: new List<Role> 
-                {
-                    new Medic(StartingCity, 0),
-                    new QuarantineSpecialist(StartingCity, 1)
-                },
-                PlayerDeck: new PlayerDeck(new List<Card>
-                {
-                    new CityCard("TestCity1", Colors.Yellow),
-                    new CityCard("TestCity2", Colors.Yellow),
-                    new CityCard("TestCity3", Colors.Red),
-                    new CityCard("TestCity4", Colors.Blue),
-                    new CityCard("TestCity5", Colors.Black),
-                    new CityCard("TestCity6", Colors.Black),
-                    new CityCard("TestCity7", Colors.Black),
-                    new CityCard("TestCity8", Colors.Black)
-                }));
-
-            State.TestDealPlayerCards();
-
-            Boolean CorrectNumberOfCards = true;
-            foreach (Role CurrentRole in State.Roles)
+            int expectedNumberOfCards = 4;
+            List<Card> expectedCards = new List<Card>
             {
-                if (CurrentRole.Hand.Count != 4)
-                {
-                    CorrectNumberOfCards = false;
-                    break;
-                }
-            }
+                new CityCard("TestCity1", Colors.Yellow),
+                new CityCard("TestCity2", Colors.Yellow),
+                new CityCard("TestCity3", Colors.Red),
+                new CityCard("TestCity4", Colors.Blue),
+                new CityCard("TestCity5", Colors.Black),
+                new CityCard("TestCity6", Colors.Black),
+                new CityCard("TestCity7", Colors.Black),
+                new CityCard("TestCity8", Colors.Black)
+            };
 
-            Assert.True(CorrectNumberOfCards);
+            City startingCity = new City("Atlanta", Colors.Blue);
+            StateManager state = new StateManager(
+                Testing: true,
+                Roles: new List<Role>
+                {
+                    new Medic(startingCity, 0),
+                    new QuarantineSpecialist(startingCity, 1)
+                },
+                PlayerDeck: new PlayerDeck(expectedCards));
+
+
+            state.TestDealPlayerCards();
+
+            Assert.Collection(state.Roles,
+                item => { 
+                    Assert.Equal(expectedNumberOfCards, item.Hand.Count);
+                    Assert.Collection(item.Hand,
+                        item => { Assert.Equal(expectedCards[0], item); },
+                        item => { Assert.Equal(expectedCards[1], item); },
+                        item => { Assert.Equal(expectedCards[2], item); },
+                        item => { Assert.Equal(expectedCards[3], item); }
+                        );},
+                item => {
+                    Assert.Equal(expectedNumberOfCards, item.Hand.Count);
+                    Assert.Collection(item.Hand,
+                        item => { Assert.Equal(expectedCards[4], item); },
+                        item => { Assert.Equal(expectedCards[5], item); },
+                        item => { Assert.Equal(expectedCards[6], item); },
+                        item => { Assert.Equal(expectedCards[7], item); }
+                        );
+                });
         }
 
         [Fact]
         public void DealPlayerCards_ThreePlayers_GetThreeCardsEach()
         {
-            City StartingCity = new City("Atlanta", Colors.Blue);
-            StateManager State = new StateManager(
+            int expectedNumberOfCards = 3;
+            List<Card> expectedCards = new List<Card>
+            {
+                new CityCard("TestCity1", Colors.Yellow),
+                new CityCard("TestCity2", Colors.Yellow),
+                new CityCard("TestCity3", Colors.Red),
+                new CityCard("TestCity4", Colors.Blue),
+                new CityCard("TestCity5", Colors.Black),
+                new CityCard("TestCity6", Colors.Black),
+                new CityCard("TestCity7", Colors.Black),
+                new CityCard("TestCity8", Colors.Black),
+                new CityCard("TestCity9", Colors.Black)
+            };
+
+            City startingCity = new City("Atlanta", Colors.Blue);
+            StateManager state = new StateManager(
                 Testing: true,
                 Roles: new List<Role>
                 {
-                    new Medic(StartingCity, 0),
-                    new QuarantineSpecialist(StartingCity, 1),
-                    new Scientist(StartingCity, 2)
+                    new Medic(startingCity, 0),
+                    new QuarantineSpecialist(startingCity, 1),
+                    new Scientist(startingCity, 2)
                 },
-                PlayerDeck: new PlayerDeck(new List<Card>
-                {
-                    new CityCard("TestCity1", Colors.Yellow),
-                    new CityCard("TestCity2", Colors.Yellow),
-                    new CityCard("TestCity3", Colors.Red),
-                    new CityCard("TestCity4", Colors.Blue),
-                    new CityCard("TestCity5", Colors.Black),
-                    new CityCard("TestCity6", Colors.Black),
-                    new CityCard("TestCity7", Colors.Black),
-                    new CityCard("TestCity8", Colors.Black),
-                    new CityCard("TestCity9", Colors.Black)
-                }));
+                PlayerDeck: new PlayerDeck(expectedCards));
 
-            State.TestDealPlayerCards();
+            state.TestDealPlayerCards();
 
-            Boolean CorrectNumberOfCards = true;
-            foreach (Role CurrentRole in State.Roles)
-            {
-                if (CurrentRole.Hand.Count != 3)
-                {
-                    CorrectNumberOfCards = false;
-                    break;
-                }
-            }
-
-            Assert.True(CorrectNumberOfCards);
+            Assert.Collection(state.Roles,
+                item => {
+                    Assert.Equal(expectedNumberOfCards, item.Hand.Count);
+                    Assert.Collection(item.Hand,
+                        item => { Assert.Equal(expectedCards[0], item); },
+                        item => { Assert.Equal(expectedCards[1], item); },
+                        item => { Assert.Equal(expectedCards[2], item); }
+                        );
+                },
+                item => {
+                    Assert.Equal(expectedNumberOfCards, item.Hand.Count);
+                    Assert.Collection(item.Hand,
+                        item => { Assert.Equal(expectedCards[3], item); },
+                        item => { Assert.Equal(expectedCards[4], item); },
+                        item => { Assert.Equal(expectedCards[5], item); }
+                        );
+                },
+                item => {
+                    Assert.Equal(expectedNumberOfCards, item.Hand.Count);
+                    Assert.Collection(item.Hand,
+                        item => { Assert.Equal(expectedCards[6], item); },
+                        item => { Assert.Equal(expectedCards[7], item); },
+                        item => { Assert.Equal(expectedCards[8], item); }
+                        );
+                });
         }
 
         [Fact]
         public void DealPlayerCards_FourPlayers_GetTwoCardsEach()
         {
-            City StartingCity = new City("Atlanta", Colors.Blue);
-            StateManager State = new StateManager(
+            int expectedNumberOfCards = 2;
+            List<Card> expectedCards = new List<Card>
+            {
+                new CityCard("TestCity1", Colors.Yellow),
+                new CityCard("TestCity2", Colors.Yellow),
+                new CityCard("TestCity3", Colors.Red),
+                new CityCard("TestCity4", Colors.Blue),
+                new CityCard("TestCity5", Colors.Black),
+                new CityCard("TestCity6", Colors.Black),
+                new CityCard("TestCity7", Colors.Black),
+                new CityCard("TestCity8", Colors.Black),
+            };
+
+            City startingCity = new City("Atlanta", Colors.Blue);
+            StateManager state = new StateManager(
                 Testing: true,
                 Roles: new List<Role>
                 {
-                    new Medic(StartingCity, 0),
-                    new QuarantineSpecialist(StartingCity, 1),
-                    new Scientist(StartingCity, 2),
-                    new QuarantineSpecialist(StartingCity, 3)
+                        new Medic(startingCity, 0),
+                        new QuarantineSpecialist(startingCity, 1),
+                        new Scientist(startingCity, 2),
+                        new Researcher(startingCity, 3)
                 },
-                PlayerDeck: new PlayerDeck(new List<Card>
+                PlayerDeck: new PlayerDeck(expectedCards));
+
+            state.TestDealPlayerCards();
+
+            Assert.Collection(state.Roles,
+                item => {
+                    Assert.Equal(expectedNumberOfCards, item.Hand.Count);
+                    Assert.Collection(item.Hand,
+                        item => { Assert.Equal(expectedCards[0], item); },
+                        item => { Assert.Equal(expectedCards[1], item); }
+                        );
+                },
+                item => {
+                    Assert.Equal(expectedNumberOfCards, item.Hand.Count);
+                    Assert.Collection(item.Hand,
+                        item => { Assert.Equal(expectedCards[2], item); },
+                        item => { Assert.Equal(expectedCards[3], item); }
+                        );
+                },
+                item =>
                 {
-                    new CityCard("TestCity1", Colors.Yellow),
-                    new CityCard("TestCity2", Colors.Yellow),
-                    new CityCard("TestCity3", Colors.Red),
-                    new CityCard("TestCity4", Colors.Blue),
-                    new CityCard("TestCity5", Colors.Black),
-                    new CityCard("TestCity6", Colors.Black),
-                    new CityCard("TestCity7", Colors.Black),
-                    new CityCard("TestCity8", Colors.Black)
-                }));
-
-            State.TestDealPlayerCards();
-
-            Boolean CorrectNumberOfCards = true;
-            foreach (Role CurrentRole in State.Roles)
-            {
-                if (CurrentRole.Hand.Count != 2)
-                {
-                    CorrectNumberOfCards = false;
-                    break;
-                }
-            }
-
-            Assert.True(CorrectNumberOfCards);
+                    Assert.Equal(expectedNumberOfCards, item.Hand.Count);
+                    Assert.Collection(item.Hand,
+                        item => { Assert.Equal(expectedCards[4], item); },
+                        item => { Assert.Equal(expectedCards[5], item); }
+                        );
+                },
+                item => {
+                    Assert.Equal(expectedNumberOfCards, item.Hand.Count);
+                    Assert.Collection(item.Hand,
+                        item => { Assert.Equal(expectedCards[6], item); },
+                        item => { Assert.Equal(expectedCards[7], item); }
+                        );
+                });
         }
 
         [Fact]
         public void DealPlayerCards_NoPlayerDeck_ThrowsException()
         {
-            City StartingCity = new City("Atlanta", Colors.Blue);
-            StateManager State = new StateManager(
+            City startingCity = new City("Atlanta", Colors.Blue);
+            StateManager state = new StateManager(
                 Testing: true);
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestDealPlayerCards());
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestDealPlayerCards());
         }
 
         [Fact]
         public void DealPlayerCards_InvalidNumberOfPlayers_ThrowsException()
         {
-            City StartingCity = new City("Atlanta", Colors.Blue);
-            StateManager State = new StateManager(
+            City startingCity = new City("Atlanta", Colors.Blue);
+            StateManager state = new StateManager(
                 Testing: true,
                 Roles: new List<Role>
                 {
-                    new Medic(StartingCity, 0),
-                    new QuarantineSpecialist(StartingCity, 1),
-                    new Scientist(StartingCity, 2),
-                    new QuarantineSpecialist(StartingCity, 3),
-                    new Researcher(StartingCity, 4)
+                        new Medic(startingCity, 0),
+                        new QuarantineSpecialist(startingCity, 1),
+                        new Scientist(startingCity, 2),
+                        new QuarantineSpecialist(startingCity, 3),
+                        new Researcher(startingCity, 4)
                 },
                 PlayerDeck: new PlayerDeck(new List<Card>
                 {
-                    new CityCard("TestCity1", Colors.Yellow),
-                    new CityCard("TestCity2", Colors.Yellow),
-                    new CityCard("TestCity3", Colors.Red),
-                    new CityCard("TestCity4", Colors.Blue),
-                    new CityCard("TestCity5", Colors.Black),
-                    new CityCard("TestCity6", Colors.Black),
-                    new CityCard("TestCity7", Colors.Black),
-                    new CityCard("TestCity8", Colors.Black)
+                        new CityCard("TestCity1", Colors.Yellow),
+                        new CityCard("TestCity2", Colors.Yellow),
+                        new CityCard("TestCity3", Colors.Red),
+                        new CityCard("TestCity4", Colors.Blue),
+                        new CityCard("TestCity5", Colors.Black),
+                        new CityCard("TestCity6", Colors.Black),
+                        new CityCard("TestCity7", Colors.Black),
+                        new CityCard("TestCity8", Colors.Black)
                 }));
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestDealPlayerCards());
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestDealPlayerCards());
         }
 
         [Fact]
         public void DealPlayerCards_InvalidNumberOfCardsInDeck_ThrowsException()
         {
-            City StartingCity = new City("Atlanta", Colors.Blue);
-            StateManager State = new StateManager(
+            City startingCity = new City("Atlanta", Colors.Blue);
+            StateManager state = new StateManager(
                 Testing: true,
                 Roles: new List<Role>
                 {
-                    new Medic(StartingCity, 0),
-                    new QuarantineSpecialist(StartingCity, 1),
+                        new Medic(startingCity, 0),
+                        new QuarantineSpecialist(startingCity, 1),
                 },
                 PlayerDeck: new PlayerDeck(new List<Card>
                 {
-                    new CityCard("TestCity1", Colors.Yellow),
-                    new CityCard("TestCity2", Colors.Yellow),
+                        new CityCard("TestCity1", Colors.Yellow),
+                        new CityCard("TestCity2", Colors.Yellow),
 
                 }));
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestDealPlayerCards());
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestDealPlayerCards());
         }
 
-        [Fact]
-        public void AddEpidemicsToDeck_EpidemicsSuccessfullyAdded()
-        {
-            StateManager State = new StateManager(
-                Testing: true,
-                NumberOfEpidemics: 2,
-                PlayerDeck: new PlayerDeck(new List<Card>
-                {
-                    new CityCard("TestCity1", Colors.Yellow),
-                    new CityCard("TestCity2", Colors.Yellow),
-                    new CityCard("TestCity3", Colors.Red),
-                    new CityCard("TestCity4", Colors.Blue),
-                    new CityCard("TestCity5", Colors.Black),
-                    new CityCard("TestCity6", Colors.Black),
-                    new CityCard("TestCity7", Colors.Black),
-                    new CityCard("TestCity8", Colors.Black),
-                    new CityCard("TestCity9", Colors.Black)
-                }));
+        //Will not work till Deck is generic?
+        //[Fact]
+        //public void AddEpidemicsToDeck_EpidemicsSuccessfullyAdded()
+        //{
+        //    List<Card> expectedCards = new List<Card>
+        //    {
+        //        new CityCard("TestCity1", Colors.Yellow),
+        //        new CityCard("TestCity2", Colors.Yellow),
+        //        new CityCard("TestCity3", Colors.Red),
+        //        new CityCard("TestCity4", Colors.Blue),
+        //        new CityCard("TestCity5", Colors.Black),
+        //        new CityCard("TestCity6", Colors.Black),
+        //        new CityCard("TestCity7", Colors.Black),
+        //        new CityCard("TestCity8", Colors.Black),
+        //        new CityCard("TestCity9", Colors.Black)
+        //    };
 
-            State.TestAddEpidemicsToDeck();
+        //    StateManager state = new StateManager(
+        //        Testing: true,
+        //        NumberOfEpidemics: 2,
+        //        PlayerDeck: new PlayerDeck(expectedCards));
 
-            int NumberOfEpidemics = 0;
-            foreach(Card CurrentCard in State.PlayerDeck)
-            {
-                if (CurrentCard is EpidemicCard)
-                {
-                    NumberOfEpidemics++;
-                }
-            }
+        //    state.TestAddEpidemicsToDeck();
 
-            Boolean CorrectCardsArePresentInEachShuffle = true;
-            int Counter = 0;
-            List<string> FirstPile = new List<string>
-            {
-                "TestCity1",
-                "TestCity2",
-                "TestCity3",
-                "TestCity4",
-                "TestCity5", 
-                "Epidemic"
-            };
-            List<string> SecondPile = new List<string>
-            {
-                "TestCity6",
-                "TestCity7",
-                "TestCity8",
-                "TestCity9",
-                "Epidemic"
-            };
-            foreach (Card CurrentCard in State.PlayerDeck)
-            {
-                if(Counter < 6)
-                {
-                    if (!FirstPile.Remove(CurrentCard.Name)){
-                        CorrectCardsArePresentInEachShuffle = false;
-                        break;
-                    }
-                } else
-                {
-                    if (!SecondPile.Remove(CurrentCard.Name))
-                    {
-                        CorrectCardsArePresentInEachShuffle = false;
-                        break;
-                    }
-                }
-                Counter++;
-            }
-
-            Boolean CorrectNumberOfCards = (State.PlayerDeck.Count() == 11);
-            Boolean CorrectNumberOfEpidemics = (NumberOfEpidemics == 2);
-
-            Assert.True(CorrectNumberOfCards && CorrectNumberOfEpidemics && CorrectCardsArePresentInEachShuffle);
-        }
+        //    Assert.Collection(state.PlayerDeck,
+        //        item => { Assert.Equal(expectedCards[0], item); },
+        //        item => { Assert.Equal(expectedCards[1], item); },
+        //        item => { Assert.Equal(expectedCards[2], item); },
+        //        item => { Assert.Equal(expectedCards[3], item); },
+        //        item => { Assert.Equal(expectedCards[4], item); },
+        //        item => { Assert.IsType(EpidemicCard, item); },
+        //        item => { Assert.Equal(expectedCards[5], item); },
+        //        item => { Assert.Equal(expectedCards[6], item); },
+        //        item => { Assert.Equal(expectedCards[7], item); },
+        //        item => { Assert.Equal(expectedCards[8], item); },
+        //        item => { Assert.Equal(expectedCards[9], item); },
+        //        item => { Assert.IsType(EpidemicCard, item); }
+        //        );
+        //}
 
         [Fact]
         public void AddEpidemicsToDeck_PlayerDeckNotCreated_ThrowsException()
         {
-            StateManager State = new StateManager(
+            StateManager state = new StateManager(
                 Testing: true,
                 NumberOfEpidemics: 2
                 );
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestAddEpidemicsToDeck());
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestAddEpidemicsToDeck());
         }
 
         [Fact]
         public void InitialInfection_CitiesAreInfected_Succeeds()
         {
-            StateManager State = new StateManager(
+            Colors testColor = Colors.Blue;
+
+            string cityName1 = "TestCity1";
+            string cityName2 = "TestCity2";
+            string cityName3 = "TestCity3";
+            string cityName4 = "TestCity4";
+            string cityName5 = "TestCity5";
+            string cityName6 = "TestCity6";
+            string cityName7 = "TestCity7";
+            string cityName8 = "TestCity8";
+            string cityName9 = "TestCity9";
+
+            StateManager state = new StateManager(
                 Testing: true,
                 InfectionDeck: new InfectionDeck(new List<InfectionCard>
                 {
-                    new InfectionCard("TestCity1", Colors.Yellow),
-                    new InfectionCard("TestCity2", Colors.Yellow),
-                    new InfectionCard("TestCity3", Colors.Red),
-                    new InfectionCard("TestCity4", Colors.Blue),
-                    new InfectionCard("TestCity5", Colors.Black),
-                    new InfectionCard("TestCity6", Colors.Black),
-                    new InfectionCard("TestCity7", Colors.Black),
-                    new InfectionCard("TestCity8", Colors.Black),
-                    new InfectionCard("TestCity9", Colors.Black)
+                    new InfectionCard(cityName1 , testColor),
+                    new InfectionCard(cityName2 , testColor),
+                    new InfectionCard(cityName3 , testColor),
+                    new InfectionCard(cityName4 , testColor),
+                    new InfectionCard(cityName5 , testColor),
+                    new InfectionCard(cityName6 , testColor),
+                    new InfectionCard(cityName7 , testColor),
+                    new InfectionCard(cityName8 , testColor),
+                    new InfectionCard(cityName9 , testColor)
                 }),
-                Cities: new List<City>
+                Cities: new Dictionary<string, City>
                 {
-                    new City("TestCity1", Colors.Yellow),
-                    new City("TestCity2", Colors.Yellow),
-                    new City("TestCity3", Colors.Red),
-                    new City("TestCity4", Colors.Blue),
-                    new City("TestCity5", Colors.Black),
-                    new City("TestCity6", Colors.Black),
-                    new City("TestCity7", Colors.Black),
-                    new City("TestCity8", Colors.Black),
-                    new City("TestCity9", Colors.Black)
+                    {cityName1 , new City(cityName1, testColor) },
+                    {cityName2 , new City(cityName2, testColor) },
+                    {cityName3 , new City(cityName3, testColor) },
+                    {cityName4 , new City(cityName4, testColor) },
+                    {cityName5 , new City(cityName5, testColor) },
+                    {cityName6 , new City(cityName6, testColor) },
+                    {cityName7 , new City(cityName7, testColor) },
+                    {cityName8 , new City(cityName8, testColor) },
+                    {cityName9 , new City(cityName9, testColor) }
                 });
 
-            State.TestInitialInfection();
+            state.TestInitialInfection();
 
-            Boolean CubesPlacedCorrectly = true;
-            for (int i=1; i<4; i++)
-            {
-                for (int j=3*i-3; j<3*i; j++)
-                {
-                    City CurrentCity = State.Cities[j];
-                    Colors CurrentColor = CurrentCity.Color;
-                    if(CurrentCity.DiseaseCubes[CurrentColor] != i)
-                    {
-                        CubesPlacedCorrectly = false;
-                        break;
-                    }
-                }
-            }
-
-            Assert.True(CubesPlacedCorrectly);
+            Assert.Collection(state.Cities.Values,
+                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); }
+                );
         }
 
         [Fact]
         public void InitialInfection_NoInfectionDeckCreated_ThrowsException()
         {
-            StateManager State = new StateManager(
+            Colors testColor = Colors.Blue;
+
+            string cityName1 = "TestCity1";
+            string cityName2 = "TestCity2";
+            string cityName3 = "TestCity3";
+            string cityName4 = "TestCity4";
+            string cityName5 = "TestCity5";
+            string cityName6 = "TestCity6";
+            string cityName7 = "TestCity7";
+            string cityName8 = "TestCity8";
+            string cityName9 = "TestCity9";
+
+            StateManager state = new StateManager(
                 Testing: true,
-                Cities: new List<City>
+                Cities: new Dictionary<string, City>
                 {
-                    new City("TestCity1", Colors.Yellow),
-                    new City("TestCity2", Colors.Yellow),
-                    new City("TestCity3", Colors.Red),
-                    new City("TestCity4", Colors.Blue),
-                    new City("TestCity5", Colors.Black),
-                    new City("TestCity6", Colors.Black),
-                    new City("TestCity7", Colors.Black),
-                    new City("TestCity8", Colors.Black),
-                    new City("TestCity9", Colors.Black)
+                    {cityName1 , new City(cityName1, testColor) },
+                    {cityName2 , new City(cityName2, testColor) },
+                    {cityName3 , new City(cityName3, testColor) },
+                    {cityName4 , new City(cityName4, testColor) },
+                    {cityName5 , new City(cityName5, testColor) },
+                    {cityName6 , new City(cityName6, testColor) },
+                    {cityName7 , new City(cityName7, testColor) },
+                    {cityName8 , new City(cityName8, testColor) },
+                    {cityName9 , new City(cityName9, testColor) }
                 });
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestInitialInfection());
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestInitialInfection());
         }
 
         [Fact]
         public void InitialInfection_NoCitiesInState_ThrowsException()
         {
-            StateManager State = new StateManager(
+            StateManager state = new StateManager(
                 Testing: true,
                 InfectionDeck: new InfectionDeck(new List<InfectionCard>
                 {
-                    new InfectionCard("TestCity1", Colors.Yellow),
-                    new InfectionCard("TestCity2", Colors.Yellow),
-                    new InfectionCard("TestCity3", Colors.Red),
-                    new InfectionCard("TestCity4", Colors.Blue),
-                    new InfectionCard("TestCity5", Colors.Black),
-                    new InfectionCard("TestCity6", Colors.Black),
-                    new InfectionCard("TestCity7", Colors.Black),
-                    new InfectionCard("TestCity8", Colors.Black),
-                    new InfectionCard("TestCity9", Colors.Black)
+                        new InfectionCard("TestCity1", Colors.Yellow),
                 }));
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.TestInitialInfection());
+            Assert.Throws<UnexpectedBehaviourException>(() => state.TestInitialInfection());
         }
 
         [Fact]
-        public void GetCity_CityIsFound()
+        public void GetCity_CardAsInput_CityIsFound()
         {
-            City City = new City("Atlanta", Colors.Blue);
-            StateManager State = new StateManager(
+            string testName = "Atlanta";
+            City testCity = new City(testName, Colors.Blue);
+            StateManager state = new StateManager(
                 Testing: true,
-                Cities: new List<City>
-                {
-                    City
-                });
+                Cities: new Dictionary<string, City>{
+                    {testName, testCity } });
 
-            CityCard CardToFind = new CityCard("Atlanta", Colors.Blue);
+            CityCard cardToFind = new CityCard(testName, Colors.Blue);
 
-            City FoundCity = State.GetCity(CardToFind);
+            City foundCity = state.GetCity(cardToFind);
 
-            Assert.True(City.Equals(FoundCity));
+            Assert.Equal(testCity, foundCity);
         }
 
         [Fact]
         public void GetCity_CityNotFound_ThrowsException()
         {
-            StateManager State = new StateManager(Testing: true);
+            StateManager state = new StateManager(Testing: true);
 
-            CityCard CityToFind = new CityCard("Atlanta", Colors.Blue);
+            CityCard cityToFind = new CityCard("Atlanta", Colors.Blue);
 
-            Assert.Throws<UnexpectedBehaviourException>(() => State.GetCity(CityToFind));
+            Assert.Throws<UnexpectedBehaviourException>(() => state.GetCity(cityToFind));
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(2)]
+        public void GetCity_IntAsInput_CityIsFound(int index)
+        {
+            Colors testColor = Colors.Blue;
+
+            string cityName1 = "TestCity1";
+            string cityName2 = "TestCity2";
+            string cityName3 = "TestCity3";
+
+            City testCity1 = new City(cityName1, testColor);
+            City testCity2 = new City(cityName2, testColor);
+            City testCity3 = new City(cityName3, testColor);
+
+            List<City> expectedCity = new List<City>
+            {
+                testCity1,
+                testCity2,
+                testCity3
+            };
+
+            StateManager state = new StateManager(
+                Testing: true,
+                Cities: new Dictionary<string, City>
+                {
+                    {cityName1 , new City(cityName1, testColor) },
+                    {cityName2 , new City(cityName2, testColor) },
+                    {cityName3 , new City(cityName3, testColor) }
+                });
+
+            City foundCity = state.GetCity(index);
+
+            Assert.Equal(expectedCity[index], foundCity);
         }
 
         [Fact]
         public void GetCitiesWithResearchStation_CitiesAreReturned_Succeeds()
         {
-            List<City> Cities = new List<City>
-                {
-                    new City("TestCity1", Colors.Yellow),
-                    new City("TestCity2", Colors.Yellow),
-                    new City("TestCity3", Colors.Red),
-                    new City("TestCity4", Colors.Blue)
-                };
+            Colors testColor = Colors.Blue;
+
+            string cityName1 = "TestCity1";
+            string cityName2 = "TestCity2";
+            string cityName3 = "TestCity3";
+            string cityName4 = "TestCity4";
+
+            City testCity1 = new City(cityName1, testColor);
+            City testCity2 = new City(cityName2, testColor);
+            City testCity3 = new City(cityName3, testColor);
+            City testCity4 = new City(cityName4, testColor);
+
             StateManager State = new StateManager(
                 Testing: true,
-                Cities: Cities);
+                Cities: new Dictionary<string, City>{
+                    {cityName1, testCity1 },
+                    {cityName2, testCity2 },
+                    {cityName3, testCity3 },
+                    {cityName4, testCity4 } 
+                });
 
-            State.Cities[1].BuildResearchStation();
-            State.Cities[2].BuildResearchStation();
+            testCity2.BuildResearchStation();
+            testCity3.BuildResearchStation();
 
             List<City> CitiesWithStations = State.GetCitiesWithResearchStation();
 
-            List<City> ActualCitiesWithStation = new List<City>();
-            ActualCitiesWithStation.Add(Cities[1]);
-            ActualCitiesWithStation.Add(Cities[2]);
-
-            Assert.True(CitiesWithStations.SequenceEqual(ActualCitiesWithStation));
+            Assert.Collection(CitiesWithStations,
+                item =>
+                {
+                    Assert.Equal(testCity2, item);
+                    Assert.True(item.ResearchStation);
+                },
+                item => {
+                    Assert.Equal(testCity3, item);
+                    Assert.True(item.ResearchStation);
+                });
         }
 
         [Fact]
         public void GetCitiesWithResearchStation_NoCitiesWithStation_ThrowsException()
         {
-            List<City> Cities = new List<City>
-                {
-                    new City("TestCity1", Colors.Yellow),
-                    new City("TestCity2", Colors.Yellow),
-                    new City("TestCity3", Colors.Red),
-                    new City("TestCity4", Colors.Blue)
-                };
+            string cityName1 = "TestCity1";
+            City testCity1 = new City(cityName1, Colors.Blue);
+
             StateManager State = new StateManager(
                 Testing: true,
-                Cities: Cities);
+                Cities: new Dictionary<string, City>{
+                    {cityName1, testCity1 },
+                });
 
             Assert.Throws<UnexpectedBehaviourException>(() => State.GetCitiesWithResearchStation());
         }

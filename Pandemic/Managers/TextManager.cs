@@ -34,7 +34,7 @@ namespace Pandemic.Managers
             Console.WriteLine("\nThe following cities are infected with diseases:");
 
             //Cities with infection
-            foreach(City CurrentCity in State.Cities)
+            foreach(City CurrentCity in State.Cities.Values)
             {
                 if (!CurrentCity.MultipleDiseases)
                 {
@@ -219,7 +219,7 @@ namespace Pandemic.Managers
             return GetValidInteger(1, 2);
         }
 
-        public static int ChooseItemFromList<T>(List<T> ItemList, string PickOneOfTheFollowingTo)
+        public static int ChooseItemFromList<T>(IEnumerable<T> ItemList, string PickOneOfTheFollowingTo)
         {
             Console.WriteLine($"Pick one of the following to {PickOneOfTheFollowingTo}:");
             int counter = 0;
@@ -229,7 +229,7 @@ namespace Pandemic.Managers
                 Console.WriteLine($"{counter}: {item.ToString()}");
             }
 
-            return (GetValidInteger(1, ItemList.Count+1)-1);
+            return (GetValidInteger(1, counter+1)-1);
         }
 
         public static int GetValidInteger(int LowerRange, int UpperRange)

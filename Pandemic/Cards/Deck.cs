@@ -69,29 +69,10 @@ namespace Pandemic.Cards
                 _cards.RemoveAt(index);
             }
         }
-
+        
         public int Count()
         {
             return _cards.Count;
-        }
-
-        public Boolean IsSequenceEqual(Deck OtherDeck)
-        {
-            if (this.Count() != OtherDeck.Count())
-            {
-                return false;
-            } else
-            {
-                for(int i=0; i<this.Count(); i++)
-                {
-                    if(this[i].Name != OtherDeck[i].Name)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
         }
 
         //Implementation of to make Deck indexable
@@ -108,9 +89,9 @@ namespace Pandemic.Cards
             }
         }
 
-        public Boolean Contains(string CardName)
+        public Boolean Contains(Card card)
         {
-            return _cards.Exists(Card => Card.Name == CardName);
+            return _cards.Exists(Card => Card == card);
         }
 
         //Implementation of IEnumerable&&IEnumerator

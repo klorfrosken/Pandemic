@@ -22,14 +22,13 @@ namespace Pandemic.Cards.EventCards
                 int playerChoice = TextManager.ChooseItemFromList(state.Roles, "move");
                 Role playerToMove = state.Roles[playerChoice];
 
-                List<City> EligibleCities = new List<City>(state.Cities);
-                EligibleCities.Remove(playerToMove.CurrentCity);
-                int cityChoice = TextManager.ChooseItemFromList(EligibleCities, $"move the {playerToMove} to");
-                City nextCity = state.Cities[cityChoice];
+                Dictionary<string, City> EligibleCities = new Dictionary<string, City>(state.Cities);
+                EligibleCities.Remove(playerToMove.CurrentCity.Name);
+                int cityChoice = TextManager.ChooseItemFromList(EligibleCities.Values, $"move the {playerToMove} to");
+                City nextCity = state.GetCity(cityChoice);
 
                 playerToMove.ChangeCity(nextCity, state);
             }
-
         }
     }
 }

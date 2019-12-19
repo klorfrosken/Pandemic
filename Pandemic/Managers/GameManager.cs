@@ -197,8 +197,8 @@ namespace Pandemic.Managers
             {
                 if (CurrentPlayer.CardInHand(CurrentPlayer.CurrentCity.Name))
                 {
-                    int Choice = TextManager.ChooseItemFromList(State.Cities, "go to");
-                    City NextCity = State.Cities[Choice];
+                    int Choice = TextManager.ChooseItemFromList(State.Cities.Values, "go to");
+                    City NextCity = State.GetCity(Choice);
                     CurrentPlayer.CharterFlight(NextCity, State);
                     TextManager.PrintPlayerMoved(CurrentPlayer, NextCity);
                 }

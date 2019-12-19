@@ -9,7 +9,7 @@ namespace Pandemic.Cards
 
         public void Infect(StateManager State)
         {
-            City TempCity = State.Cities.Find(City => City.Name == this.Name);
+            City TempCity = State.Cities[this.Name];
             TempCity.InfectCity(Color, State);
 
             State.OutbreakThisChain.Clear();

@@ -23,7 +23,7 @@ namespace Pandemic.Managers
         public bool QuarantineSpecialistInGame { get; private set; }
         public bool MedicInGame { get; private set; }
         public List<Role> Roles = new List<Role>();
-        public List<City> Cities = new List<City>();
+        public Dictionary<string, City> Cities = new Dictionary<string, City>();
 
         //Global game constants
         public int[] InfectionRates = new int[] { 2, 2, 2, 3, 3, 4, 4 };
@@ -68,7 +68,7 @@ namespace Pandemic.Managers
             int CurrentInfectionRateIndex = 0,
             int Outbreaks = 0,
 
-            List<City> Cities = null,
+            Dictionary<string, City> Cities = null,
             Dictionary<Colors, bool> Cures = null,
             List<City> OutbreakThisChain = null,
             InfectionDeck InfectionDeck = null,
@@ -132,7 +132,7 @@ namespace Pandemic.Managers
             PlayerDeck.Shuffle();
 
             //Add Player Roles
-            City StartingCity = Cities.Find(City => City.Name == StartingCityName);
+            City StartingCity = Cities[StartingCityName];
             StartingCity.ResearchStation = true;
             RemainingResearchStations--;
             AssignPlayerRoles(Users);
@@ -226,55 +226,55 @@ namespace Pandemic.Managers
             }
         }
 
-        List<City> CreateCities(List<string> InputStrings)
+        Dictionary<string, City> CreateCities(List<string> inputStrings)
         {
-            List<City> TempCities = new List<City>();
+            Dictionary<string, City> cities = new Dictionary<string, City>();
 
-            Colors CurrentColor = Colors.None;
-            foreach(string CurrentString in InputStrings)
+            Colors currentColor = Colors.None;
+            foreach(string currentString in inputStrings)
             {
-               bool IsNewColor = CurrentString.StartsWith('/');
-               if (IsNewColor)
+               bool isNewColor = currentString.StartsWith('/');
+               if (isNewColor)
                 {
-                    CurrentColor++;
+                    currentColor++;
                 }
                 else
                 {
-                    string[] SplitLine = CurrentString.Split(" - ");
-                    string CityName = SplitLine[0];
+                    string[] SplitLine = currentString.Split(" - ");
+                    string cityName = SplitLine[0];
 
-                    City NewCity = new City(CityName, CurrentColor);
-                    TempCities.Add(NewCity);
+                    City newCity = new City(cityName, currentColor);
+                    cities.Add(cityName, newCity);
                 }
             }
-            return TempCities;
+            return cities;
         }
 
-        void AddConnectedCities(List<string> InputStrings)
+        void AddConnectedCities(List<string> inputStrings)
         {
-            foreach (String CurrentString in InputStrings)
+            foreach (String currentString in inputStrings)
             {
-                bool IsNewColor = CurrentString.StartsWith('/');
-                if (!IsNewColor)
+                bool isNewColor = currentString.StartsWith('/');
+                if (!isNewColor)
                 {
-                    string[] SplitLine = CurrentString.Split(" - ");
+                    string[] splitLine = currentString.Split(" - ");
 
-                    string CityName = SplitLine[0];
-                    City CurrentCity = Cities.Find(City => City.Name == CityName);
+                    string cityName = splitLine[0];
+                    City currentCity = Cities[cityName];
                     
-                    string ConnectedCitiesString = SplitLine[1];
-                    string[] ConnectedCities = ConnectedCitiesString.Split(", ");
+                    string connectedCitiesString = splitLine[1];
+                    string[] connectedCities = connectedCitiesString.Split(", ");
 
-                    foreach(String CurrentConnectedCity in ConnectedCities)
+                    foreach(String currentConnectedCity in connectedCities)
                     {
-                        City TempCity = Cities.Find(City => City.Name == CurrentConnectedCity);
-                        if (TempCity == null)
+                        try
                         {
-                            throw new UnexpectedBehaviourException($"A connected city, {CurrentConnectedCity}, was not found to attach to {CityName} in the list of cities in AddConnectedCities in StateManager. Please check the Input list for errors.");
-                        } 
-                        else
+                            City newConnectedCity = Cities[currentConnectedCity];
+                            currentCity.ConnectedCities.Add(newConnectedCity);
+                        }
+                        catch (Exception ex)
                         {
-                            CurrentCity.ConnectedCities.Add(TempCity);
+                            throw new UnexpectedBehaviourException($"A connected city, {currentConnectedCity}, was not found to attach to {cityName} in the list of cities in AddConnectedCities in StateManager. Please check the Input list for errors.", ex);
                         }
                     }
                 }
@@ -283,16 +283,16 @@ namespace Pandemic.Managers
 
         void AddCitiesToDecks()
         {
-            foreach(City CurrentCity in Cities)
+            foreach(City currentCity in Cities.Values)
             {
-                string CurrentName = CurrentCity.Name;
-                Colors CurrentColor = CurrentCity.Color;
+                string currentName = currentCity.Name;
+                Colors currentColor = currentCity.Color;
 
-                CityCard CityCard = new CityCard(CurrentName, CurrentColor);
-                PlayerDeck.AddCard(CityCard);
+                CityCard cityCard = new CityCard(currentName, currentColor);
+                PlayerDeck.AddCard(cityCard);
 
-                InfectionCard InfectionCard = new InfectionCard(CurrentName, CurrentColor);
-                InfectionDeck.AddCard(InfectionCard);
+                InfectionCard infectionCard = new InfectionCard(currentName, currentColor);
+                InfectionDeck.AddCard(infectionCard);
             }
         }
 
@@ -312,7 +312,7 @@ namespace Pandemic.Managers
 
         void AssignPlayerRoles(List<User> Users)
         {
-            City StartingCity = Cities.Find(City => City.Name == StartingCityName);
+            City StartingCity = Cities[StartingCityName];
             if (StartingCity == null)
             {
                 throw new UnexpectedBehaviourException("Unable to find the starting city in the cities list in AssignPlayerRoles in StateManager.");
@@ -447,34 +447,55 @@ namespace Pandemic.Managers
                     {
                         Card CurrentCard = InfectionDeck.Draw();
                         InfectionDiscard.AddCard(CurrentCard as InfectionCard);
-                        City CurrentCity = Cities.Find(City => City.Name == CurrentCard.Name);
+                        City CurrentCity = Cities[CurrentCard.Name];
                         CurrentCity.DiseaseCubes[CurrentCard.Color] = i;
                         CubePools[CurrentCard.Color] -= i;
                     }
                 }
             }
-
         }
 
 
         //public methods
         public City GetCity(Card CityToFind)
         {
-            City TempCity = Cities.Find(City => City.Name == CityToFind.Name);
-            if (TempCity == null)
+            try
             {
-                throw new UnexpectedBehaviourException($"{CityToFind.Name} wasn't found on the board in GetCity of StateManager.");
+                City foundCity = Cities[CityToFind.Name];
+                return foundCity;
+            }
+            catch (Exception ex)
+            {
+                throw new UnexpectedBehaviourException($"{CityToFind.Name} wasn't found on the board in GetCity of StateManager.", ex);
+            }
+        }
+
+        public City GetCity(int index)
+        {
+            if(index >= 0 && index < Cities.Values.Count)
+            {
+                int counter = 0;
+                foreach (City currentCity in Cities.Values)
+                {
+                    if (counter == index)
+                    {
+                        return currentCity;
+                    }
+                    counter++;
+                }
             } else
             {
-                return TempCity;
+                throw new UnexpectedBehaviourException("Could not retrieve requested city. The index requested was out of bounds.");
             }
+
+            throw new UnexpectedBehaviourException("Something extremely unexpected happeded. To such a degree that this error message should never be displayed. The error was in GetCity(int index) of stateManager.");
         }
 
         public List<City> GetCitiesWithResearchStation()
         {
             List<City> TempCities = new List<City>();
 
-            foreach (City CurrentCity in Cities)
+            foreach (City CurrentCity in Cities.Values)
             {
                 if (CurrentCity.ResearchStation)
                 {
@@ -526,7 +547,7 @@ namespace Pandemic.Managers
             CleanInput(InputStrings);
         }
 
-        public List<City> TestCreateCities(List<string> InputStrings)
+        public Dictionary<string, City> TestCreateCities(List<string> InputStrings)
         {
             return CreateCities(InputStrings);
         }

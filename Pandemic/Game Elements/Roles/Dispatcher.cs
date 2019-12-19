@@ -136,8 +136,8 @@ namespace Pandemic.Game_Elements.Roles
 
                             if (CardInHand(OtherPlayer.CurrentCity.Name))
                             {
-                                int ChoiceOfTargetCity = TextManager.ChooseItemFromList(State.Cities, "go to");
-                                City NextCity = State.Cities[ChoiceOfTargetCity];
+                                int ChoiceOfTargetCity = TextManager.ChooseItemFromList(State.Cities.Values, "go to");
+                                City NextCity = State.GetCity(ChoiceOfTargetCity);
                                 CharterFlightForPlayer(NextCity, OtherPlayer, State);
                                 ActionPerformed = true;
                             }

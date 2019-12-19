@@ -65,10 +65,10 @@ namespace Pandemic.Game_Elements.Roles
             }
             else
             {
-                Choice = TextManager.ChooseItemFromList(State.Cities, "go to");
+                Choice = TextManager.ChooseItemFromList(State.Cities.Values, "go to");
             }
 
-            City NextCity = State.Cities[Choice];
+            City NextCity = State.GetCity(Choice);
 
             List<Card> EligibleCards = Hand.FindAll(Card => Card is CityCard);
             Choice = TextManager.ChooseItemFromList(EligibleCards, "discard");
