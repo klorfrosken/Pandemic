@@ -16,7 +16,7 @@ namespace Pandemic.Game_Elements.Roles
 
         };
 
-        public OperationsExpert(City StartingCity, int PlayerID, StateManager state): base(PlayerID, Title, StartingCity, state)
+        public OperationsExpert(City StartingCity, int PlayerID, StateManager state, TextManager textManager): base(PlayerID, Title, StartingCity, state, textManager)
         {
             SpecialActions = 1;
         }
@@ -40,7 +40,7 @@ namespace Pandemic.Game_Elements.Roles
             {
                 CurrentCity.BuildResearchStation();
                 RemainingActions--;
-                _state.BuildResearchStation();
+                State.BuildResearchStation();
             }
             else
             {
@@ -64,10 +64,10 @@ namespace Pandemic.Game_Elements.Roles
             }
             else
             {
-                Choice = TextManager.ChooseItemFromList(_state.Cities.Values, "go to");
+                Choice = TextManager.ChooseItemFromList(State.Cities.Values, "go to");
             }
 
-            City NextCity = _state.GetCity(Choice);
+            City NextCity = State.GetCity(Choice);
 
             List<Card> EligibleCards = Hand.FindAll(Card => Card is CityCard);
             Choice = TextManager.ChooseItemFromList(EligibleCards, "discard");

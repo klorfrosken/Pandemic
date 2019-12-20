@@ -10,7 +10,7 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "Government Grant";
         readonly static string _eventDescription = $"Build a research station in any city";
 
-        public GovernmentGrant(StateManager state) : base(_eventName, _eventDescription, state) { }
+        public GovernmentGrant(StateManager state, TextManager textManager) : base(_eventName, _eventDescription, state, textManager) { }
 
         public override void Play(Role playerWithCard)
         {
@@ -22,7 +22,7 @@ namespace Pandemic.Cards.EventCards
                 throw new IllegalMoveException($"There are no research stations left to build. You'll have to make do with the ones you have.");
             } else
             {
-                TextManager.PrintEventDescription(this);
+                textManager.PrintEventDescription(this);
 
                 List<City> eligibleCities = new List<City>();
                 foreach (City currentCity in _state.Cities.Values)
@@ -33,7 +33,7 @@ namespace Pandemic.Cards.EventCards
                     }
                 }
 
-                int choice = TextManager.ChooseItemFromList(eligibleCities, "build a research station in");
+                int choice = textManager.ChooseItemFromList(eligibleCities, "build a research station in");
                 City chosenCity = eligibleCities[choice];
                 chosenCity.BuildResearchStation();
             }

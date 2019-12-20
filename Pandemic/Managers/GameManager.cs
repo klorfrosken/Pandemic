@@ -9,7 +9,7 @@ namespace Pandemic.Managers
     class GameManager
     {
         StateManager state;
-        TextManager textManager;
+        TextManager TextManager = new TextManager();
 
         List<User> Users = new List<User>
         {
@@ -27,8 +27,8 @@ namespace Pandemic.Managers
         void InitiateGame()
         {
             int NumberOfEpidemics = TextManager.GetDifficulty();
-            state = new StateManager(NumberOfEpidemics: NumberOfEpidemics, Users: Users);
-            TextManager.PrintBeginGame(state, Users);
+            state = new StateManager(NumberOfEpidemics: NumberOfEpidemics, Users: Users, textManager: TextManager);
+            TextManager.PrintBeginGame(Users);
 
             try
             {
@@ -69,7 +69,7 @@ namespace Pandemic.Managers
                 {
                     try
                     {
-                        DoActions(CurrentUser.CurrentRole);
+                        DoActions(CurrentUser.CurrentRole, state);
                         CurrentUser.CurrentRole.Draw();
                         CurrentUser.CurrentRole.Draw();
 
@@ -88,9 +88,9 @@ namespace Pandemic.Managers
             } while (!DonePlaying);
         }
 
-        void DoActions(Role CurrentPlayer)
+        void DoActions(Role CurrentPlayer, StateManager state)
         {
-            TextManager.PrintNewTurn(CurrentPlayer, state);
+            TextManager.PrintNewTurn(state);
 
             do
             {
@@ -117,7 +117,7 @@ namespace Pandemic.Managers
                         BuildResearchStation(CurrentPlayer);
                         break;
                     case 6:
-                        TreatDisease(CurrentPlayer);
+                        TreatDisease(CurrentPlayer, state);
                         break;
                     case 7:
                         DiscoverCure(CurrentPlayer);
@@ -259,7 +259,7 @@ namespace Pandemic.Managers
             }
         }
 
-        void TreatDisease(Role CurrentPlayer)
+        void TreatDisease(Role CurrentPlayer, StateManager state)
         {
             //TREAT DISEASE - Remove one disease cube from the city you are in. If this color is cured remove all cubes _of that color_ from the city
             try

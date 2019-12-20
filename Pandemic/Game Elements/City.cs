@@ -21,12 +21,14 @@ namespace Pandemic.Game
         };
         public List<City> ConnectedCities = new List<City>();
         StateManager _state;
+        TextManager _textManager;
 
-        public City(string Name, Colors Color, StateManager state)
+        public City(string Name, Colors Color, StateManager state, TextManager textManager)
         {
             this.Name = Name;
             this.Color = Color;
-            _state = state; 
+            _state = state;
+            _textManager = textManager;
         }
 
         public Boolean IsConnectedTo(City otherCity)
@@ -127,7 +129,7 @@ namespace Pandemic.Game
                             {
                                 DiseaseCubes[Color]++;
                                 _state.CubePools[Color]--;
-                                TextManager.PrintInfection(this, Color);
+                                _textManager.PrintInfection(this, Color);
                             }
                         }
                     }

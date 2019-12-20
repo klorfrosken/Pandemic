@@ -76,7 +76,8 @@ namespace Pandemic.Managers
             PlayerDeck PlayerDeck = null,
             PlayerDeck PlayerDiscard = null,
             bool Testing = false,
-            List<User> Users = null
+            List<User> Users = null, 
+            TextManager textManager = null
             )
         {
             this.CitiesFilePath = CitiesFilePath;
@@ -111,23 +112,23 @@ namespace Pandemic.Managers
             
             if (!Testing)
             {
-                Setup(Users);
+                Setup(Users, textManager);
             } 
         }
 
         //Setup methods
-        void Setup(List<User> Users)
+        void Setup(List<User> Users, TextManager textManager)
         {
             List<string> InputStrings = GetInput();
             CleanInput(InputStrings);
 
             //City Setup
-            Cities = CreateCities(InputStrings);
+            Cities = CreateCities(InputStrings, textManager);
             AddConnectedCities(InputStrings);
 
             //Creating Decks
             AddCitiesToDecks();
-            AddEventsToPlayerDeck();
+            AddEventsToPlayerDeck(textManager);
             InfectionDeck.Shuffle();
             PlayerDeck.Shuffle();
 
@@ -135,7 +136,7 @@ namespace Pandemic.Managers
             City StartingCity = Cities[StartingCityName];
             StartingCity.ResearchStation = true;
             RemainingResearchStations--;
-            AssignPlayerRoles(Users);
+            AssignPlayerRoles(Users, textManager);
             DealPlayerCards();
    
             //Initial Infection
@@ -226,7 +227,7 @@ namespace Pandemic.Managers
             }
         }
 
-        Dictionary<string, City> CreateCities(List<string> inputStrings)
+        Dictionary<string, City> CreateCities(List<string> inputStrings, TextManager textManager)
         {
             Dictionary<string, City> cities = new Dictionary<string, City>();
 
@@ -243,7 +244,7 @@ namespace Pandemic.Managers
                     string[] SplitLine = currentString.Split(" - ");
                     string cityName = SplitLine[0];
 
-                    City newCity = new City(cityName, currentColor, this);
+                    City newCity = new City(cityName, currentColor, this, textManager);
                     cities.Add(cityName, newCity);
                 }
             }
@@ -296,21 +297,21 @@ namespace Pandemic.Managers
             }
         }
 
-        void AddEventsToPlayerDeck()
+        void AddEventsToPlayerDeck(TextManager textManager)
         {
             List<Card> EventCards = new List<Card>
             {
-                new Airlift(this),
-                new Forecast(this),
-                new GovernmentGrant(this),
-                new OneQuietNight(this),
-                new ResilientPopulation(this)
+                new Airlift(this, textManager),
+                new Forecast(this, textManager),
+                new GovernmentGrant(this, textManager),
+                new OneQuietNight(this, textManager),
+                new ResilientPopulation(this, textManager)
             };
 
             PlayerDeck.AddCards(EventCards);
         }
 
-        void AssignPlayerRoles(List<User> Users)
+        void AssignPlayerRoles(List<User> Users, TextManager textManager)
         {
             City StartingCity = Cities[StartingCityName];
             if (StartingCity == null)
@@ -328,31 +329,31 @@ namespace Pandemic.Managers
                     switch (CurrentRoleIndex)
                     {
                         case 0:
-                            CurrentRole = new ContingencyPlanner(StartingCity, CurrentUser.UserID, this);
+                            CurrentRole = new ContingencyPlanner(StartingCity, CurrentUser.UserID, this, textManager);
                             Roles.Add(CurrentRole);
                             break;
                         case 1:
-                            CurrentRole = new Dispatcher(StartingCity, CurrentUser.UserID, this);
+                            CurrentRole = new Dispatcher(StartingCity, CurrentUser.UserID, this, textManager);
                             Roles.Add(CurrentRole);
                             break;
                         case 2:
-                            CurrentRole = new Medic(StartingCity, CurrentUser.UserID, this);
+                            CurrentRole = new Medic(StartingCity, CurrentUser.UserID, this, textManager);
                             Roles.Add(CurrentRole);
                             break;
                         case 3:
-                            CurrentRole = new OperationsExpert(StartingCity, CurrentUser.UserID, this);
+                            CurrentRole = new OperationsExpert(StartingCity, CurrentUser.UserID, this, textManager);
                             Roles.Add(CurrentRole);
                             break;
                         case 4:
-                            CurrentRole = new QuarantineSpecialist(StartingCity, CurrentUser.UserID, this);
+                            CurrentRole = new QuarantineSpecialist(StartingCity, CurrentUser.UserID, this, textManager);
                             Roles.Add(CurrentRole);
                             break;
                         case 5:
-                            CurrentRole = new Researcher(StartingCity, CurrentUser.UserID, this);
+                            CurrentRole = new Researcher(StartingCity, CurrentUser.UserID, this, textManager);
                             Roles.Add(CurrentRole);
                             break;
                         case 6:
-                            CurrentRole = new Scientist(StartingCity, CurrentUser.UserID, this);
+                            CurrentRole = new Scientist(StartingCity, CurrentUser.UserID, this, textManager);
                             Roles.Add(CurrentRole);
                             break;
                         default:
@@ -549,7 +550,8 @@ namespace Pandemic.Managers
 
         public Dictionary<string, City> TestCreateCities(List<string> InputStrings)
         {
-            return CreateCities(InputStrings);
+            TextManager temp = new TextManager();
+            return CreateCities(InputStrings, temp);
         }
 
         public void TestAddConnectedCities(List<String> InputStrings)
@@ -564,12 +566,14 @@ namespace Pandemic.Managers
 
         public void TestAddEventsToPlayerDeck()
         {
-            AddEventsToPlayerDeck();
+            TextManager temp = new TextManager();
+            AddEventsToPlayerDeck(temp);
         }
 
         public void TestAssignPlayerRoles(List<User> Users)
         {
-            AssignPlayerRoles(Users);
+            TextManager temp = new TextManager();
+            AssignPlayerRoles(Users, temp);
         }
 
         public void TestDealPlayerCards()

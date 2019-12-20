@@ -14,7 +14,7 @@ namespace Pandemic.Game_Elements.Roles
         Boolean HasPickedEvent = false;
         EventCard StoredCard;
 
-        public ContingencyPlanner(City StartingCity, int PlayerID, StateManager state) : base (PlayerID, Title, StartingCity, state) 
+        public ContingencyPlanner(City StartingCity, int PlayerID, StateManager state, TextManager textManager) : base (PlayerID, Title, StartingCity, state, textManager) 
         {
             SpecialActions = 1;
         }
@@ -31,7 +31,7 @@ namespace Pandemic.Game_Elements.Roles
         {
             try
             {
-                PickEventcardFromDiscard(_state.PlayerDiscard);
+                PickEventcardFromDiscard(State.PlayerDiscard);
             }
             catch { throw; }    //Throws illegalmoveexception if there are no event cards in the playerDiscard or haspickedevent
         }

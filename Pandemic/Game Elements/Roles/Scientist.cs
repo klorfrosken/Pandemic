@@ -7,7 +7,7 @@ namespace Pandemic.Game_Elements.Roles
     public class Scientist : Role
     {
         readonly static string Title = "Scientist";
-        public Scientist(City StartingCity, int PlayerID, StateManager state) : base(PlayerID, Title, StartingCity, state)
+        public Scientist(City StartingCity, int PlayerID, StateManager state, TextManager textManager) : base(PlayerID, Title, StartingCity, state, textManager)
         {
             CardsNecessaryForCure = 4;
         }

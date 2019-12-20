@@ -18,20 +18,23 @@ namespace Pandemic.Game
         public int RemainingActions { get; private protected set; } 
         public City CurrentCity { get; private protected set; }
         public List<Card> Hand = new List<Card>();
-        protected internal StateManager _state;
 
-        public Role (int PlayerID, String RoleName, City StartingCity, StateManager state)
+        protected internal StateManager State;
+        protected internal TextManager TextManager;
+
+        public Role (int PlayerID, String RoleName, City StartingCity, StateManager state, TextManager textManager)
         {
             this.PlayerID = PlayerID;
             this.RoleName = RoleName;
             CurrentCity = StartingCity;
             RemainingActions = MaxActions;
-            _state = state;
+            State = state;
+            TextManager = textManager;
         }
 
         public void Draw()
         {
-            Card drawnCard = _state.PlayerDeck.Draw();
+            Card drawnCard = State.PlayerDeck.Draw();
 
             if (drawnCard is EpidemicCard)
             {
@@ -109,7 +112,7 @@ namespace Pandemic.Game
                     CurrentCity.BuildResearchStation();
                     Discard(CurrentCity.Name);
                     RemainingActions--;
-                    _state.BuildResearchStation();
+                    State.BuildResearchStation();
                 } else
                 {
                     throw new IllegalMoveException($"You need to have the city card for {CurrentCity.Name} in your hand, in order to build a research station in this city");
@@ -147,7 +150,7 @@ namespace Pandemic.Game
             {
                 throw new IllegalMoveException($"You don't have enough cards of the same color in your hand. You need {CardsNecessaryForCure} cards of the same color, to discover a cure.");
             }
-            else if(_state.Cures[CureColor] == true)
+            else if(State.Cures[CureColor] == true)
             {
                 throw new IllegalMoveException($"The {CureColor} cure has already been discovered");
             }
@@ -169,7 +172,7 @@ namespace Pandemic.Game
                 }
 
                 Discard(AvailableCardsForCure);
-                _state.Cures[CureColor] = true;
+                State.Cures[CureColor] = true;
                 if (GameWon())
                 {
                     throw new GameWonException();
@@ -325,7 +328,7 @@ namespace Pandemic.Game
         {
             for (int i = 0; i<4; i++)
             {
-                if (!_state.Cures[(Colors)i])
+                if (!State.Cures[(Colors)i])
                 {
                     return false;
                 }

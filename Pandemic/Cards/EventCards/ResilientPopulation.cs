@@ -11,7 +11,7 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "Resilient Population";
         readonly static string _eventDescription = $"pick a card from the discard pile for the infection deck. Remove that card form the game.";
 
-        public ResilientPopulation(StateManager state) : base (_eventName, _eventDescription, state) { }
+        public ResilientPopulation(StateManager state, TextManager textManager) : base (_eventName, _eventDescription, state, textManager) { }
 
         public override void Play(Role playerWithCard)
         {
@@ -25,7 +25,7 @@ namespace Pandemic.Cards.EventCards
             }
             else
             {
-                TextManager.PrintEventDescription(this);
+                textManager.PrintEventDescription(this);
                 int counter = 0;
                 foreach (Card currentCard in _state.InfectionDiscard)
                 {
@@ -33,7 +33,7 @@ namespace Pandemic.Cards.EventCards
                     Console.WriteLine($"{counter}: {currentCard.ToString()}");
                 }
 
-                int Choice = TextManager.GetValidInteger(1, _state.InfectionDiscard.Count());
+                int Choice = textManager.GetValidInteger(1, _state.InfectionDiscard.Count());
                 InfectionCard cardToRemove = _state.InfectionDiscard[Choice] as InfectionCard;   //hvorfor er ikke dette et infection-kort allerede??
                 _state.InfectionDiscard.Remove(cardToRemove);
             }

@@ -9,16 +9,10 @@ namespace Pandemic.Managers
 {
     public class TextManager
     {
-        public static readonly int AvailableStandardActions = 8;
-        StateManager _state;
-
-        public TextManager(StateManager state)
-        {
-            _state = state;
-        }
+        public readonly int AvailableStandardActions = 8;
         
         //Print methods
-        public static void PrintBeginGame(StateManager State, List<User> Users)
+        public void PrintBeginGame(List<User> Users)
         {
             Console.WriteLine("|---------------------------------------------------------------------------------------|");  
             Console.WriteLine("|     Welcome to Pandemic! The cooperative game where the world (most likely) dies.     |");
@@ -33,20 +27,21 @@ namespace Pandemic.Managers
             Console.WriteLine();
         }
 
-        public static void PrintStatus(StateManager _state)
+        public void PrintStatus(StateManager state)
         {
-            Console.WriteLine($"There have been {_state.Outbreaks} outbreaks up till now.");
-            Console.WriteLine($"The current infection rate is {_state.InfectionRates[_state.InfectionIndex]}.");
-            Console.WriteLine("\nThe following cities are infected with diseases:");
+            Console.WriteLine($"|     There have been {state.Outbreaks} outbreaks up till now.");
+            Console.WriteLine($"|     The current infection rate is {state.InfectionRates[state.InfectionIndex]}.");
+            Console.WriteLine("|     ");
+            Console.WriteLine("|     The following cities are infected with diseases:");
 
             //Cities with infection
-            foreach(City CurrentCity in _state.Cities.Values)
+            foreach(City CurrentCity in state.Cities.Values)
             {
                 if (!CurrentCity.MultipleDiseases)
                 {
                     if(CurrentCity.DiseaseCubes[CurrentCity.Color] != 0)
                     {
-                        Console.WriteLine($"{CurrentCity.Name} has {CurrentCity.DiseaseCubes[CurrentCity.Color]} {CurrentCity.Color} disease cubes");
+                        Console.WriteLine($"|     {CurrentCity.Name} has {CurrentCity.DiseaseCubes[CurrentCity.Color]} {CurrentCity.Color} disease cubes");
                     }
                 } 
                 else
@@ -72,7 +67,7 @@ namespace Pandemic.Managers
                         cubeNumbers.Add($"{CurrentCity.DiseaseCubes[Colors.Black]} black disease cubes ");
                     }
 
-                    string printLine = $"{CurrentCity.Name} has ";
+                    string printLine = $"|     {CurrentCity.Name} has ";
                     for(int i=0; i<cubeNumbers.Count; i++)
                     {
                         printLine += cubeNumbers[i];
@@ -87,7 +82,7 @@ namespace Pandemic.Managers
             }
         }
 
-        public static void PrintHand(Role currentRole)
+        public void PrintHand(Role currentRole)
         {
             Console.WriteLine("\nYou have the following cards in your hand:");
             foreach(Card currentCard in currentRole.Hand)
@@ -96,18 +91,18 @@ namespace Pandemic.Managers
             }
         }
 
-        public static void PrintEventDescription(EventCard card)
+        public void PrintEventDescription(EventCard card)
         {
             Console.WriteLine($"{card.Name} allows you to {card.description}");
         }
 
-        public static void PrintNewTurn(Role currentRole, StateManager _state)
+        public void PrintNewTurn(StateManager state)
         {
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
-            PrintStatus(_state);
+            PrintStatus(state);
         }
 
-        public static void AvailableActions(Role currentRole)
+        public void AvailableActions(Role currentRole)
         {
             Console.WriteLine("|---------------------------------------------------------------------------------------|");
 
@@ -134,7 +129,7 @@ namespace Pandemic.Managers
             Console.WriteLine("\nWhich one of the above would you like to do?");
         }
 
-        public static int DiscardOrPlay(List<Card> Hand)
+        public int DiscardOrPlay(List<Card> Hand)
         {
             Boolean EventInHand = Hand.Exists(Card => Card is EventCard);
 
@@ -152,19 +147,19 @@ namespace Pandemic.Managers
             return ChooseItemFromList(Hand, screenText);
         }
 
-        public static void PrintPlayerMoved(Role movedRole, City newCity)
+        public void PrintPlayerMoved(Role movedRole, City newCity)
         {
             Console.WriteLine($"{movedRole} was moved to {newCity}");
         }
 
-        public static void PrintResearchStationBuilt(Role currentRole)
+        public void PrintResearchStationBuilt(Role currentRole)
         {
             Console.WriteLine($"A research station was built in {currentRole.CurrentCity}");
         }
 
-        public static void PrintDiseaseTreated(Role currentRole, City treatedCity, Colors cubeColor, StateManager _state)
+        public void PrintDiseaseTreated(Role currentRole, City treatedCity, Colors cubeColor, StateManager state)
         {
-            if (_state.Cures[cubeColor] || currentRole is Medic)
+            if (state.Cures[cubeColor] || currentRole is Medic)
             {
                 Console.WriteLine($"All the {cubeColor} cubes were removed from {treatedCity}");
             } else
@@ -173,28 +168,28 @@ namespace Pandemic.Managers
             }
         }
 
-        public static void PrintCureDiscovered(Role currentRole)
+        public void PrintCureDiscovered(Role currentRole)
         {
             Console.WriteLine($"{currentRole} discovered a cure.");
         }
 
-        public static void PrintKnowledgeShared(Role currentRole, Role otherPlayer)
+        public void PrintKnowledgeShared(Role currentRole, Role otherPlayer)
         {
             Console.WriteLine($"Knowledge was shared between the {currentRole} and the {otherPlayer}");
         }
 
-        public static void PrintUsedSpecialAbility(Role currentRole)
+        public void PrintUsedSpecialAbility(Role currentRole)
         {
             Console.WriteLine($"The {currentRole} used their special ability");
         }
 
-        public static void PrintInfection(City currentCity, Colors cubeColor)
+        public void PrintInfection(City currentCity, Colors cubeColor)
         {
             Console.WriteLine($"{currentCity} was just infected by a {cubeColor} cube");
         }
 
         //Choice methods
-        public static int GetDifficulty()
+        public int GetDifficulty()
         {
             Console.WriteLine("What difficulty would you like for the game?");
             Console.WriteLine("1: Introductory (4 epidemic cards)");
@@ -216,7 +211,7 @@ namespace Pandemic.Managers
                 return 6;
             }
         }
-        public static int ShareKnowledgeWithScientist()
+        public int ShareKnowledgeWithScientist()
         {
             Console.WriteLine("Which one of you will be receiving a card?");
             Console.WriteLine("1: You will be receiving a card");
@@ -225,7 +220,7 @@ namespace Pandemic.Managers
             return GetValidInteger(1, 2);
         }
 
-        public static int ChooseItemFromList<T>(IEnumerable<T> ItemList, string PickOneOfTheFollowingTo)
+        public int ChooseItemFromList<T>(IEnumerable<T> ItemList, string PickOneOfTheFollowingTo)
         {
             Console.WriteLine($"Pick one of the following to {PickOneOfTheFollowingTo}:");
             int counter = 0;
@@ -238,7 +233,7 @@ namespace Pandemic.Managers
             return (GetValidInteger(1, counter+1)-1);
         }
 
-        public static int GetValidInteger(int LowerRange, int UpperRange)
+        public int GetValidInteger(int LowerRange, int UpperRange)
         {
             Boolean InputNotValid = true;
             int UserInput = -1;

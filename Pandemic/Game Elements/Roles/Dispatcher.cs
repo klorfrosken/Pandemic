@@ -12,7 +12,7 @@ namespace Pandemic.Game_Elements.Roles
     {
         readonly static string Title = "Dispatcher";
 
-        public Dispatcher (City StartingCity, int PlayerID, StateManager state) : base(PlayerID, Title, StartingCity, state) 
+        public Dispatcher (City StartingCity, int PlayerID, StateManager state, TextManager textManager) : base(PlayerID, Title, StartingCity, state, textManager) 
         {
             SpecialActions = 2;
         }
@@ -40,10 +40,10 @@ namespace Pandemic.Game_Elements.Roles
 
         public override void PlayFirstSpecialAbility()
         {
-            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(_state.Roles, "move");
-            Role OtherPlayer = _state.Roles[ChoiceOfOtherPlayer];
+            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, "move");
+            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
 
-            List<Role> EligibleTargetPlayers = new List<Role>(_state.Roles);
+            List<Role> EligibleTargetPlayers = new List<Role>(State.Roles);
             EligibleTargetPlayers.Remove(OtherPlayer);
 
             int ChoiceOfTargetPlayer = TextManager.ChooseItemFromList(EligibleTargetPlayers, "move to");
@@ -51,7 +51,7 @@ namespace Pandemic.Game_Elements.Roles
 
             try
             {
-                ConnectPawns(OtherPlayer, TargetPlayer, _state);
+                ConnectPawns(OtherPlayer, TargetPlayer, State);
             }
             catch { throw; }    //throws illegalmoveexception if the two players are already in the same city.
         }
@@ -71,13 +71,13 @@ namespace Pandemic.Game_Elements.Roles
                         //DRIVE/FERRY - Move another to a city connected by a white line to their current city
                         try
                         {
-                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(_state.Roles, "move");
-                            Role OtherPlayer = _state.Roles[ChoiceOfOtherPlayer];
+                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, "move");
+                            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
 
                             int ChoiceOfTargetCity = TextManager.ChooseItemFromList(OtherPlayer.CurrentCity.ConnectedCities, "move them to");
                             City NextCity = OtherPlayer.CurrentCity.ConnectedCities[ChoiceOfTargetCity];
 
-                            DriveFerryForPlayer(NextCity, OtherPlayer, _state);
+                            DriveFerryForPlayer(NextCity, OtherPlayer, State);
                             ActionPerformed = true;
                         }
                         catch (IllegalMoveException ex)
@@ -113,12 +113,12 @@ namespace Pandemic.Game_Elements.Roles
                                 ChoiceOfTargetCity = TextManager.ChooseItemFromList(EligibleCards, "move another player to");
                             }
 
-                            City NextCity = _state.GetCity(EligibleCards[ChoiceOfTargetCity]);
+                            City NextCity = State.GetCity(EligibleCards[ChoiceOfTargetCity]);
 
-                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(_state.Roles, "players to move");
-                            Role OtherPlayer = _state.Roles[ChoiceOfOtherPlayer];
+                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, "players to move");
+                            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
 
-                            DirectFlightForPlayer(NextCity, OtherPlayer, _state);
+                            DirectFlightForPlayer(NextCity, OtherPlayer, State);
                             ActionPerformed = true;
                         }
                         catch (IllegalMoveException ex)
@@ -131,14 +131,14 @@ namespace Pandemic.Game_Elements.Roles
                         //CHARTER FLIGHT - Discard the city card that matches the city another player is in to move that player to _any_ city"
                         try
                         {
-                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(_state.Roles, " players to move");
-                            Role OtherPlayer = _state.Roles[ChoiceOfOtherPlayer];
+                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, " players to move");
+                            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
 
                             if (CardInHand(OtherPlayer.CurrentCity.Name))
                             {
-                                int ChoiceOfTargetCity = TextManager.ChooseItemFromList(_state.Cities.Values, "go to");
-                                City NextCity = _state.GetCity(ChoiceOfTargetCity);
-                                CharterFlightForPlayer(NextCity, OtherPlayer, _state);
+                                int ChoiceOfTargetCity = TextManager.ChooseItemFromList(State.Cities.Values, "go to");
+                                City NextCity = State.GetCity(ChoiceOfTargetCity);
+                                CharterFlightForPlayer(NextCity, OtherPlayer, State);
                                 ActionPerformed = true;
                             }
                             else
@@ -156,10 +156,10 @@ namespace Pandemic.Game_Elements.Roles
                         //SHUTTLE FLIGHT - Move another player from a city with a research station to any other city that has a research station
                         try
                         {
-                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(_state.Roles, " players to move");
-                            Role OtherPlayer = _state.Roles[ChoiceOfOtherPlayer];
+                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, " players to move");
+                            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
 
-                            List<City> ResearchStations = _state.GetCitiesWithResearchStation();
+                            List<City> ResearchStations = State.GetCitiesWithResearchStation();
                             if (!OtherPlayer.CurrentCity.ResearchStation)
                             {
                                 throw new IllegalMoveException("The player you want to move must be in a city with a research station in order for you to shuttle a flight for them.");
@@ -179,7 +179,7 @@ namespace Pandemic.Game_Elements.Roles
                                 }
 
                                 City NextCity = ResearchStations[Choice];
-                                ShuttleFlightForPlayer(NextCity, OtherPlayer, _state);
+                                ShuttleFlightForPlayer(NextCity, OtherPlayer, State);
                                 ActionPerformed = true;
                             }
                         }

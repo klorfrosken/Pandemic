@@ -11,7 +11,7 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "Forecast";
         readonly static string _eventDesctiption = $"Allows the player to rearrange the top 6 cards of the Infection Deck.";
 
-        public Forecast(StateManager state) : base (_eventName, _eventDesctiption, state) { }
+        public Forecast(StateManager state, TextManager textManager) : base (_eventName, _eventDesctiption, state, textManager) { }
 
         public override void Play(Role playerWithCard)
         {
@@ -20,14 +20,14 @@ namespace Pandemic.Cards.EventCards
                 throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {_eventName} in their hand to play.");
             } else
             {
-                TextManager.PrintEventDescription(this);
+                textManager.PrintEventDescription(this);
 
                 List<Card> cardsToRearrange = _state.InfectionDeck.Draw(6);
                 List<InfectionCard> newOrder = new List<InfectionCard>();
                 int choice = -1;
                 for (int i=1; i<6; i++)
                 {
-                    choice = TextManager.ChooseItemFromList(cardsToRearrange, $"play as card number {i}");
+                    choice = textManager.ChooseItemFromList(cardsToRearrange, $"play as card number {i}");
                     newOrder.Add(cardsToRearrange[choice] as InfectionCard);
                     cardsToRearrange.RemoveAt(choice);
                 }

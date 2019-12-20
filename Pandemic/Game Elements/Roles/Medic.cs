@@ -10,7 +10,7 @@ namespace Pandemic.Game_Elements.Roles
     public class Medic : Role
     {
         readonly static string Title = "Medic";
-        public Medic(City StartingCity, int PlayerID, StateManager state) : base (PlayerID, Title, StartingCity, state) { }
+        public Medic(City StartingCity, int PlayerID, StateManager state, TextManager textManager) : base (PlayerID, Title, StartingCity, state, textManager) { }
 
         public override void PrintSpecialAbilities()
         {
@@ -41,7 +41,7 @@ namespace Pandemic.Game_Elements.Roles
                 catch (UnexpectedBehaviourException) { throw; }
             } while (NotCleared);
 
-            if (!_state.Cures[CurrentCity.Color])
+            if (!State.Cures[CurrentCity.Color])
             {
                 RemainingActions--;
             }
@@ -53,7 +53,7 @@ namespace Pandemic.Game_Elements.Roles
             Boolean CubesToCureInCity;
             for (int i = 1; i < 5; i++)
             {
-                CureDiscovered = _state.Cures[(Colors)i];
+                CureDiscovered = State.Cures[(Colors)i];
                 CubesToCureInCity = CurrentCity.DiseaseCubes[(Colors)i] > 0;
                 if (CureDiscovered && CubesToCureInCity)
                 {
