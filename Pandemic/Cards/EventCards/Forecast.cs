@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Pandemic.Game;
 using Pandemic.Managers;
 using Pandemic.Exceptions;
@@ -31,12 +30,9 @@ namespace Pandemic.Cards.EventCards
                     newOrder.Add(cardsToRearrange[choice] as InfectionCard);
                     cardsToRearrange.RemoveAt(choice);
                 }
-
                 newOrder.Add(cardsToRearrange[0] as InfectionCard);
-                InfectionDeck tempDeck = new InfectionDeck();
-                tempDeck.AddCards(newOrder);
 
-                _state.InfectionDeck.InsertOnTop(tempDeck);
+                _state.InfectionDeck.AddCards(newOrder);
             }
         }
     }

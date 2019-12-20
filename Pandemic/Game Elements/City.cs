@@ -23,7 +23,7 @@ namespace Pandemic.Game
         StateManager _state;
         TextManager _textManager;
 
-        public City(string Name, Colors Color, StateManager state, TextManager textManager)
+        public City(string Name, Colors Color, StateManager state = null, TextManager textManager = null)
         {
             this.Name = Name;
             this.Color = Color;

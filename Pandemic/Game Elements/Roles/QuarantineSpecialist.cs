@@ -7,7 +7,7 @@ namespace Pandemic.Game_Elements.Roles
     public class QuarantineSpecialist : Role
     {
         readonly static string Title = "QuarantineSpecialist";
-        public QuarantineSpecialist(City StartingCity, int PlayerID, StateManager state, TextManager textManager) : base(PlayerID, Title, StartingCity, state, textManager){ }
+        public QuarantineSpecialist(City StartingCity, int PlayerID, StateManager state = null, TextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager){ }
 
         public override void PrintSpecialAbilities()
         {

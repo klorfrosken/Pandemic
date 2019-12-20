@@ -7,6 +7,6 @@ namespace Pandemic.Cards
 {
     public class CityCard : PlayerCard
     {
-        public CityCard(string Name, Colors Color, StateManager state) : base(Name, Color, state) { }
+        public CityCard(string Name, Colors Color, StateManager state = null) : base(Name, Color, state) { }
     }
 }

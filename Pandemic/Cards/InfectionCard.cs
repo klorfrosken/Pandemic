@@ -5,7 +5,7 @@ namespace Pandemic.Cards
 {
     public class InfectionCard : Card
     {
-        public InfectionCard(string Name, Colors Color, StateManager state) : base(Name, Color, state) { }
+        public InfectionCard(string Name, Colors Color, StateManager state = null) : base(Name, Color, state) { }
 
         public void Infect(StateManager State)
         {

@@ -9,6 +9,7 @@ namespace Pandemic.Cards
     {
         private protected List<Card> _cards = new List<Card>();
 
+        //Draw from the back of the list to ensure efficiency
         public Card Draw()
         {
             if (_cards.Count == 0)
@@ -16,13 +17,14 @@ namespace Pandemic.Cards
                 throw new UnexpectedBehaviourException("There are no more cards to draw in the deck. That's unfortunate... (and unexpected so the game crashes. Sorry");
             } else
             {
-                Card TempCard = _cards[0];
-                _cards.RemoveAt(0);
-                return TempCard;
+                int lastIndex = _cards.Count - 1;
+                Card DrawnCard = _cards[lastIndex];
+                _cards.RemoveAt(lastIndex);
+                return DrawnCard;
             }
         }
 
-        public List<Card> Draw(int NumberOfCards)
+        public List<Card> Draw(int numberOfCards)
         {
             if (_cards.Count == 0)
             {
@@ -30,10 +32,13 @@ namespace Pandemic.Cards
             }
             else
             {
-                List<Card> TempCards = _cards.GetRange(0, NumberOfCards);
-                _cards.RemoveRange(0, NumberOfCards);
+                List<Card> drawnCards = new List<Card>();
+                for(int i=0; i<numberOfCards; i++)
+                {
+                    drawnCards.Add(Draw());
+                }
 
-                return TempCards;
+                return drawnCards;
             }
         }
 
@@ -52,9 +57,9 @@ namespace Pandemic.Cards
             }
         }
 
-        public Boolean Remove(Card Card)
+        public Boolean Remove(Card card)
         {
-            return _cards.Remove(Card);
+            return _cards.Remove(card);
         }
 
         public void RemoveAt(int index)
@@ -75,7 +80,7 @@ namespace Pandemic.Cards
             return _cards.Count;
         }
 
-        //Implementation of to make Deck indexable
+        //Implementation to make Deck indexable
         public virtual Card this[int index]
         {
             get
@@ -137,6 +142,5 @@ namespace Pandemic.Cards
                 _currentIndex = -1;
             }
         }
-        
     }
 }

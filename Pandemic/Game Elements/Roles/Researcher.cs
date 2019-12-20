@@ -11,7 +11,7 @@ namespace Pandemic.Game_Elements.Roles
     {
         readonly static string Title = "Researcher";
 
-        public Researcher(City StartingCity, int PlayerID, StateManager state, TextManager textManager) : base(PlayerID, Title, StartingCity, state, textManager) { }
+        public Researcher(City StartingCity, int PlayerID, StateManager state = null, TextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager) { }
 
         public override void PrintSpecialAbilities()
         {

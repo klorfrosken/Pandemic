@@ -6,9 +6,10 @@ namespace Pandemic.Cards
     public class InfectionDeck : Deck
     {
         public InfectionDeck() { }
-        public InfectionDeck(List<InfectionCard> CardsInDeck)
+
+        public InfectionDeck(List<InfectionCard> cardsInDeck)
         {
-            _cards.AddRange(CardsInDeck);
+            _cards.AddRange(cardsInDeck);
         }
 
         public void Infect(StateManager state)
@@ -23,14 +24,15 @@ namespace Pandemic.Cards
             _cards.Add(temp);
         }
 
-        public void AddCards(List<InfectionCard> NewCards)
+        public void AddCards(List<InfectionCard> newCards)
         {
-            _cards.AddRange(NewCards);
+            newCards.Reverse();
+            _cards.AddRange(newCards);
         }
 
-        public void CombineDecks(InfectionDeck NewDeck)
+        public void CombineDecks(InfectionDeck newDeck)
         {
-            _cards.AddRange(NewDeck._cards);
+            _cards.AddRange(newDeck._cards);
         }
 
         public void InsertOnTop(InfectionDeck discardPile)
@@ -42,11 +44,10 @@ namespace Pandemic.Cards
 
         public InfectionCard RemoveBottomCard()
         {
-            int lastIndex = _cards.Count-1;
-            InfectionCard tempCard = _cards[lastIndex] as InfectionCard;
-            _cards.RemoveAt(lastIndex);
+            InfectionCard bottomCard = _cards[0] as InfectionCard;
+            _cards.RemoveAt(0);
 
-            return tempCard;
+            return bottomCard;
         }
 
         public void Clear()

@@ -12,7 +12,7 @@ namespace Pandemic.Game_Elements.Roles
     {
         readonly static string Title = "Dispatcher";
 
-        public Dispatcher (City StartingCity, int PlayerID, StateManager state, TextManager textManager) : base(PlayerID, Title, StartingCity, state, textManager) 
+        public Dispatcher (City StartingCity, int PlayerID, StateManager state = null, TextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager) 
         {
             SpecialActions = 2;
         }

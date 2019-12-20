@@ -10,7 +10,7 @@ namespace Pandemic.Game_Elements.Roles
     public class Medic : Role
     {
         readonly static string Title = "Medic";
-        public Medic(City StartingCity, int PlayerID, StateManager state, TextManager textManager) : base (PlayerID, Title, StartingCity, state, textManager) { }
+        public Medic(City StartingCity, int PlayerID, StateManager state = null, TextManager textManager = null) : base (PlayerID, Title, StartingCity, state, textManager) { }
 
         public override void PrintSpecialAbilities()
         {

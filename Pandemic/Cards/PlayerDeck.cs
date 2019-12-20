@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Pandemic.Cards.EventCards;
+﻿using System.Collections.Generic;
 using Pandemic.Exceptions;
 
 namespace Pandemic.Cards
@@ -9,33 +7,37 @@ namespace Pandemic.Cards
     {
         public PlayerDeck() { }
 
-        public PlayerDeck(List<Card> CardsInDeck)
+        public PlayerDeck(List<Card> cardsInDeck)
         {
-            _cards.AddRange(CardsInDeck);
+            cardsInDeck.Reverse();
+            _cards.AddRange(cardsInDeck);
         }
 
-        public void AddCard(Card temp)
+        public void AddCard(Card newCard)
         {
-            if (temp is PlayerCard)
+            if (newCard is PlayerCard)
             {
-                _cards.Add(temp);
+                _cards.Add(newCard);
             } else
             {
-                throw new ArgumentException($"An invalid card, {temp.Name}, was attempted added to the Player Deck");
+                throw new UnexpectedBehaviourException($"An invalid card, {newCard.Name}, was attempted added to the Player Deck");
             }
         }
 
-        public void AddCards(List<Card> NewCards)
+        public void AddCards(List<Card> newCards)
         {
-            foreach (Card CurrentCard in NewCards)
+            if(newCards == null)
             {
-                AddCard(CurrentCard);
+                throw new UnexpectedBehaviourException("For some reason an empty list of cards was attempted added to the PlayerDeck. That's not supposed to happen!");
+            } else
+            {
+                _cards.AddRange(newCards);
             }
         }
 
-        public void CombineDecks(PlayerDeck NewDeck)
+        public void CombineDecks(PlayerDeck newDeck)
         {
-            _cards.AddRange(NewDeck._cards);
+            _cards.AddRange(newDeck._cards);
         }
 
         public void Clear()

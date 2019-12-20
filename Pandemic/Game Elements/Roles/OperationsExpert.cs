@@ -16,7 +16,7 @@ namespace Pandemic.Game_Elements.Roles
 
         };
 
-        public OperationsExpert(City StartingCity, int PlayerID, StateManager state, TextManager textManager): base(PlayerID, Title, StartingCity, state, textManager)
+        public OperationsExpert(City StartingCity, int PlayerID, StateManager state = null, TextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager)
         {
             SpecialActions = 1;
         }

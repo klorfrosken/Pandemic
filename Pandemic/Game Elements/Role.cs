@@ -22,7 +22,7 @@ namespace Pandemic.Game
         protected internal StateManager State;
         protected internal TextManager TextManager;
 
-        public Role (int PlayerID, String RoleName, City StartingCity, StateManager state, TextManager textManager)
+        public Role (int PlayerID, String RoleName, City StartingCity, StateManager state = null, TextManager textManager = null)
         {
             this.PlayerID = PlayerID;
             this.RoleName = RoleName;

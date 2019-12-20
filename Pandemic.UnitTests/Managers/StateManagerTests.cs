@@ -505,6 +505,7 @@ namespace Pandemic.UnitTests.Managers
                 },
                 PlayerDeck: new PlayerDeck(expectedCards));
 
+            expectedCards.Reverse();    //because draw pulls from end of deck. 
 
             state.TestDealPlayerCards();
 
@@ -555,6 +556,8 @@ namespace Pandemic.UnitTests.Managers
                     new Scientist(startingCity, 2)
                 },
                 PlayerDeck: new PlayerDeck(expectedCards));
+
+            expectedCards.Reverse();    //because draw pulls from end of deck. 
 
             state.TestDealPlayerCards();
 
@@ -612,6 +615,8 @@ namespace Pandemic.UnitTests.Managers
                         new Researcher(startingCity, 3)
                 },
                 PlayerDeck: new PlayerDeck(expectedCards));
+
+            expectedCards.Reverse();    //because draw pulls from end of deck. 
 
             state.TestDealPlayerCards();
 
@@ -803,15 +808,15 @@ namespace Pandemic.UnitTests.Managers
             state.TestInitialInfection();
 
             Assert.Collection(state.Cities.Values,
-                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
                 item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
                 item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); }
+                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); }
                 );
         }
 
