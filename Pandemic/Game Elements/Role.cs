@@ -45,7 +45,7 @@ namespace Pandemic.Game
             }
         }
 
-        public void Draw(Deck Deck, int NumberOfCards)
+        public void Draw(Deck<PlayerCard> Deck, int NumberOfCards)
         {
             Hand.AddRange(Deck.Draw(NumberOfCards));
         }
@@ -134,7 +134,6 @@ namespace Pandemic.Game
 
         public void DiscoverCure()
         {
-            List<Card> CardsOfSameColor = new List<Card>();
             int[] CardCount = new int[5];
             Colors CureColor = Colors.None;
             foreach (Card CurrentCard in Hand)

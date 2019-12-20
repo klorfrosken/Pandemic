@@ -9,9 +9,9 @@ namespace Pandemic.Managers
     class GameManager
     {
         StateManager state;
-        TextManager TextManager = new TextManager();
+        readonly TextManager TextManager = new TextManager();
 
-        List<User> Users = new List<User>
+        readonly List<User> Users = new List<User>
         {
             new User(0, "Ragna Rekkverk"),
             new User(1, "Frida Frosk"),

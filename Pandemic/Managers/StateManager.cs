@@ -13,8 +13,8 @@ namespace Pandemic.Managers
 {
     public class StateManager
     {
-        string CitiesFilePath;
-        string StartingCityName;
+        readonly string CitiesFilePath;
+        readonly string StartingCityName;
 
         //Constants to be set upon initialization
         public int NumberOfPlayers { get; private set; }
@@ -299,7 +299,7 @@ namespace Pandemic.Managers
 
         void AddEventsToPlayerDeck(TextManager textManager)
         {
-            List<Card> EventCards = new List<Card>
+            List<PlayerCard> EventCards = new List<PlayerCard>
             {
                 new Airlift(this, textManager),
                 new Forecast(this, textManager),
@@ -321,7 +321,7 @@ namespace Pandemic.Managers
             {
                 List<int> AvailableRoleIndexes = new List<int> { 0, 1, 2, 3, 4, 5, 6 };
                 Random rnd = new Random();
-                int CurrentRoleIndex = -1;
+                int CurrentRoleIndex;
                 foreach (User CurrentUser in Users)
                 {
                     CurrentRoleIndex = AvailableRoleIndexes[rnd.Next(AvailableRoleIndexes.Count)];

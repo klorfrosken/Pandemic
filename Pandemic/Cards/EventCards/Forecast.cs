@@ -21,9 +21,9 @@ namespace Pandemic.Cards.EventCards
             {
                 textManager.PrintEventDescription(this);
 
-                List<Card> cardsToRearrange = _state.InfectionDeck.Draw(6);
+                List<InfectionCard> cardsToRearrange = _state.InfectionDeck.Draw(6);
                 List<InfectionCard> newOrder = new List<InfectionCard>();
-                int choice = -1;
+                int choice;
                 for (int i=1; i<6; i++)
                 {
                     choice = textManager.ChooseItemFromList(cardsToRearrange, $"play as card number {i}");

@@ -3,17 +3,17 @@ using Pandemic.Exceptions;
 
 namespace Pandemic.Cards
 {
-    public class PlayerDeck : Deck
+    public class PlayerDeck : Deck<PlayerCard>
     {
         public PlayerDeck() { }
 
-        public PlayerDeck(List<Card> cardsInDeck)
+        public PlayerDeck(List<PlayerCard> cardsInDeck)
         {
             cardsInDeck.Reverse();
             _cards.AddRange(cardsInDeck);
         }
 
-        public void AddCard(Card newCard)
+        public void AddCard(PlayerCard newCard)
         {
             if (newCard is PlayerCard)
             {
@@ -24,7 +24,7 @@ namespace Pandemic.Cards
             }
         }
 
-        public void AddCards(List<Card> newCards)
+        public void AddCards(List<PlayerCard> newCards)
         {
             if(newCards == null)
             {

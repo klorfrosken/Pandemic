@@ -3,7 +3,7 @@ using Pandemic.Managers;
 
 namespace Pandemic.Cards
 {
-    public class InfectionDeck : Deck
+    public class InfectionDeck : Deck<InfectionCard>
     {
         public InfectionDeck() { }
 

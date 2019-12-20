@@ -5,12 +5,12 @@ using Pandemic.Exceptions;
 
 namespace Pandemic.Cards
 {
-    public abstract class Deck : IEnumerable
+    public abstract class Deck<T> : IEnumerable<T> where T : Card
     {
-        private protected List<Card> _cards = new List<Card>();
+        private protected List<T> _cards = new List<T>();
 
         //Draw from the back of the list to ensure efficiency
-        public Card Draw()
+        public T Draw()
         {
             if (_cards.Count == 0)
             {
@@ -18,13 +18,13 @@ namespace Pandemic.Cards
             } else
             {
                 int lastIndex = _cards.Count - 1;
-                Card DrawnCard = _cards[lastIndex];
+                T DrawnCard = _cards[lastIndex];
                 _cards.RemoveAt(lastIndex);
                 return DrawnCard;
             }
         }
 
-        public List<Card> Draw(int numberOfCards)
+        public List<T> Draw(int numberOfCards)
         {
             if (_cards.Count == 0)
             {
@@ -32,7 +32,7 @@ namespace Pandemic.Cards
             }
             else
             {
-                List<Card> drawnCards = new List<Card>();
+                List<T> drawnCards = new List<T>();
                 for(int i=0; i<numberOfCards; i++)
                 {
                     drawnCards.Add(Draw());
@@ -50,14 +50,14 @@ namespace Pandemic.Cards
             for (int i = _cards.Count; i > 0; i--)
             {
                 int randomNumber = rnd.Next(i);
-                Card temp = _cards[randomNumber];
+                T temp = _cards[randomNumber];
 
                 _cards.RemoveAt(randomNumber);
                 _cards.Add(temp);
             }
         }
 
-        public Boolean Remove(Card card)
+        public Boolean Remove(T card)
         {
             return _cards.Remove(card);
         }
@@ -80,8 +80,13 @@ namespace Pandemic.Cards
             return _cards.Count;
         }
 
+        public Boolean Contains(Card card)
+        {
+            return _cards.Exists(Card => Card == card);
+        }
+
         //Implementation to make Deck indexable
-        public virtual Card this[int index]
+        public virtual T this[int index]
         {
             get
             {
@@ -94,23 +99,23 @@ namespace Pandemic.Cards
             }
         }
 
-        public Boolean Contains(Card card)
-        {
-            return _cards.Exists(Card => Card == card);
-        }
-
         //Implementation of IEnumerable&&IEnumerator
-        public IEnumerator GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
-            return new DeckEnumerator(this);
+            return new DeckEnumerator<T>(this);
         }
 
-        class DeckEnumerator : IEnumerator
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            Deck deck;
+            return new DeckEnumerator<T>(this);
+        }
+
+        class DeckEnumerator<S> : IEnumerator<S> where S : Card
+        {
+            readonly Deck<S> deck;
             private int _currentIndex = -1;
 
-            public DeckEnumerator(Deck deck)
+            public DeckEnumerator(Deck<S> deck)
             {
                 this.deck = deck;
             }
@@ -122,7 +127,7 @@ namespace Pandemic.Cards
                 return (_currentIndex < (deck._cards.Count));
             }
 
-            public object Current
+            public S Current
             {
                 get
                 {
@@ -136,10 +141,23 @@ namespace Pandemic.Cards
                     }
                 }
             }
+            
+            object IEnumerator.Current
+            {
+                get 
+                {
+                    return Current;
+                } 
+            }
 
             public void Reset()
             {
                 _currentIndex = -1;
+            }
+
+            public void Dispose()
+            {
+                throw new NotImplementedException();
             }
         }
     }
