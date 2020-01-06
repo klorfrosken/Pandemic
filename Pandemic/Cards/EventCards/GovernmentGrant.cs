@@ -10,7 +10,7 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "Government Grant";
         readonly static string _eventDescription = $"Build a research station in any city";
 
-        public GovernmentGrant(StateManager state, TextManager textManager) : base(_eventName, _eventDescription, state, textManager) { }
+        public GovernmentGrant(StateManager state = null, TextManager textManager = null) : base(_eventName, _eventDescription, state, textManager) { }
 
         public override void Play(Role playerWithCard)
         {

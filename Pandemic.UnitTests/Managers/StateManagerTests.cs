@@ -28,7 +28,7 @@ namespace Pandemic.UnitTests.Managers
                 });
 
             Assert.Contains(testRole, state.Roles);
-            Assert.True(state.NumberOfPlayers == 1);
+            Assert.Equal(1, state.NumberOfPlayers);
         }
 
         [Fact]
@@ -113,7 +113,7 @@ namespace Pandemic.UnitTests.Managers
 
             StateManager state = new StateManager(
                 Testing: true,
-                PlayerDeck: new PlayerDeck(new List<Card>
+                PlayerDeck: new PlayerDeck(new List<PlayerCard>
                 {
                         testCard
                 }));
@@ -128,7 +128,7 @@ namespace Pandemic.UnitTests.Managers
 
             StateManager state = new StateManager(
                 Testing: true,
-                PlayerDiscard: new PlayerDeck(new List<Card>
+                PlayerDiscard: new PlayerDeck(new List<PlayerCard>
                 {
                         testCard
                 }));
@@ -149,7 +149,7 @@ namespace Pandemic.UnitTests.Managers
                         new User(1, "Testperson 2")
                 });
 
-            Assert.True(state.NumberOfPlayers == actualNumberOfPlayers);
+            Assert.Equal(actualNumberOfPlayers, state.NumberOfPlayers);
         }
 
         [Fact]
@@ -367,73 +367,75 @@ namespace Pandemic.UnitTests.Managers
             Assert.Throws<UnexpectedBehaviourException>(() => state.TestAddConnectedCities(inputStrings));
         }
 
-        //Will not work till Deck has been made generic?
-        //[Fact]
-        //public void AddCitiesToDecs_DecksAreCreated_Succeeds()
-        //{
-        //    StateManager state = new StateManager(
-        //        Testing: true,
-        //        Cities: new Dictionary<string, City>
-        //        {
-        //                { "TestCity1", new City("TestCity1", Colors.Yellow) },
-        //                { "TestCity2", new City("TestCity2", Colors.Yellow) },
-        //                { "TestCity3", new City("TestCity3", Colors.Red) },
-        //                { "TestCity4", new City("TestCity4", Colors.Blue) },
-        //                { "TestCity5", new City("TestCity5", Colors.Black) }
-        //        });
+        [Fact]
+        public void AddCitiesToDecs_DecksAreCreated_Succeeds()
+        {
+            string cityName1 = "TestCity1";
+            string cityName2 = "TestCity2";
+            string cityName3 = "TestCity3";
+            string cityName4 = "TestCity4";
+            string cityName5 = "TestCity5";
 
-        //    List<Card> cityCards = new List<Card>
-        //        {
-        //            new CityCard("TestCity1", Colors.Yellow),
-        //            new CityCard("TestCity2", Colors.Yellow),
-        //            new CityCard("TestCity3", Colors.Red),
-        //            new CityCard("TestCity4", Colors.Blue),
-        //            new CityCard("TestCity5", Colors.Black)
-        //        };
+            City testCity1 = new City(cityName1, Colors.Blue);
+            City testCity2 = new City(cityName2, Colors.Blue);
+            City testCity3 = new City(cityName3, Colors.Blue);
+            City testCity4 = new City(cityName4, Colors.Blue);
+            City testCity5 = new City(cityName5, Colors.Blue);
 
-        //    List<InfectionCard> infectionCards = new List<InfectionCard>
-        //        {
-        //            new InfectionCard("TestCity1", Colors.Yellow),
-        //            new InfectionCard("TestCity2", Colors.Yellow),
-        //            new InfectionCard("TestCity3", Colors.Red),
-        //            new InfectionCard("TestCity4", Colors.Blue),
-        //            new InfectionCard("TestCity5", Colors.Black)
-        //        };
+            StateManager state = new StateManager(
+                Testing: true,
+                Cities: new Dictionary<string, City>
+                {
+                        { cityName1, testCity1},
+                        { cityName2, testCity2},
+                        { cityName3, testCity3},
+                        { cityName4, testCity4},
+                        { cityName5, testCity5},
+                });
 
-        //    state.TestAddCitiesToDecks();
+            state.TestAddCitiesToDecks();
 
-        //    Assert.Collection((IEnumerable<Card>)state.PlayerDeck,
-        //        item => { Assert.Equal(item, cityCards[0]); },
-        //        item => { Assert.Equal(item, cityCards[1]); },
-        //        item => { Assert.Equal(item, cityCards[2]); },
-        //        item => { Assert.Equal(item, cityCards[3]); },
-        //        item => { Assert.Equal(item, cityCards[4]); }
-        //    );
-        //}
+            Assert.Collection(state.PlayerDeck,
+                item => { Assert.Equal(cityName1, item.Name); },
+                item => { Assert.Equal(cityName2, item.Name); },
+                item => { Assert.Equal(cityName3, item.Name); },
+                item => { Assert.Equal(cityName4, item.Name); },
+                item => { Assert.Equal(cityName5, item.Name); }
+            );
 
-        //[Fact]
-        //public void AddEventsToPlayerDeck_Succeeds()
-        //{
-        //    StateManager state = new StateManager(Testing: true);
+            Assert.Collection(state.InfectionDeck,
+                item => { Assert.Equal(cityName1, item.Name); },
+                item => { Assert.Equal(cityName2, item.Name); },
+                item => { Assert.Equal(cityName3, item.Name); },
+                item => { Assert.Equal(cityName4, item.Name); },
+                item => { Assert.Equal(cityName5, item.Name); }
+            );
+        }
 
-        //    PlayerDeck ExpectedPlayerDeck = new PlayerDeck(new List<Card>
-        //        {
-        //            new Airlift(),
-        //            new Forecast(),
-        //            new GovernmentGrant(),
-        //            new OneQuietNight(),
-        //            new ResilientPopulation()
-        //        });
+        [Fact]
+        public void AddEventsToPlayerDeck_Succeeds()
+        {
+            StateManager state = new StateManager(Testing: true);
 
-        //    state.TestAddEventsToPlayerDeck();
+            PlayerDeck expectedPlayerDeck = new PlayerDeck(new List<PlayerCard>
+                {
+                    new Airlift(),
+                    new Forecast(),
+                    new GovernmentGrant(),
+                    new OneQuietNight(),
+                    new ResilientPopulation()
+                });
 
-        //    Assert.Collection(state.PlayerDeck,
-        //        item => { Assert.IsType(Airlift, item); },
-        //        item => { Assert.IsType(Forecast, item); },
-        //        item => { Assert.IsType(GovernmentGrant, item); },
-        //        item => { Assert.IsType(OneQuietNight, item); },
-        //        item => { Assert.IsType(ResilientPopulation, item); });
-        //}
+            state.TestAddEventsToPlayerDeck();
+
+            Assert.Collection(state.PlayerDeck,
+                item => { Assert.True(item is Airlift); },
+                item => { Assert.True(item is Forecast); },
+                item => { Assert.True(item is GovernmentGrant); },
+                item => { Assert.True(item is OneQuietNight); },
+                item => { Assert.True(item is ResilientPopulation); }
+            );
+        }
 
         [Fact]
         public void AssignPlayerRoles_FourPlayersAreAssignedRandomNonEqualRoles()
@@ -483,7 +485,7 @@ namespace Pandemic.UnitTests.Managers
         public void DealPlayerCards_TwoPlayers_GetFourCardsEach()
         {
             int expectedNumberOfCards = 4;
-            List<Card> expectedCards = new List<Card>
+            List<PlayerCard> expectedCards = new List<PlayerCard>
             {
                 new CityCard("TestCity1", Colors.Yellow),
                 new CityCard("TestCity2", Colors.Yellow),
@@ -533,7 +535,7 @@ namespace Pandemic.UnitTests.Managers
         public void DealPlayerCards_ThreePlayers_GetThreeCardsEach()
         {
             int expectedNumberOfCards = 3;
-            List<Card> expectedCards = new List<Card>
+            List<PlayerCard> expectedCards = new List<PlayerCard>
             {
                 new CityCard("TestCity1", Colors.Yellow),
                 new CityCard("TestCity2", Colors.Yellow),
@@ -592,7 +594,7 @@ namespace Pandemic.UnitTests.Managers
         public void DealPlayerCards_FourPlayers_GetTwoCardsEach()
         {
             int expectedNumberOfCards = 2;
-            List<Card> expectedCards = new List<Card>
+            List<PlayerCard> expectedCards = new List<PlayerCard>
             {
                 new CityCard("TestCity1", Colors.Yellow),
                 new CityCard("TestCity2", Colors.Yellow),
@@ -676,7 +678,7 @@ namespace Pandemic.UnitTests.Managers
                         new QuarantineSpecialist(startingCity, 3),
                         new Researcher(startingCity, 4)
                 },
-                PlayerDeck: new PlayerDeck(new List<Card>
+                PlayerDeck: new PlayerDeck(new List<PlayerCard>
                 {
                         new CityCard("TestCity1", Colors.Yellow),
                         new CityCard("TestCity2", Colors.Yellow),
@@ -702,7 +704,7 @@ namespace Pandemic.UnitTests.Managers
                         new Medic(startingCity, 0),
                         new QuarantineSpecialist(startingCity, 1),
                 },
-                PlayerDeck: new PlayerDeck(new List<Card>
+                PlayerDeck: new PlayerDeck(new List<PlayerCard>
                 {
                         new CityCard("TestCity1", Colors.Yellow),
                         new CityCard("TestCity2", Colors.Yellow),
@@ -712,45 +714,118 @@ namespace Pandemic.UnitTests.Managers
             Assert.Throws<UnexpectedBehaviourException>(() => state.TestDealPlayerCards());
         }
 
-        //Will not work till Deck is generic?
-        //[Fact]
-        //public void AddEpidemicsToDeck_EpidemicsSuccessfullyAdded()
-        //{
-        //    List<Card> expectedCards = new List<Card>
-        //    {
-        //        new CityCard("TestCity1", Colors.Yellow),
-        //        new CityCard("TestCity2", Colors.Yellow),
-        //        new CityCard("TestCity3", Colors.Red),
-        //        new CityCard("TestCity4", Colors.Blue),
-        //        new CityCard("TestCity5", Colors.Black),
-        //        new CityCard("TestCity6", Colors.Black),
-        //        new CityCard("TestCity7", Colors.Black),
-        //        new CityCard("TestCity8", Colors.Black),
-        //        new CityCard("TestCity9", Colors.Black)
-        //    };
+        [Fact]
+        public void AddEpidemicsToDeck_EpidemicsSuccessfullyAdded()
+        {
+            List<PlayerCard> initialDeck = new List<PlayerCard> 
+            {
+                new CityCard("TestCity1", Colors.Yellow),
+                new CityCard("TestCity2", Colors.Yellow),
+                new CityCard("TestCity3", Colors.Red),
+                new CityCard("TestCity4", Colors.Blue),
+                new CityCard("TestCity5", Colors.Black),
+                new CityCard("TestCity6", Colors.Black),
+                new CityCard("TestCity7", Colors.Black),
+                new CityCard("TestCity8", Colors.Black),
+                new CityCard("TestCity9", Colors.Black)
+            };
 
-        //    StateManager state = new StateManager(
-        //        Testing: true,
-        //        NumberOfEpidemics: 2,
-        //        PlayerDeck: new PlayerDeck(expectedCards));
+            List<PlayerCard> firstExpectedPile = new List<PlayerCard>
+            {
+                initialDeck[8],
+                initialDeck[7],
+                initialDeck[6],
+                initialDeck[5],
+                initialDeck[4]
+            };
+            List<PlayerCard> secondExpectedPile = new List<PlayerCard>
+            {
+                initialDeck[3],
+                initialDeck[2],
+                initialDeck[1],
+                initialDeck[0]
+            };
 
-        //    state.TestAddEpidemicsToDeck();
+            StateManager state = new StateManager(
+                Testing: true,
+                NumberOfEpidemics: 2,
+                PlayerDeck: new PlayerDeck(initialDeck));
 
-        //    Assert.Collection(state.PlayerDeck,
-        //        item => { Assert.Equal(expectedCards[0], item); },
-        //        item => { Assert.Equal(expectedCards[1], item); },
-        //        item => { Assert.Equal(expectedCards[2], item); },
-        //        item => { Assert.Equal(expectedCards[3], item); },
-        //        item => { Assert.Equal(expectedCards[4], item); },
-        //        item => { Assert.IsType(EpidemicCard, item); },
-        //        item => { Assert.Equal(expectedCards[5], item); },
-        //        item => { Assert.Equal(expectedCards[6], item); },
-        //        item => { Assert.Equal(expectedCards[7], item); },
-        //        item => { Assert.Equal(expectedCards[8], item); },
-        //        item => { Assert.Equal(expectedCards[9], item); },
-        //        item => { Assert.IsType(EpidemicCard, item); }
-        //        );
-        //}
+            state.TestAddEpidemicsToDeck();
+
+            Assert.Collection(state.PlayerDeck,
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); }
+                );
+
+
+
+
+
+            //int NumberOfEpidemics = 0;
+            //foreach (Card CurrentCard in State.PlayerDeck)
+            //{
+            //    if (CurrentCard is EpidemicCard)
+            //    {
+            //        NumberOfEpidemics++;
+            //    }
+            //}
+
+            //Boolean CorrectCardsArePresentInEachShuffle = true;
+            //int Counter = 0;
+            //List<string> FirstPile = new List<string>
+            //{
+            //    "TestCity1",
+            //    "TestCity2",
+            //    "TestCity3",
+            //    "TestCity4",
+            //    "TestCity5",
+            //    "Epidemic"
+            //};
+            //List<string> SecondPile = new List<string>
+            //{
+            //    "TestCity6",
+            //    "TestCity7",
+            //    "TestCity8",
+            //    "TestCity9",
+            //    "Epidemic"
+            //};
+            //foreach (Card CurrentCard in State.PlayerDeck)
+            //{
+            //    if (Counter < 6)
+            //    {
+            //        if (!FirstPile.Remove(CurrentCard.Name))
+            //        {
+            //            CorrectCardsArePresentInEachShuffle = false;
+            //            break;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        if (!SecondPile.Remove(CurrentCard.Name))
+            //        {
+            //            CorrectCardsArePresentInEachShuffle = false;
+            //            break;
+            //        }
+            //    }
+            //    Counter++;
+            //}
+
+            //Boolean CorrectNumberOfCards = (State.PlayerDeck.Count() == 11);
+            //Boolean CorrectNumberOfEpidemics = (NumberOfEpidemics == 2);
+
+            //Assert.True(CorrectNumberOfCards && CorrectNumberOfEpidemics && CorrectCardsArePresentInEachShuffle);
+
+        }
 
         [Fact]
         public void AddEpidemicsToDeck_PlayerDeckNotCreated_ThrowsException()

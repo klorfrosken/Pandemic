@@ -155,10 +155,7 @@ namespace Pandemic.Cards
                 _currentIndex = -1;
             }
 
-            public void Dispose()
-            {
-                throw new NotImplementedException();
-            }
+            public void Dispose() { }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "Forecast";
         readonly static string _eventDesctiption = $"Allows the player to rearrange the top 6 cards of the Infection Deck.";
 
-        public Forecast(StateManager state, TextManager textManager) : base (_eventName, _eventDesctiption, state, textManager) { }
+        public Forecast(StateManager state = null, TextManager textManager = null) : base (_eventName, _eventDesctiption, state, textManager) { }
 
         public override void Play(Role playerWithCard)
         {

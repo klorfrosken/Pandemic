@@ -10,7 +10,7 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "One Quiet Night";
         readonly static string _eventDesctiption = $"Skip the infection stage of one turn.";
 
-        public OneQuietNight(StateManager state, TextManager textManager) : base (_eventName, _eventDesctiption, state, textManager) { }
+        public OneQuietNight(StateManager state = null , TextManager textManager = null) : base (_eventName, _eventDesctiption, state, textManager) { }
 
         public override void Play(Role playerWithCard)
         {

@@ -11,7 +11,7 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "Resilient Population";
         readonly static string _eventDescription = $"pick a card from the discard pile for the infection deck. Remove that card form the game.";
 
-        public ResilientPopulation(StateManager state, TextManager textManager) : base (_eventName, _eventDescription, state, textManager) { }
+        public ResilientPopulation(StateManager state = null, TextManager textManager = null) : base (_eventName, _eventDescription, state, textManager) { }
 
         public override void Play(Role playerWithCard)
         {
