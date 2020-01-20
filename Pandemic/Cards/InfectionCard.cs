@@ -1,5 +1,6 @@
 ﻿using Pandemic.Game;
 using Pandemic.Managers;
+using Pandemic.Exceptions;
 
 namespace Pandemic.Cards
 {
@@ -7,13 +8,22 @@ namespace Pandemic.Cards
     {
         public InfectionCard(string Name, Colors Color, StateManager state = null) : base(Name, Color, state) { }
 
-        public void Infect(StateManager State)
+        public void Infect()
         {
-            City TempCity = State.Cities[this.Name];
-            TempCity.InfectCity(Color);
+            City cityToInfect;
+            try
+            {
+                cityToInfect = _state.Cities[Name];
+            }
+            catch 
+            {
+                throw new UnexpectedBehaviourException($"There was no city corresponding to {Name} in the cities list. What could have happened to it?");
+            }
 
-            State.OutbreakThisChain.Clear();
-            State.InfectionDiscard.AddCard(this);
+            cityToInfect.InfectCity(Color);
+
+            _state.OutbreakThisChain.Clear();
+            _state.InfectionDiscard.AddCard(this);
         }
     }
 }

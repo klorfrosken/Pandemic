@@ -37,7 +37,7 @@ Chicago - San Francisco, Montreal, Los Angeles, Mexico City, Atlanta
 Atlanta - Chicago, Washington, Miami
 Montreal - Chicago, New York, Washington
 New York - Montreal, London, Washington, Madrid
-Washington - Atlanta, Montreal, New York
+Washington - Atlanta, Montreal, New York, Miami
 London - New York, Essen, Paris, Madrid
 Madrid - New York, London, Paris, Sao Paulo, Algiers
 Paris - London, Essen, Milan, Madrid, Algiers

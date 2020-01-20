@@ -36,12 +36,12 @@ namespace Pandemic.UnitTests.Managers
         {
             string testCityName = "Atlanta";
 
-            StateManager State = new StateManager(
+            StateManager state = new StateManager(
                 Testing: true,
                 Cities: new Dictionary<string, City> { { testCityName, new City(testCityName, Colors.Blue) } }
                 );
 
-            Assert.Contains<string, City>(testCityName, (IDictionary<string, City>)State.Cities);
+            Assert.Contains(testCityName, (IDictionary<string, City>)state.Cities);
         }
 
         [Fact]
@@ -61,6 +61,57 @@ namespace Pandemic.UnitTests.Managers
                 );
 
             Assert.Equal(initialCures, state.Cures);
+        }
+
+        [Fact]
+        public void StateManager_CubePoolsNotNull_Succeeds()
+        {
+            Dictionary<Colors, int> initialCubePools = new Dictionary<Colors, int>
+            {
+                {Colors.Yellow, 12 },
+                {Colors.Red, 12 },
+                {Colors.Blue, 12 },
+                {Colors.Black, 12 }
+            };
+
+            StateManager state = new StateManager(
+                Testing: true,
+                CubePools: initialCubePools
+                );
+
+            Assert.Equal(initialCubePools, state.CubePools);
+        }
+
+        [Fact]
+        public void StateManager_CubePoolsNull_Succeeds()
+        {
+            int maxCubesInCubePool = 12;
+            StateManager state = new StateManager(
+                Testing: true,
+                MaxCubesInCubePool: maxCubesInCubePool
+                );
+
+            Assert.Collection(state.CubePools,
+                item =>
+                {
+                    Assert.Equal(Colors.Yellow, item.Key);
+                    Assert.Equal(maxCubesInCubePool, item.Value);
+                },
+                item =>
+                {
+                    Assert.Equal(Colors.Red, item.Key);
+                    Assert.Equal(maxCubesInCubePool, item.Value);
+                },
+                item =>
+                {
+                    Assert.Equal(Colors.Blue, item.Key);
+                    Assert.Equal(maxCubesInCubePool, item.Value);
+                },
+                item =>
+                {
+                    Assert.Equal(Colors.Black, item.Key);
+                    Assert.Equal(maxCubesInCubePool, item.Value);
+                });
         }
 
         [Fact]
@@ -88,7 +139,7 @@ namespace Pandemic.UnitTests.Managers
                     testCard
                 }));
 
-            Assert.True(state.InfectionDeck.Contains(testCard));
+            Assert.Contains(testCard, state.InfectionDeck);
         }
 
         [Fact]
@@ -103,7 +154,7 @@ namespace Pandemic.UnitTests.Managers
                         testCard
                 }));
 
-            Assert.True(state.InfectionDiscard.Contains(testCard));
+            Assert.Contains<InfectionCard>(testCard, state.InfectionDiscard);
         }
 
         [Fact]
@@ -118,7 +169,7 @@ namespace Pandemic.UnitTests.Managers
                         testCard
                 }));
 
-            Assert.True(state.PlayerDeck.Contains(testCard));
+            Assert.Contains<PlayerCard>(testCard, state.PlayerDeck);
         }
 
         [Fact]
@@ -133,11 +184,11 @@ namespace Pandemic.UnitTests.Managers
                         testCard
                 }));
 
-            Assert.True(state.PlayerDiscard.Contains(testCard));
+            Assert.Contains<PlayerCard>(testCard, state.PlayerDiscard);
         }
 
         [Fact]
-        public void Statemanager_UsersNotNull_Succeds()
+        public void StateManager_UsersNotNull_Succeds()
         {
             int actualNumberOfPlayers = 2;
 
@@ -150,6 +201,127 @@ namespace Pandemic.UnitTests.Managers
                 });
 
             Assert.Equal(actualNumberOfPlayers, state.NumberOfPlayers);
+        }
+
+        [Fact]
+        public void StateManager_TestingNotFalse_Succeeds()
+        {
+            List<User> testUsers = new List<User>
+                {
+                    new User(0, "Ragna Rekkverk"),
+                    new User(1, "Frida Frosk"),
+                    new User(2, "Sandra Salamander"),
+                    new User(3, "Pelle Parafin")
+                };
+            TextManager textMgr = new TextManager();
+
+            StateManager state = new StateManager(
+                Testing: false,
+                Users: testUsers,
+                textManager: textMgr);
+
+            int numberOfCities = 48;
+            int numberOfInfectionCards = state.InfectionDeck.Count() + state.InfectionDiscard.Count();
+
+            Boolean playerDeckShuffled = false;
+            int differentColorsInSequence = 0;
+            Card previousCard = null;
+            foreach (Card currentCard in state.PlayerDeck)
+            {
+                if (previousCard == null)
+                {
+                    previousCard = currentCard;
+                }else if(currentCard.Color != previousCard.Color)
+                {
+                    differentColorsInSequence += 1;
+                    previousCard = currentCard;
+                }
+            }
+            if(differentColorsInSequence > 4)
+            {
+                playerDeckShuffled = true;
+            }
+
+            Boolean infectionDeckShuffled = false;
+            differentColorsInSequence = 0;
+            previousCard = null;
+            foreach (Card currentCard in state.InfectionDeck)
+            {
+                if (previousCard == null)
+                {
+                    previousCard = currentCard;
+                }
+                else if (currentCard.Color != previousCard.Color)
+                {
+                    differentColorsInSequence += 1;
+                    previousCard = currentCard;
+                }
+            }
+            if (differentColorsInSequence > 4)
+            {
+                infectionDeckShuffled = true;
+            }
+
+            Boolean rolesAssigned = true;
+            Boolean hasCards = true;
+            int playerCardsInHand = 0;
+            foreach (User currentUser in testUsers)
+            {
+                if(currentUser.CurrentRole == null)
+                {
+                    rolesAssigned = false;
+                }
+
+                int cardsInHand = currentUser.CurrentRole.Hand.Count;
+                playerCardsInHand += cardsInHand;
+                if (cardsInHand == 0)
+                {
+                    hasCards = false;
+                }
+            }
+
+            Boolean startingCityHasResearchStation = state.Cities["Atlanta"].HasResearchStation;
+
+            int citiesWithOneCube = 0;
+            int citiesWithTwoCubes = 0;
+            int citiesWithThreeCubes = 0;
+            foreach (KeyValuePair<string, City> currentEntry in state.Cities)
+            {
+                City currentCity = currentEntry.Value;
+                int numberOfCubes = currentCity.DiseaseCubes[currentCity.Color];
+
+                if (numberOfCubes == 0)
+                {
+                    continue;
+                }
+                else if (numberOfCubes == 1)
+                {
+                    citiesWithOneCube += 1;
+                }
+                else if (numberOfCubes == 2)
+                {
+                    citiesWithTwoCubes += 1;
+                } else if (numberOfCubes == 3)
+                {
+                    citiesWithThreeCubes += 1;
+                }
+            }
+
+            int numberOfEvents = 5;
+            int expectedNumberOfPlayerCards = numberOfCities + state.NumberOfEpidemics + numberOfEvents;
+            int actualNumberOfPlayerCards = state.PlayerDeck.Count() + playerCardsInHand;
+
+            Assert.Equal(numberOfCities, state.Cities.Count);
+            Assert.Equal(numberOfCities, numberOfInfectionCards);
+            Assert.True(playerDeckShuffled);
+            Assert.True(infectionDeckShuffled);
+            Assert.True(rolesAssigned);
+            Assert.True(hasCards);
+            Assert.True(startingCityHasResearchStation);
+            Assert.Equal(3, citiesWithOneCube);
+            Assert.Equal(3, citiesWithTwoCubes);
+            Assert.Equal(3, citiesWithThreeCubes);
+            Assert.Equal(expectedNumberOfPlayerCards, actualNumberOfPlayerCards);
         }
 
         [Fact]
@@ -732,18 +904,18 @@ namespace Pandemic.UnitTests.Managers
 
             List<PlayerCard> firstExpectedPile = new List<PlayerCard>
             {
-                initialDeck[8],
-                initialDeck[7],
-                initialDeck[6],
-                initialDeck[5],
+                initialDeck[0],
+                initialDeck[1],
+                initialDeck[2],
+                initialDeck[3],
                 initialDeck[4]
             };
             List<PlayerCard> secondExpectedPile = new List<PlayerCard>
             {
-                initialDeck[3],
-                initialDeck[2],
-                initialDeck[1],
-                initialDeck[0]
+                initialDeck[5],
+                initialDeck[6],
+                initialDeck[7],
+                initialDeck[8]
             };
 
             StateManager state = new StateManager(
@@ -754,17 +926,17 @@ namespace Pandemic.UnitTests.Managers
             state.TestAddEpidemicsToDeck();
 
             Assert.Collection(state.PlayerDeck,
-                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
-                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
-                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
-                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
-                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
-                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
                 item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); },
                 item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); },
                 item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); },
                 item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); },
-                item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); }
+                item => { Assert.True((item is EpidemicCard) || (secondExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); },
+                item => { Assert.True((item is EpidemicCard) || (firstExpectedPile.Contains(item))); }
                 );
 
 
@@ -883,15 +1055,15 @@ namespace Pandemic.UnitTests.Managers
             state.TestInitialInfection();
 
             Assert.Collection(state.Cities.Values,
-                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
                 item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
                 item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
-                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); }
+                item => { Assert.Equal(1, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); },
+                item => { Assert.Equal(3, item.DiseaseCubes[testColor]); }
                 );
         }
 
@@ -1038,11 +1210,11 @@ namespace Pandemic.UnitTests.Managers
                 item =>
                 {
                     Assert.Equal(testCity2, item);
-                    Assert.True(item.ResearchStation);
+                    Assert.True(item.HasResearchStation);
                 },
                 item => {
                     Assert.Equal(testCity3, item);
-                    Assert.True(item.ResearchStation);
+                    Assert.True(item.HasResearchStation);
                 });
         }
 

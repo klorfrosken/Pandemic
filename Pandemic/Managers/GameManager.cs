@@ -70,20 +70,28 @@ namespace Pandemic.Managers
                     try
                     {
                         DoActions(CurrentUser.CurrentRole, state);
-                        CurrentUser.CurrentRole.Draw();
-                        CurrentUser.CurrentRole.Draw();
+                        try
+                        {
+                            //should this be solved in the PlayerDeck class instead?
+                            CurrentUser.CurrentRole.Draw();
+                            CurrentUser.CurrentRole.Draw();
+                        }
+                        catch
+                        {
+                            throw new TheWorldIsDeadException("There are no more cards in the player deck. You were too slow and the world is now suffering for it");
+                        }
 
+                        //should this be handeled in InfectionDeck class instead?
                         int infectionRate = State.InfectionRates[State.InfectionIndex];
                         for (int i = 0; i<infectionRate; i++)
                         {
-                            State.InfectionDeck.Infect(State);
+                            State.InfectionDeck.Infect();
                         }
                     }
                     catch (UnexpectedBehaviourException ex)
                     {
                         ex.ToString();
                     }
-                    catch { throw; }
                 }
             } while (!DonePlaying);
         }
@@ -302,7 +310,7 @@ namespace Pandemic.Managers
             //DISCOVER A CURE - At _any_ research station, discard 5 city cards of the same disease color to cure that disease
             try
             {
-                if (!CurrentPlayer.CurrentCity.ResearchStation)
+                if (!CurrentPlayer.CurrentCity.HasResearchStation)
                 {
                     throw new IllegalMoveException($"There's no research station in {CurrentPlayer.CurrentCity.Name}. There has to be a research station in your location for you to discover a cure.");
                 }

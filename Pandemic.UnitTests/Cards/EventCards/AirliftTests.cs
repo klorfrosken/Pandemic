@@ -6,6 +6,7 @@
 
 //namespace Pandemic.UnitTests.Cards
 //{
+//Husk å legge inn at kortet må discardes!
 //    public class AirliftTests
 //    {
 //        [Fact]

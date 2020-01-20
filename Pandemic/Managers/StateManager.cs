@@ -33,7 +33,6 @@ namespace Pandemic.Managers
 
         //States
         public int RemainingResearchStations { get; private set; }
-        public int CurrentInfectionRateIndex;
         public int Outbreaks;
         public Dictionary<Colors, int> CubePools;
         public Dictionary<Colors, bool> Cures = new Dictionary<Colors, bool>
@@ -65,11 +64,11 @@ namespace Pandemic.Managers
             int MaxOutbreaks = 8,
             int MaxCubesInCubePool = 24,
             int RemainingResearchStations = 6,
-            int CurrentInfectionRateIndex = 0,
             int Outbreaks = 0,
 
             Dictionary<string, City> Cities = null,
             Dictionary<Colors, bool> Cures = null,
+            Dictionary<Colors, int> CubePools = null,
             List<City> OutbreakThisChain = null,
             InfectionDeck InfectionDeck = null,
             InfectionDeck InfectionDiscard = null,
@@ -80,18 +79,18 @@ namespace Pandemic.Managers
             TextManager textManager = null
             )
         {
+
             this.CitiesFilePath = CitiesFilePath;
             this.StartingCityName = StartingCityName;
             this.NumberOfEpidemics = NumberOfEpidemics;
             this.RandomRoles = RandomRoles;
             this.QuarantineSpecialistInGame = QuarantineSpecialistInGame;
             this.MedicInGame = MedicInGame;
-            if (Roles != null) { this.Roles.AddRange(Roles); NumberOfPlayers = this.Roles.Count; }
+            if (Roles != null) { this.Roles = Roles; NumberOfPlayers = this.Roles.Count; }
             this.InfectionIndex = InfectionIndex;
             this.MaxOutbreaks = MaxOutbreaks;
             this.MaxCubesInCubePool = MaxCubesInCubePool;
             this.RemainingResearchStations = RemainingResearchStations;
-            this.CurrentInfectionRateIndex = CurrentInfectionRateIndex;
             this.Outbreaks = Outbreaks;
             if (Cities != null) { this.Cities = Cities; }
             if (Cures != null) { this.Cures = Cures; }
@@ -102,15 +101,22 @@ namespace Pandemic.Managers
             if (PlayerDiscard != null) { this.PlayerDiscard = PlayerDiscard; }
             if (Users != null) { NumberOfPlayers = Users.Count; }
 
-            CubePools = new Dictionary<Colors, int>
+            if (CubePools != null)
             {
-                {Colors.Yellow, MaxCubesInCubePool },
-                {Colors.Red, MaxCubesInCubePool },
-                {Colors.Blue, MaxCubesInCubePool },
-                {Colors.Black, MaxCubesInCubePool }
-            };
-            
-            if (!Testing)
+                this.CubePools = CubePools;
+            }
+            else
+            {
+                this.CubePools = new Dictionary<Colors, int>
+                {
+                    {Colors.Yellow, MaxCubesInCubePool },
+                    {Colors.Red, MaxCubesInCubePool },
+                    {Colors.Blue, MaxCubesInCubePool },
+                    {Colors.Black, MaxCubesInCubePool }
+                };
+            }
+
+            if(!Testing)
             {
                 Setup(Users, textManager);
             } 
@@ -134,7 +140,7 @@ namespace Pandemic.Managers
 
             //Add Player Roles
             City StartingCity = Cities[StartingCityName];
-            StartingCity.ResearchStation = true;
+            StartingCity.HasResearchStation = true;
             RemainingResearchStations--;
             AssignPlayerRoles(Users, textManager);
             DealPlayerCards();
@@ -446,8 +452,8 @@ namespace Pandemic.Managers
                 {
                     for (int j = 0; j<3; j++)
                     {
-                        Card CurrentCard = InfectionDeck.Draw();
-                        InfectionDiscard.AddCard(CurrentCard as InfectionCard);
+                        InfectionCard CurrentCard = InfectionDeck.Draw();
+                        InfectionDiscard.AddCard(CurrentCard);
                         City CurrentCity = Cities[CurrentCard.Name];
                         CurrentCity.DiseaseCubes[CurrentCard.Color] = i;
                         CubePools[CurrentCard.Color] -= i;
@@ -498,7 +504,7 @@ namespace Pandemic.Managers
 
             foreach (City CurrentCity in Cities.Values)
             {
-                if (CurrentCity.ResearchStation)
+                if (CurrentCity.HasResearchStation)
                 {
                     TempCities.Add(CurrentCity);
                 }

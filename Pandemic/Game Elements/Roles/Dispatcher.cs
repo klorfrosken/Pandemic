@@ -12,7 +12,7 @@ namespace Pandemic.Game_Elements.Roles
     {
         readonly static string Title = "Dispatcher";
 
-        public Dispatcher (City StartingCity, int PlayerID, StateManager state = null, TextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager) 
+        public Dispatcher (City StartingCity, int PlayerID, StateManager state = null, ITextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager) 
         {
             SpecialActions = 2;
         }
@@ -160,7 +160,7 @@ namespace Pandemic.Game_Elements.Roles
                             Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
 
                             List<City> ResearchStations = State.GetCitiesWithResearchStation();
-                            if (!OtherPlayer.CurrentCity.ResearchStation)
+                            if (!OtherPlayer.CurrentCity.HasResearchStation)
                             {
                                 throw new IllegalMoveException("The player you want to move must be in a city with a research station in order for you to shuttle a flight for them.");
                             } else if (ResearchStations.Count == 0)
@@ -252,7 +252,7 @@ namespace Pandemic.Game_Elements.Roles
 
         void ShuttleFlightForPlayer(City NextCity, Role OtherPlayer, StateManager State)
         {
-            if (OtherPlayer.CurrentCity.ResearchStation && NextCity.ResearchStation)
+            if (OtherPlayer.CurrentCity.HasResearchStation && NextCity.HasResearchStation)
             {
                 OtherPlayer.ChangeCity(NextCity);
                 RemainingActions--;

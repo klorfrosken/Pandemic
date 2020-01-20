@@ -7,9 +7,14 @@ using Pandemic.Game_Elements.Roles;
 
 namespace Pandemic.Managers
 {
-    public class TextManager
+    public class TextManager : ITextManager
     {
-        public readonly int AvailableStandardActions = 8;
+        public int AvailableStandardActions { get; }
+
+        public TextManager()
+        {
+            AvailableStandardActions = 8;
+        }
         
         //Print methods
         public void PrintBeginGame(List<User> Users)
@@ -129,24 +134,6 @@ namespace Pandemic.Managers
             Console.WriteLine("\nWhich one of the above would you like to do?");
         }
 
-        public int DiscardOrPlay(List<Card> Hand)
-        {
-            Boolean EventInHand = Hand.Exists(Card => Card is EventCard);
-
-            string screenText;
-            if (EventInHand)
-            {
-                Console.WriteLine("You have more than 7 cards in your hand and have to either play an event or discard a card.");
-                screenText = "discard or play";
-            } else
-            {
-                Console.WriteLine("You have more than 7 cards in your hand and have to discard a card.");
-                screenText = "discard";
-            }
-
-            return ChooseItemFromList(Hand, screenText);
-        }
-
         public void PrintPlayerMoved(Role movedRole, City newCity)
         {
             Console.WriteLine($"{movedRole} was moved to {newCity}");
@@ -211,7 +198,8 @@ namespace Pandemic.Managers
                 return 6;
             }
         }
-        public int ShareKnowledgeWithScientist()
+        
+        public int ShareKnowledgeWithResearcher()
         {
             Console.WriteLine("Which one of you will be receiving a card?");
             Console.WriteLine("1: You will be receiving a card");
@@ -251,6 +239,25 @@ namespace Pandemic.Managers
                 }
             }
             return UserInput;
+        }
+        
+        public int DiscardOrPlay(List<PlayerCard> Hand)
+        {
+            Boolean EventInHand = Hand.Exists(Card => Card is EventCard);
+
+            string screenText;
+            if (EventInHand)
+            {
+                Console.WriteLine("You have more than 7 cards in your hand and have to either play an event or discard a card.");
+                screenText = "discard or play";
+            }
+            else
+            {
+                Console.WriteLine("You have more than 7 cards in your hand and have to discard a card.");
+                screenText = "discard";
+            }
+
+            return ChooseItemFromList(Hand, screenText);
         }
     }
 }

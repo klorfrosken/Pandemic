@@ -14,7 +14,7 @@ namespace Pandemic.Game_Elements.Roles
         Boolean HasPickedEvent = false;
         EventCard StoredCard;
 
-        public ContingencyPlanner(City StartingCity, int PlayerID, StateManager state = null, TextManager textManager = null) : base (PlayerID, Title, StartingCity, state, textManager) 
+        public ContingencyPlanner(City StartingCity, int PlayerID, StateManager state = null, ITextManager textManager = null) : base (PlayerID, Title, StartingCity, state, textManager) 
         {
             SpecialActions = 1;
         }

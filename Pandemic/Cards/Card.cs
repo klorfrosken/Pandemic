@@ -7,6 +7,7 @@ namespace Pandemic.Cards
     public abstract class Card
     {
         public string Name { get; private set; }
+
         public Colors Color { get; private set; }
 
         protected internal StateManager _state;
@@ -18,7 +19,7 @@ namespace Pandemic.Cards
             _state = state;
         }
 
-        public virtual void Play(Role playerWithCard)
+        public virtual void Play(Role roleWithCard)
         {
             throw new IllegalMoveException($"{Name} is not a playable card");
         }

@@ -27,7 +27,7 @@ namespace Pandemic.Cards.EventCards
                 List<City> eligibleCities = new List<City>();
                 foreach (City currentCity in _state.Cities.Values)
                 {
-                    if (!currentCity.ResearchStation)
+                    if (!currentCity.HasResearchStation)
                     {
                         eligibleCities.Add(currentCity);
                     }

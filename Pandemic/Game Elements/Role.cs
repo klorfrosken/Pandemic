@@ -17,12 +17,12 @@ namespace Pandemic.Game
         protected int CardsNecessaryForCure = 5;
         public int RemainingActions { get; private protected set; } 
         public City CurrentCity { get; private protected set; }
-        public List<Card> Hand = new List<Card>();
+        public List<PlayerCard> Hand = new List<PlayerCard>();
 
         protected internal StateManager State;
-        protected internal TextManager TextManager;
+        protected internal ITextManager TextManager;
 
-        public Role (int PlayerID, String RoleName, City StartingCity, StateManager state = null, TextManager textManager = null)
+        public Role (int PlayerID, String RoleName, City StartingCity, StateManager state = null, ITextManager textManager = null)
         {
             this.PlayerID = PlayerID;
             this.RoleName = RoleName;
@@ -32,17 +32,44 @@ namespace Pandemic.Game
             TextManager = textManager;
         }
 
+        void Discard()
+        {
+            int Choice = TextManager.DiscardOrPlay(Hand);
+
+            if (Hand[Choice] is EventCard)
+            {
+                Hand[Choice].Play(this);
+            }
+            else
+            {
+                Discard(Choice);
+            }
+        }
+        
+        public void TestDiscard()
+        {
+            Discard();
+        }
+
         public void Draw()
         {
-            Card drawnCard = State.PlayerDeck.Draw();
+            try
+            {
+                PlayerCard drawnCard = State.PlayerDeck.Draw();
 
-            if (drawnCard is EpidemicCard)
+                if (drawnCard is EpidemicCard)
+                {
+                    drawnCard.Play(this);
+                }
+                else
+                {
+                    Hand.Add(drawnCard);
+                }
+            } catch
             {
-                drawnCard.Play(this);
-            } else
-            {
-                Hand.Add(drawnCard);
+                throw new TheWorldIsDeadException("There are no more cards in the PlayerDeck. The world will now disintegrate.");
             }
+
         }
 
         public void Draw(Deck<PlayerCard> Deck, int NumberOfCards)
@@ -93,7 +120,7 @@ namespace Pandemic.Game
 
         public void ShuttleFlight(City NextCity)
         {
-            if (CurrentCity.ResearchStation && NextCity.ResearchStation)
+            if (CurrentCity.HasResearchStation && NextCity.HasResearchStation)
             {
                 ChangeCity(NextCity);
                 RemainingActions--;
@@ -105,7 +132,7 @@ namespace Pandemic.Game
 
         public virtual void BuildResearchStation()
         {
-            if (!CurrentCity.ResearchStation)
+            if (!CurrentCity.HasResearchStation)
             {
                 if (CardInHand(CurrentCity.Name))
                 {
@@ -134,53 +161,81 @@ namespace Pandemic.Game
 
         public void DiscoverCure()
         {
-            int[] CardCount = new int[5];
-            Colors CureColor = Colors.None;
-            foreach (Card CurrentCard in Hand)
+            if (!CurrentCity.HasResearchStation)
             {
-                CardCount[(int)CurrentCard.Color]++;
-                if (CardCount[(int)CurrentCard.Color]==CardsNecessaryForCure)
-                {
-                    CureColor = CurrentCard.Color;
-                }
-            }
-
-            if(CureColor == Colors.None)
+                throw new IllegalMoveException("There has to be a research station in your city for you to be able to discover a cure. Sorry...");
+            } else
             {
-                throw new IllegalMoveException($"You don't have enough cards of the same color in your hand. You need {CardsNecessaryForCure} cards of the same color, to discover a cure.");
-            }
-            else if(State.Cures[CureColor] == true)
-            {
-                throw new IllegalMoveException($"The {CureColor} cure has already been discovered");
-            }
-            else
-            {
-                List<Card> AvailableCardsForCure = null;
+                int[] CardCount = new int[5];
+                Colors CureColor = Colors.None;
                 foreach (Card CurrentCard in Hand)
                 {
-                    if (CurrentCard.Color == CureColor)
+                    CardCount[(int)CurrentCard.Color]++;
+                    if (CardCount[(int)CurrentCard.Color] == CardsNecessaryForCure)
                     {
-                        AvailableCardsForCure.Add(CurrentCard);
+                        CureColor = CurrentCard.Color;
                     }
                 }
 
-                if (AvailableCardsForCure.Count > CardsNecessaryForCure)
+                if (CureColor == Colors.None)
                 {
-                    int Choice = TextManager.ChooseItemFromList(AvailableCardsForCure, "keep");
-                    AvailableCardsForCure.RemoveAt(Choice);
+                    throw new IllegalMoveException($"You don't have enough cards of the same color in your hand. You need {CardsNecessaryForCure} cards of the same color, to discover a cure.");
                 }
-
-                Discard(AvailableCardsForCure);
-                State.Cures[CureColor] = true;
-                if (GameWon())
+                else if (State.Cures[CureColor] == true)
                 {
-                    throw new GameWonException();
+                    throw new IllegalMoveException($"The {CureColor} cure has already been discovered");
                 }
                 else
                 {
-                    RemainingActions--;
+                    List<PlayerCard> AvailableCardsForCure = new List<PlayerCard>();
+                    foreach (PlayerCard CurrentCard in Hand)
+                    {
+                        if (CurrentCard.Color == CureColor)
+                        {
+                            AvailableCardsForCure.Add(CurrentCard);
+                        }
+                    }
+
+                    if (AvailableCardsForCure.Count > CardsNecessaryForCure)
+                    {
+                        int Choice = TextManager.ChooseItemFromList(AvailableCardsForCure, "keep");
+                        AvailableCardsForCure.RemoveAt(Choice);
+                    }
+
+                    Discard(AvailableCardsForCure);
+                    State.Cures[CureColor] = true;
+                    if (GameWon())
+                    {
+                        throw new GameWonException();
+                    }
+                    else
+                    {
+                        RemainingActions--;
+                    }
                 }
             }
+        }
+
+        public void ReceiveCard(PlayerCard Card)
+        {
+            Hand.Add(Card);
+
+            if (Hand.Count > 7)
+            {
+                Discard();
+            }
+        }
+
+        public virtual void GiveCard(Role OtherPlayer)
+        {
+            PlayerCard CardToGive = Hand.Find(Card => Card.Name == CurrentCity.Name);
+            if (CardToGive == null)
+            {
+                throw new IllegalMoveException($"The {RoleName} doesn't have the City Card for {CurrentCity.Name} in their hand to give");
+            }
+
+            Hand.Remove(CardToGive);
+            OtherPlayer.ReceiveCard(CardToGive);
         }
 
         public virtual void ShareKnowledge(Role OtherPlayer)
@@ -193,9 +248,9 @@ namespace Pandemic.Game
 
             Role GivingPlayer;
             Role ReceivingPlayer;
-            if(OtherPlayer is Scientist)
+            if(OtherPlayer is Researcher)
             {
-                int Choice = TextManager.ShareKnowledgeWithScientist();
+                int Choice = TextManager.ShareKnowledgeWithResearcher();
                 if (Choice == 1)
                 {
                     GivingPlayer = OtherPlayer;
@@ -231,28 +286,6 @@ namespace Pandemic.Game
             RemainingActions--;
         }
 
-        public virtual void GiveCard(Role OtherPlayer)
-        {
-            Card CardToGive = Hand.Find(Card => Card.Name == CurrentCity.Name);
-            if (CardToGive == null)
-            {
-                throw new IllegalMoveException($"The {RoleName} doesn't have the City Card for {CurrentCity.Name} in their hand to give");
-            }
-
-            Hand.Remove(CardToGive);
-            OtherPlayer.ReceiveCard(CardToGive);
-        }
-
-        public void ReceiveCard(Card Card)
-        {
-            Hand.Add(Card);
-
-            if (Hand.Count > 7)
-            {
-                Discard();
-            }
-        }
-
         public Boolean CardInHand(string Name)
         {
             return Hand.Exists(Card => Card.Name == Name);
@@ -271,22 +304,9 @@ namespace Pandemic.Game
             return Counter;
         }
 
-        void Discard()
+        public void Discard(List<PlayerCard> CardsToDiscard)
         {
-            int Choice = TextManager.DiscardOrPlay(Hand);
-            
-            if (Hand[Choice] is EventCard)
-            {
-                Hand[Choice].Play(this);
-            } else
-            {
-                Discard(Choice);
-            }
-        }
-
-        public void Discard(List<Card> CardsToDiscard)
-        {
-            foreach (Card CurrentCard in CardsToDiscard)
+            foreach (PlayerCard CurrentCard in CardsToDiscard)
             {
                 Hand.Remove(CurrentCard);
             }
@@ -294,11 +314,11 @@ namespace Pandemic.Game
 
         public void Discard (String CardName)
         {
-            Card TempCard = Hand.Find(Card => Card.Name == CardName);
+            PlayerCard TempCard = Hand.Find(Card => Card.Name == CardName);
             Hand.Remove(TempCard);
         }
 
-        public void Discard (int index)
+        protected void Discard (int index)
         {
             Hand.RemoveAt(index);
         }
@@ -325,7 +345,7 @@ namespace Pandemic.Game
 
         protected Boolean GameWon()
         {
-            for (int i = 0; i<4; i++)
+            for (int i = 1; i<5; i++)
             {
                 if (!State.Cures[(Colors)i])
                 {

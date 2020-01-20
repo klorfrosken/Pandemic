@@ -16,7 +16,7 @@ namespace Pandemic.Game_Elements.Roles
 
         };
 
-        public OperationsExpert(City StartingCity, int PlayerID, StateManager state = null, TextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager)
+        public OperationsExpert(City StartingCity, int PlayerID, StateManager state = null, ITextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager)
         {
             SpecialActions = 1;
         }
@@ -36,7 +36,7 @@ namespace Pandemic.Game_Elements.Roles
 
         public override void BuildResearchStation()
         {
-            if (!CurrentCity.ResearchStation)
+            if (!CurrentCity.HasResearchStation)
             {
                 CurrentCity.BuildResearchStation();
                 RemainingActions--;
@@ -51,7 +51,7 @@ namespace Pandemic.Game_Elements.Roles
         void CharterFlightFromResearchStation()
         {
             int Choice = -1;
-            if (!CurrentCity.ResearchStation)
+            if (!CurrentCity.HasResearchStation)
             {
                 throw new IllegalMoveException("There needs to be a research station in the city you're in, in order to perform that action.");
             }
@@ -69,7 +69,7 @@ namespace Pandemic.Game_Elements.Roles
 
             City NextCity = State.GetCity(Choice);
 
-            List<Card> EligibleCards = Hand.FindAll(Card => Card is CityCard);
+            List<PlayerCard> EligibleCards = Hand.FindAll(Card => Card is CityCard);
             Choice = TextManager.ChooseItemFromList(EligibleCards, "discard");
 
             CurrentCity = NextCity;

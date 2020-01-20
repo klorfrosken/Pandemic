@@ -64,25 +64,19 @@ namespace Pandemic.Cards
 
         public void RemoveAt(int index)
         {
-            //this should never happen, but just in case...
-            if (index < 0 || index > _cards.Count)
-            {
-                throw new UnexpectedBehaviourException("The index was out of range for the deck. That's not good. RemoveAt() in Deck() failed"); 
-            }
-            else
+            try
             {
                 _cards.RemoveAt(index);
+            }
+            catch (Exception ex) 
+            {
+                throw new UnexpectedBehaviourException("The index was out of range for the deck. That's not good. RemoveAt() in Deck() failed", ex);
             }
         }
         
         public int Count()
         {
             return _cards.Count;
-        }
-
-        public Boolean Contains(Card card)
-        {
-            return _cards.Exists(Card => Card == card);
         }
 
         //Implementation to make Deck indexable

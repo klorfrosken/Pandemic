@@ -10,7 +10,7 @@ namespace Pandemic.Game
     {
         public string Name;
         public Colors Color;
-        public Boolean ResearchStation = false;
+        public Boolean HasResearchStation = false;
         public Boolean MultipleDiseases = false;
         public Dictionary<Colors, int> DiseaseCubes = new Dictionary<Colors, int>
         {
@@ -21,9 +21,9 @@ namespace Pandemic.Game
         };
         public List<City> ConnectedCities = new List<City>();
         StateManager _state;
-        TextManager _textManager;
+        ITextManager _textManager;
 
-        public City(string Name, Colors Color, StateManager state = null, TextManager textManager = null)
+        public City(string Name, Colors Color, StateManager state = null, ITextManager textManager = null)
         {
             this.Name = Name;
             this.Color = Color;
@@ -33,19 +33,23 @@ namespace Pandemic.Game
 
         public Boolean IsConnectedTo(City otherCity)
         {
-            return ConnectedCities.Exists(City => City == otherCity);
-        }
-
-        public Boolean BuildResearchStation()
-        {
-            if (ResearchStation)
+            if(otherCity == null)
             {
-                Console.WriteLine($"There is already a researchstation in {Name}");
-                return false;
+                throw new UnexpectedBehaviourException("The city you are trying to match is null. What kind of city could that be?!");
             } else
             {
-                ResearchStation = true;
-                return true;
+                return ConnectedCities.Exists(City => City == otherCity);
+            }
+        }
+
+        public void BuildResearchStation()
+        {
+            if (HasResearchStation)
+            {
+                throw new IllegalMoveException("There is already a research station in this city. Please try another action. ");
+            } else
+            {
+                HasResearchStation = true;
             }            
         }
 
@@ -64,21 +68,21 @@ namespace Pandemic.Game
             }
         }
 
-        public Boolean DiseaseIsEradicated(Colors Color)
+        Boolean DiseaseIsEradicated(Colors Color)
         {
-            bool CubePoolIsFull = _state.CubePools[Color] == _state.MaxCubesInCubePool;
+            bool CubePoolIsFull = (_state.CubePools[Color] == _state.MaxCubesInCubePool);
             bool CureIsFound = _state.Cures[Color];
             return (CubePoolIsFull && CureIsFound);
         }
 
-        public Boolean InfectionPreventedByQuarantineSpecialist()
+        Boolean InfectionPreventedByQuarantineSpecialist()
         {
             if (!_state.QuarantineSpecialistInGame)
             {
                 return false;
             } else
             {
-                Role QuarantineSpecialist = _state.Roles.Find(Player => Player is QuarantineSpecialist);
+                Role QuarantineSpecialist = _state.Roles.Find(Role => Role is QuarantineSpecialist);
                 Boolean QSisHere = (QuarantineSpecialist.CurrentCity == this);
                 Boolean QSisInConnectedCity = ConnectedCities.Exists(City => QuarantineSpecialist.CurrentCity == City);
 
@@ -86,7 +90,7 @@ namespace Pandemic.Game
             }
         }
 
-        public Boolean InfectionPreventedByMedic(Colors Color)
+        Boolean InfectionPreventedByMedic(Colors Color)
         {
             if (!_state.MedicInGame)
             {
@@ -108,25 +112,27 @@ namespace Pandemic.Game
                 {
                     if (!InfectionPreventedByMedic(Color))
                     {
-                        Boolean OutbreakThisChain = _state.OutbreakThisChain.Exists(City => City == this);
-                        if (DiseaseCubes[Color] == 3 && !OutbreakThisChain)
+                        if (DiseaseCubes[Color] == 3)
                         {
-                            Outbreak(Color);
-                            //blir dette helt riktig? kan den bryte ut på nytt hvis en annen by får den til å gjøre det?
+                            Boolean OutbreakThisChain = _state.OutbreakThisChain.Exists(City => City == this);
+                            if (!OutbreakThisChain)
+                            {
+                                Outbreak(Color);
+                            }
                         }
                         else
                         {
-                            if (Color != this.Color)
-                            {
-                                MultipleDiseases = true;
-                            }
-
                             if (_state.CubePools[Color] == 0)
                             {
                                 throw new TheWorldIsDeadException($"There are no more {Color} cubes left. The disease has spread too much.");
                             }
                             else
                             {
+                                if (Color != this.Color)
+                                {
+                                    MultipleDiseases = true;
+                                }
+
                                 DiseaseCubes[Color]++;
                                 _state.CubePools[Color]--;
                                 _textManager.PrintInfection(this, Color);
@@ -137,7 +143,7 @@ namespace Pandemic.Game
             }
         }
 
-        public void Outbreak(Colors Color)
+        void Outbreak(Colors Color)
         {
             _state.Outbreaks++;
 
@@ -168,7 +174,7 @@ namespace Pandemic.Game
             }
         }
 
-        //kopiert fra https://github.com/loganfranken/overriding-equals-in-c-sharp/blob/master/OverridingEquals/PhoneNumber.cs
+        //copied from https://github.com/loganfranken/overriding-equals-in-c-sharp/blob/master/OverridingEquals/PhoneNumber.cs
         public override int GetHashCode()
         {
             unchecked
@@ -188,6 +194,25 @@ namespace Pandemic.Game
         public override string ToString()
         {
             return Name;
+        }
+
+
+        //Unit Test methods
+        public Boolean TestDiseaseIsEradicated(Colors color)
+        {
+            return DiseaseIsEradicated(color);
+        }
+        public Boolean TestInfectionPreventedByQuarantineSpecialist()
+        {
+            return InfectionPreventedByQuarantineSpecialist();
+        }
+        public Boolean TestInfectionPreventedByMedic(Colors color)
+        {
+            return InfectionPreventedByMedic(color);
+        }
+        public void TestOutbreak(Colors color)
+        {
+            Outbreak(color);
         }
     }
 }

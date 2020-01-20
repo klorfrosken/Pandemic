@@ -17,4 +17,8 @@
     <EmbeddedResource Include="Managers\Cities.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Decks\" />
+  </ItemGroup>
+
 </Project>

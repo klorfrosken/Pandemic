@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Pandemic.Game;
 using Pandemic.Managers;
 using Pandemic.Exceptions;
@@ -35,7 +34,11 @@ namespace Pandemic.Cards.EventCards
 
                 int Choice = textManager.GetValidInteger(1, _state.InfectionDiscard.Count());
                 InfectionCard cardToRemove = _state.InfectionDiscard[Choice] as InfectionCard;   //hvorfor er ikke dette et infection-kort allerede??
-                _state.InfectionDiscard.Remove(cardToRemove);
+                
+                if (!_state.InfectionDiscard.Remove(cardToRemove))
+                {
+                    throw new UnexpectedBehaviourException("A card that doesn't exist was attempted removed from a Deck. That's not good...");
+                }
             }
         }
     }

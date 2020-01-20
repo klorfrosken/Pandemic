@@ -1,505 +1,627 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Text;
-//using Xunit;
-//using Pandemic.Game;
-//using Pandemic.Cards;
-//using Pandemic.Managers;
-//using Pandemic.Game_Elements.Roles;
+﻿using System;
+using System.Collections.Generic;
+using Xunit;
+using Pandemic.Game;
+using Pandemic.Managers;
+using Pandemic.Game_Elements.Roles;
+using Pandemic.Exceptions;
+using Pandemic.UnitTests.TestClasses;
 
-//namespace Pandemic.UnitTests.GameElements
-//{
-//    public class CityTests
-//    {
-//        [Fact]
-//        void IsConnectedTo_CitiesAreConnected_True()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            City ConnectedCity = new City("Chicago", Colors.Blue);
-//            List<City> ConnectedCities = new List<City>
-//            {
-//                ConnectedCity,
-//                new City("Washington", Colors.Blue),
-//                new City("Miami", Colors.Yellow)
-//            };
-//            ActualCity.ConnectedCities.AddRange(ConnectedCities);
+namespace Pandemic.UnitTests.GameElements
+{
+    public class CityTests
+    {
+        [Fact]
+        void IsConnectedTo_CitiesAreConnected_True()
+        {
+            City actualCity = new City("Atlanta", Colors.Blue);
+            City connectedCity = new City("Chicago", Colors.Blue);
+            List<City> ConnectedCities = new List<City>
+            {
+                connectedCity,
+                new City("Washington", Colors.Blue),
+                new City("Miami", Colors.Yellow)
+            };
+            actualCity.ConnectedCities.AddRange(ConnectedCities);
 
-//            Assert.True(ActualCity.IsConnectedTo(ConnectedCity));
-//        }
+            Boolean actual = actualCity.IsConnectedTo(connectedCity);
 
-//        [Fact]
-//        void IsConnectedTo_CitiesAreNotConnected_False()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            City ConnectedCity = new City("Chicago", Colors.Blue);
-//            List<City> ConnectedCities = new List<City>
-//            {
-//                new City("Washington", Colors.Blue),
-//                new City("Miami", Colors.Yellow)
-//            };
-//            ActualCity.ConnectedCities.AddRange(ConnectedCities);
+            Assert.True(actual);
+        }
 
-//            Assert.False(ActualCity.IsConnectedTo(ConnectedCity));
-//        }
+        [Fact]
+        void IsConnectedTo_CitiesAreNotConnected_False()
+        {
+            City actualCity = new City("Atlanta", Colors.Blue);
+            City connectedCity = new City("Chicago", Colors.Blue);
+            List<City> ConnectedCities = new List<City>
+            {
+                new City("Washington", Colors.Blue),
+                new City("Miami", Colors.Yellow)
+            };
+            actualCity.ConnectedCities.AddRange(ConnectedCities);
 
-//        [Fact]
-//        void BuildResearchStation_ResearchStationIsBuilt_True()
-//        {
-//            City ActualCity = new City("Paris", Colors.Blue);
-//            Assert.True(ActualCity.BuildResearchStation());
-//        }
+            Boolean actual = actualCity.IsConnectedTo(connectedCity);
 
-//        [Fact]
-//        void BuildResearchStation_CityAlreadyHasResearchStation_True()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            ActualCity.ResearchStation = true;
-//            Assert.False(ActualCity.BuildResearchStation());
-//        }
-    
-//        [Fact]
-//        void TreatDisease_NoDiseaseToCure_False()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Assert.False(ActualCity.TreatDisease(Colors.Blue));
-//        }
+            Assert.False(actual);
+        }
 
-//        //Dette er ikke god praksis, men hvordan skal man ellers gjøre det når metoden gjør 3 ting. En må jo sjekke at alle tre er gjennomført...
-//        [Fact]
-//        void TreatDisease_YellowIsCured_True()
-//        {
-//            new StateManager(Testing: true, MaxCubesInCubePool: 12);
-//            City ActualCity = new City("Miami", Colors.Yellow);
-//            Colors ColorCubeToRemove = Colors.Yellow;
-//            ActualCity.DiseaseCubes[ColorCubeToRemove] = 2;
+        [Fact]
+        void IsConnectedTo_ConnectedCityIsNull_ThrowsException()
+        {
+            City actualCity = new City("Atlanta", Colors.Blue);
+            City connectedCity = null;
+            List<City> ConnectedCities = new List<City>
+            {
+                new City("Washington", Colors.Blue),
+                new City("Miami", Colors.Yellow)
+            };
+            actualCity.ConnectedCities.AddRange(ConnectedCities);
 
-//            bool MethodReturnsTrue = ActualCity.TreatDisease(ColorCubeToRemove);
+            Assert.Throws<UnexpectedBehaviourException>(() => actualCity.IsConnectedTo(connectedCity));
+        }
 
-//            bool CubeIsRemovedFromCity = (ActualCity.DiseaseCubes[ColorCubeToRemove] == 1);
-//            bool CubeIsAddedToCubePool = (StateManager.CubePools[ColorCubeToRemove] == 13);
+        [Fact]
+        void BuildResearchStation_ResearchStationIsBuilt_True()
+        {
+            City actualCity = new City("Paris", Colors.Blue);
 
-//            Assert.True(CubeIsRemovedFromCity && MethodReturnsTrue && CubeIsAddedToCubePool);
-//        }
+            actualCity.BuildResearchStation();
 
-//        [Fact]
-//        void TreatDisease_RedIsCured_True()
-//        {
-//            new StateManager(Testing: true, MaxCubesInCubePool: 12);
-//            City ActualCity = new City("Miami", Colors.Yellow);
-//            Colors ColorCubeToRemove = Colors.Red;
-//            ActualCity.DiseaseCubes[ColorCubeToRemove] = 2;
+            Assert.True(actualCity.HasResearchStation);
+        }
 
-//            bool MethodReturnsTrue = ActualCity.TreatDisease(ColorCubeToRemove);
+        [Fact]
+        void BuildResearchStation_CityAlreadyHasResearchStation_ThrowsException()
+        {
+            City actualCity = new City("Paris", Colors.Blue);
+            actualCity.BuildResearchStation();
 
-//            bool CubeIsRemovedFromCity = (ActualCity.DiseaseCubes[ColorCubeToRemove] == 1);
-//            bool CubeIsAddedToCubePool = (StateManager.CubePools[ColorCubeToRemove] == 13);
+            Assert.Throws<IllegalMoveException>(() => actualCity.BuildResearchStation());
+        }
 
-//            Assert.True(CubeIsRemovedFromCity && MethodReturnsTrue && CubeIsAddedToCubePool);
-//        }
-
-//        [Fact]
-//        void TreatDisease_BlueIsCured_True()
-//        {
-//            new StateManager(Testing: true, MaxCubesInCubePool: 12);
-//            City ActualCity = new City("Miami", Colors.Yellow);
-//            Colors ColorCubeToRemove = Colors.Blue;
-//            ActualCity.DiseaseCubes[ColorCubeToRemove] = 2;
-
-//            bool MethodReturnsTrue = ActualCity.TreatDisease(ColorCubeToRemove);
-
-//            bool CubeIsRemovedFromCity = (ActualCity.DiseaseCubes[ColorCubeToRemove] == 1);
-//            bool CubeIsAddedToCubePool = (StateManager.CubePools[ColorCubeToRemove] == 13);
-
-//            Assert.True(CubeIsRemovedFromCity && MethodReturnsTrue && CubeIsAddedToCubePool);
-//        }
-
-//        [Fact]
-//        void TreatDisease_BlackIsCured_True()
-//        {
-//            new StateManager(Testing: true, MaxCubesInCubePool: 12);
-//            City ActualCity = new City("Miami", Colors.Yellow);
-//            Colors ColorCubeToRemove = Colors.Black;
-//            ActualCity.DiseaseCubes[ColorCubeToRemove] = 2;
-           
-//            bool MethodReturnsTrue = ActualCity.TreatDisease(ColorCubeToRemove);
-
-//            bool CubeIsRemovedFromCity = (ActualCity.DiseaseCubes[ColorCubeToRemove] == 1);
-//            bool CubeIsAddedToCubePool = (StateManager.CubePools[ColorCubeToRemove] == 13);
-
-//            Assert.True(CubeIsRemovedFromCity && MethodReturnsTrue && CubeIsAddedToCubePool);
-//        }
-
-//        [Fact]
-//        void TreatDisease_ColorIsNone_ThrowsException()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Assert.Throws<ArgumentException>(() => ActualCity.TreatDisease(Colors.None));
-//        }
-
-//        [Fact]
-//        void DiseaseIsEradicated_CubePoolIsNotFullAndCureIsFound_False()
-//        {
-//            new StateManager(Testing: true);
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Colors CurrentColor = Colors.Blue;
-//            StateManager.CubePools[CurrentColor]--;
-//            StateManager.Cures[CurrentColor] = true;
-
-//            Assert.False(ActualCity.DiseaseIsEradicated(CurrentColor));
-//        }
-
-//        [Fact]
-//        void DiseaseIsEradicated_CubePoolIsFullAndCureIsFound_True()
-//        {
-//            new StateManager(Testing: true);
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Colors CurrentColor = Colors.Blue;
-//            StateManager.Cures[CurrentColor] = true;
-
-//            Assert.True(ActualCity.DiseaseIsEradicated(CurrentColor));
-//        }
-
-//        [Fact]
-//        void DiseaseIsEradicated_CubePoolIsNotFullAndCureIsNotFound_False()
-//        {
-//            new StateManager(Testing: true);
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Colors CurrentColor = Colors.Blue;
-//            StateManager.CubePools[CurrentColor]--;
-
-//            Assert.False(ActualCity.DiseaseIsEradicated(CurrentColor));
-//        }
-
-//        [Fact]
-//        void DiseaseIsEradicated_CubePoolIsFullCureIsNotFound_False()
-//        {
-//            new StateManager(Testing: true);
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Colors CurrentColor = Colors.Blue;
-
-//            Assert.False(ActualCity.DiseaseIsEradicated(CurrentColor));
-//        }
-
-//        [Fact]
-//        void InfectionPreventedByQuarantineSpecialist_QuarantineSpecialistIsNotInGame_False()
-//        {
-//            new StateManager(Testing: true);
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-
-//            Assert.False(ActualCity.InfectionPreventedByQuarantineSpecialist());
-//        }
-
-//        [Fact]
-//        void InfectionPreventedByQuarantineSpecialist_QuarantineSpecialistIsInCity_True()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Role TestPlayer = new QuarantineSpecialist(ActualCity);
-//            new StateManager(Testing: true, QuarantineSpecialistInGame: true ,TestPlayer: TestPlayer);
-
-//            Assert.True(ActualCity.InfectionPreventedByQuarantineSpecialist());
-//        }
-
-//        [Fact]
-//        void InfectionPreventedByQuarantineSpecialist_QuarantineSpecialistIsInConnectedCity_True()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            City ConnectedCity = new City("Miami", Colors.Yellow);
-//            ActualCity.ConnectedCities.Add(ConnectedCity);
-//            Role TestPlayer = new QuarantineSpecialist(ConnectedCity);
-//            new StateManager(Testing: true, QuarantineSpecialistInGame: true, TestPlayer: TestPlayer);
-
-//            Assert.True(ActualCity.InfectionPreventedByQuarantineSpecialist());
-//        }
-
-//        [Fact]
-//        void InfectionPreventedByMedic_MedicNotInGame_False()
-//        {
-//            Colors CurrentColor = Colors.Blue;
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            new StateManager(Testing: true);
-
-//            Assert.False(ActualCity.InfectionPreventedByMedic(CurrentColor));
-//        }
-
-//        [Fact]
-//        void InfectionPreventedByMedic_MedicNotInCityAndNoCure_False()
-//        {
-//            Colors CurrentColor = Colors.Blue;
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            City StartingCity = new City("Miami", Colors.Yellow);
-//            Role TestPlayer = new Medic(StartingCity);
-//            new StateManager(Testing: true, TestPlayer: TestPlayer);
-
-//            Assert.False(ActualCity.InfectionPreventedByMedic(CurrentColor));
-//        }
-
-//        [Fact]
-//        void InfectionPreventedByMedic_MedicInCityAndNoCure_False()
-//        {
-//            Colors CurrentColor = Colors.Blue;
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Role TestPlayer = new Medic(ActualCity);
-//            new StateManager(Testing: true, TestPlayer: TestPlayer);
-
-//            Assert.False(ActualCity.InfectionPreventedByMedic(CurrentColor));
-//        }
-
-//        [Fact]
-//        void InfectionPreventedByMedic_MedicNotInCityAndCure_False()
-//        {
-//            Colors CurrentColor = Colors.Blue;
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            City StartingCity = new City("Miami", Colors.Yellow);
-//            Role TestPlayer = new Medic(StartingCity);
-//            new StateManager(Testing: true, TestPlayer: TestPlayer);
-//            StateManager.Cures[CurrentColor] = true;
-
-//            Assert.False(ActualCity.InfectionPreventedByMedic(CurrentColor));
-//        }
-
-//        [Fact]
-//        void InfectionPreventedByMedic_MedicInCityAndCure_True()
-//        {
-//            Colors CurrentColor = Colors.Blue;
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Role TestPlayer = new Medic(ActualCity);
-//            new StateManager(Testing: true, TestPlayer: TestPlayer, MedicInGame: true);
-//            StateManager.Cures[CurrentColor] = true;
-
-//            Assert.True(ActualCity.InfectionPreventedByMedic(CurrentColor));
-//        }
-
-//        [Fact]
-//        void InfectCity_DiseaseEradicated_Fails()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            new StateManager(Testing: true);
-//            Colors CurrentColor = Colors.Blue;
-//            StateManager.Cures[CurrentColor] = true;
-
-//            ActualCity.InfectCity(CurrentColor);
-
-//            Assert.True(ActualCity.DiseaseCubes[CurrentColor] == 0);
-//        }
-
-//        [Fact]
-//        void InfectCity_DiseasePreventedByQuarantineSpecialist_Fails()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Role TestPlayer = new QuarantineSpecialist(ActualCity);
-//            new StateManager(Testing: true, TestPlayer: TestPlayer);
-//            Colors CurrentColor = Colors.Blue;
-
-//            ActualCity.InfectCity(CurrentColor);
-
-//            Assert.True(ActualCity.DiseaseCubes[CurrentColor] == 0);
-//        }
-
-//        [Fact]
-//        void InfectCity_DiseasePreventedByMedic_Fails()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            Role TestPlayer = new Medic(ActualCity);
-//            new StateManager(Testing: true, TestPlayer: TestPlayer);
-//            Colors CurrentColor = Colors.Blue;
-//            StateManager.Cures[CurrentColor] = true;
-
-//            ActualCity.InfectCity(CurrentColor);
-
-//            Assert.True(ActualCity.DiseaseCubes[CurrentColor] == 0);
-//        }
-
-//        [Fact]
-//        void Outbreak_Succeeds()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            City ConnectedCity1 = new City("Washington", Colors.Blue);
-//            City ConnectedCity2 = new City("Chicago", Colors.Blue);
-//            City ConnectedCity3 = new City("Miami", Colors.Yellow);
-
-//            ActualCity.ConnectedCities.Add(ConnectedCity1);
-//            ActualCity.ConnectedCities.Add(ConnectedCity2);
-//            ActualCity.ConnectedCities.Add(ConnectedCity3);
-
-//            new StateManager(Testing: true);
-//            Colors CurrentColor = Colors.Blue;
-
-//            ActualCity.Outbreak(CurrentColor);
+        [Fact]
+        void TreatDisease_NoDiseaseToCure_False()
+        {
+            City actualCity = new City("Atlanta", Colors.Blue);
             
-//            bool OutbreaksIncreased = (StateManager.Outbreaks == 1);
-//            bool CityInOutbreaksThisChain = StateManager.OutbreakThisChain.Exists(City => City == ActualCity);
-//            bool CubeInConnectedCity1 = (ConnectedCity1.DiseaseCubes[CurrentColor] == 1);
-//            bool CubeInConnectedCity2 = (ConnectedCity2.DiseaseCubes[CurrentColor] == 1);
-//            bool CubeInConnectedCity3 = (ConnectedCity3.DiseaseCubes[CurrentColor] == 1);
-//            bool CubeInAllConnectedCities = (CubeInConnectedCity1 && CubeInConnectedCity2 && CubeInConnectedCity3);
+            Assert.Throws<IllegalMoveException>(() => actualCity.TreatDisease(Colors.Blue));
+        }
 
-//            Assert.True(OutbreaksIncreased && CityInOutbreaksThisChain && CubeInAllConnectedCities);
-//        }
+        [Fact]
+        void TreatDisease_ColorIsNone_ThrowsException()
+        {
+            City actualCity = new City("Atlanta", Colors.Blue);
+            Assert.Throws<UnexpectedBehaviourException>(() => actualCity.TreatDisease(Colors.None));
+        }
 
-//        [Fact]
-//        void InfectCity_OutbreakAndNotOutbreakThisChain_Succeeds()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            City ConnectedCity1 = new City("Washington", Colors.Blue);
-//            City ConnectedCity2 = new City("Chicago", Colors.Blue);
-//            City ConnectedCity3 = new City("Miami", Colors.Yellow);
+        [Fact]
+        void TreatDisease_YellowIsCured_True()
+        {
+            StateManager state = new StateManager(Testing: true, MaxCubesInCubePool: 12);
+            City actualCity = new City("Miami", Colors.Yellow, state);
+            Colors ColorCubeToRemove = Colors.Yellow;
+            actualCity.DiseaseCubes[ColorCubeToRemove] = 2;
 
-//            ActualCity.ConnectedCities.Add(ConnectedCity1);
-//            ActualCity.ConnectedCities.Add(ConnectedCity2);
-//            ActualCity.ConnectedCities.Add(ConnectedCity3);
+            int expectedCubesCity = 1;
+            int expectedCubesState = 13;
 
-//            new StateManager(Testing: true);
-//            Colors CurrentColor = Colors.Blue;
-//            ActualCity.DiseaseCubes[CurrentColor] = 3;
+            actualCity.TreatDisease(ColorCubeToRemove);
 
-//            ActualCity.InfectCity(CurrentColor);
+            Assert.Equal(expectedCubesCity, actualCity.DiseaseCubes[ColorCubeToRemove]);
+            Assert.Equal(expectedCubesState, state.CubePools[ColorCubeToRemove]);
+        }
 
-//            bool OutbreaksIncreased = (StateManager.Outbreaks == 1);
-//            bool CityInOutbreaksThisChain = StateManager.OutbreakThisChain.Exists(City => City == ActualCity);
-//            bool CubeInConnectedCity1 = (ConnectedCity1.DiseaseCubes[CurrentColor] == 1);
-//            bool CubeInConnectedCity2 = (ConnectedCity2.DiseaseCubes[CurrentColor] == 1);
-//            bool CubeInConnectedCity3 = (ConnectedCity3.DiseaseCubes[CurrentColor] == 1);
-//            bool CubeInAllConnectedCities = (CubeInConnectedCity1 && CubeInConnectedCity2 && CubeInConnectedCity3);
+        [Fact]
+        void TreatDisease_RedIsCured_True()
+        {
+            StateManager state = new StateManager(Testing: true, MaxCubesInCubePool: 12);
+            City actualCity = new City("Miami", Colors.Yellow, state);
+            Colors ColorCubeToRemove = Colors.Red;
+            actualCity.DiseaseCubes[ColorCubeToRemove] = 2;
 
-//            Assert.True(OutbreaksIncreased && CityInOutbreaksThisChain && CubeInAllConnectedCities);
-//        }
+            int expectedCubesCity = 1;
+            int expectedCubesState = 13;
 
-//        [Fact]
-//        void InfectCity_OutbreakAndAlreadyOutbreakThisChain_Fails()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            City ConnectedCity1 = new City("Washington", Colors.Blue);
-//            City ConnectedCity2 = new City("Chicago", Colors.Blue);
-//            City ConnectedCity3 = new City("Miami", Colors.Yellow);
+            actualCity.TreatDisease(ColorCubeToRemove);
 
-//            ActualCity.ConnectedCities.Add(ConnectedCity1);
-//            ActualCity.ConnectedCities.Add(ConnectedCity2);
-//            ActualCity.ConnectedCities.Add(ConnectedCity3);
+            Assert.Equal(expectedCubesCity, actualCity.DiseaseCubes[ColorCubeToRemove]);
+            Assert.Equal(expectedCubesState, state.CubePools[ColorCubeToRemove]);
+        }
 
-//            new StateManager(Testing: true);
-//            Colors CurrentColor = Colors.Blue;
-//            ActualCity.DiseaseCubes[CurrentColor] = 3;
-//            StateManager.OutbreakThisChain.Add(ActualCity);
+        [Fact]
+        void TreatDisease_BlueIsCured_True()
+        {
+            StateManager state = new StateManager(Testing: true, MaxCubesInCubePool: 12);
+            City actualCity = new City("Miami", Colors.Yellow, state);
+            Colors ColorCubeToRemove = Colors.Blue;
+            actualCity.DiseaseCubes[ColorCubeToRemove] = 2;
 
-//            ActualCity.InfectCity(CurrentColor);
+            int expectedCubesCity = 1;
+            int expectedCubesState = 13;
 
-//            bool OutbreaksIncreased = (StateManager.Outbreaks == 1);
-//            bool CubeInConnectedCity1 = (ConnectedCity1.DiseaseCubes[CurrentColor] == 0);
-//            bool CubeInConnectedCity2 = (ConnectedCity2.DiseaseCubes[CurrentColor] == 0);
-//            bool CubeInConnectedCity3 = (ConnectedCity3.DiseaseCubes[CurrentColor] == 0);
-//            bool NoCubeInAllConnectedCities = (CubeInConnectedCity1 && CubeInConnectedCity2 && CubeInConnectedCity3);
+            actualCity.TreatDisease(ColorCubeToRemove);
 
-//            Assert.True(!OutbreaksIncreased && NoCubeInAllConnectedCities);
-//        }
+            Assert.Equal(expectedCubesCity, actualCity.DiseaseCubes[ColorCubeToRemove]);
+            Assert.Equal(expectedCubesState, state.CubePools[ColorCubeToRemove]);
+        }
 
-//        [Fact]
-//        void InfectCity_CubeNotCityColor_Succeeds()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            new StateManager(Testing: true, MaxCubesInCubePool: 12);
-//            Colors CurrentColor = Colors.Yellow;
+        [Fact]
+        void TreatDisease_BlackIsCured_True()
+        {
+            StateManager state = new StateManager(Testing: true, MaxCubesInCubePool: 12);
+            City actualCity = new City("Miami", Colors.Yellow, state);
+            Colors ColorCubeToRemove = Colors.Black;
+            actualCity.DiseaseCubes[ColorCubeToRemove] = 2;
 
-//            ActualCity.InfectCity(CurrentColor);
+            int expectedCubesCity = 1;
+            int expectedCubesState = 13;
 
-//            bool MultipleDiseasesInCity = ActualCity.MultipleDiseases;
-//            bool DiseaseCubeInCity = (ActualCity.DiseaseCubes[CurrentColor] == 1);
-//            bool CubePoolDecreased = (StateManager.CubePools[CurrentColor] == 11);
+            actualCity.TreatDisease(ColorCubeToRemove);
 
-//            Assert.True(MultipleDiseasesInCity && DiseaseCubeInCity && CubePoolDecreased);
-//        }
+            Assert.Equal(expectedCubesCity, actualCity.DiseaseCubes[ColorCubeToRemove]);
+            Assert.Equal(expectedCubesState, state.CubePools[ColorCubeToRemove]);
+        }
 
-//        [Fact]
-//        void InfectCity_CubeIsCityColor_Succeeds()
-//        {
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            new StateManager(Testing: true, MaxCubesInCubePool: 12);
-//            Colors CurrentColor = Colors.Blue;
+        [Fact]
+        void DiseaseIsEradicated_CubePoolIsNotFullAndCureIsFound_False()
+        {
+            Colors currentColor = Colors.Blue;
 
-//            ActualCity.InfectCity(CurrentColor);
+            StateManager state = new StateManager(
+                Testing: true,
+                MaxCubesInCubePool: 12,
+                Cures: new Dictionary<Colors, bool> { { currentColor, true } },
+                CubePools: new Dictionary<Colors, int> { { currentColor, 5 } }
+                );
+            City actualCity = new City("Atlanta", currentColor, state);
 
-//            bool MultipleDiseasesInCity = ActualCity.MultipleDiseases;
-//            bool DiseaseCubeInCity = (ActualCity.DiseaseCubes[CurrentColor] == 1);
-//            bool CubePoolDecreased = (StateManager.CubePools[CurrentColor] == 11);
+            bool diseaseEradicated = actualCity.TestDiseaseIsEradicated(currentColor);
 
-//            Assert.True(!MultipleDiseasesInCity && DiseaseCubeInCity && CubePoolDecreased);
-//        }
+            Assert.False(diseaseEradicated);
+        }
 
-//        [Fact]
-//        void InfectCity_NoMoreCubesInCubePool_Fails()
-//        {
-//            //This method is currently written to fail as there is no method for loosing conditions yet
-//            City ActualCity = new City("Atlanta", Colors.Blue);
-//            new StateManager(Testing: true, MaxCubesInCubePool: 0);
-//            Colors CurrentColor = Colors.Blue;
+        [Fact]
+        void DiseaseIsEradicated_CubePoolIsFullAndCureIsFound_True()
+        {
+            Colors currentColor = Colors.Blue;
 
-//            ActualCity.InfectCity(CurrentColor);
+            StateManager state = new StateManager(
+                Testing: true,
+                MaxCubesInCubePool: 12,
+                Cures: new Dictionary<Colors, bool> { { currentColor, true } },
+                CubePools: new Dictionary<Colors, int> { { currentColor, 12 } }
+                );
+            City actualCity = new City("Atlanta", currentColor, state);
 
-//            bool LooseCondition = false;
+            bool diseaseEradicated = actualCity.TestDiseaseIsEradicated(currentColor);
 
-//            Assert.True(LooseCondition);
-//        }
+            Assert.True(diseaseEradicated);
+        }
 
-//        [Fact]
-//        void Equals_ObjectIsMatchingCity_Succeeds()
-//        {
-//            City FirstCity = new City("Atlanta", Colors.Blue);
-//            City SecondCity = new City("Atlanta", Colors.Blue);
+        [Fact]
+        void DiseaseIsEradicated_CubePoolIsNotFullAndCureIsNotFound_False()
+        {
+            Colors currentColor = Colors.Blue;
 
-//            Assert.Equal(FirstCity, SecondCity);
-//        }
+            StateManager state = new StateManager(
+                Testing: true,
+                MaxCubesInCubePool: 12,
+                Cures: new Dictionary<Colors, bool> { { currentColor, false } },
+                CubePools: new Dictionary<Colors, int> { { currentColor, 5 } }
+                );
+            City actualCity = new City("Atlanta", currentColor, state);
 
-//        [Fact]
-//        void Equals_ObjectIsNotMatchingCity_Fails()
-//        {
-//            City FirstCity = new City("Atlanta", Colors.Blue);
-//            City SecondCity = new City("Paris", Colors.Blue);
+            bool diseaseEradicated = actualCity.TestDiseaseIsEradicated(currentColor);
 
-//            Assert.NotEqual(FirstCity, SecondCity);
-//        }
+            Assert.False(diseaseEradicated);
+        }
 
-//        [Fact]
-//        void Equals_ObjectIsMatchingCityCard_Succeeds()
-//        {
-//            City FirstCity = new City("Atlanta", Colors.Blue);
-//            CityCard CityCard = new CityCard("Atlanta", Colors.Blue);
+        [Fact]
+        void DiseaseIsEradicated_CubePoolIsFullCureIsNotFound_False()
+        {
+            Colors currentColor = Colors.Blue;
 
-//            Assert.True(FirstCity.Equals(CityCard));
-//        }
+            StateManager state = new StateManager(
+                Testing: true,
+                MaxCubesInCubePool: 12,
+                Cures: new Dictionary<Colors, bool> { { currentColor, false } },
+                CubePools: new Dictionary<Colors, int> { { currentColor, 12 } }
+                );
+            City actualCity = new City("Atlanta", currentColor, state);
 
-//        [Fact]
-//        void Equals_ObjectIsNotMatchingCityCard_Fails()
-//        {
-//            City FirstCity = new City("Atlanta", Colors.Blue);
-//            CityCard CityCard = new CityCard("Paris", Colors.Blue);
+            bool diseaseEradicated = actualCity.TestDiseaseIsEradicated(currentColor);
 
-//            Assert.False(FirstCity.Equals(CityCard));
-//        }
+            Assert.False(diseaseEradicated);
+        }
 
-//        [Fact]
-//        void Equals_ObjectIsMatchingInfectionCard_Succeeds()
-//        {
-//            City FirstCity = new City("Atlanta", Colors.Blue);
-//            InfectionCard CityCard = new InfectionCard("Atlanta", Colors.Blue);
+        [Fact]
+        void InfectionPreventedByQuarantineSpecialist_QuarantineSpecialistIsNotInGame_False()
+        {
+            StateManager state = new StateManager(
+                Testing: true,
+                QuarantineSpecialistInGame: false);
+            City actualCity = new City("Atlanta", Colors.Blue, state);
 
-//            Assert.True(FirstCity.Equals(CityCard));
-//        }
+            bool InfectionPrevented = actualCity.TestInfectionPreventedByQuarantineSpecialist();
 
-//        [Fact]
-//        void Equals_ObjectIsNotMatchingInfectionCard_Fails()
-//        {
-//            City FirstCity = new City("Atlanta", Colors.Blue);
-//            InfectionCard CityCard = new InfectionCard("Paris", Colors.Blue);
+            Assert.False(InfectionPrevented);
+        }
 
-//            Assert.False(FirstCity.Equals(CityCard));
-//        }
+        [Fact]
+        void InfectionPreventedByQuarantineSpecialist_QuarantineSpecialistNotInVicinity_False()
+        {
+            City otherCity = new City("Lima", Colors.Yellow);
+            Role quarantineSpecialist = new QuarantineSpecialist(otherCity, 0);
+            
+            StateManager state = new StateManager(
+                Testing: true,
+                QuarantineSpecialistInGame: true,
+                Roles: new List<Role> { quarantineSpecialist });
+            City actualCity = new City("Atlanta", Colors.Blue, state);
 
-//        [Fact]
-//        void Equals_ObjectIsNotValid_Fails()
-//        {
-//            City FirstCity = new City("Atlanta", Colors.Blue);
-//            var i = 2;
+            bool InfectionPrevented = actualCity.TestInfectionPreventedByQuarantineSpecialist();
 
-//            Assert.False(FirstCity.Equals(i));
-//        }
-//    }
-//}
+            Assert.False(InfectionPrevented);
+        }
+
+        [Fact]
+        void InfectionPreventedByQuarantineSpecialist_QuarantineSpecialistIsInCity_True()
+        {
+            List<Role> roles = new List<Role>();
+            StateManager state = new StateManager(
+                Testing: true,
+                QuarantineSpecialistInGame: true,
+                Roles: roles);
+
+            City actualCity = new City("Atlanta", Colors.Blue, state);
+            roles.Add(new QuarantineSpecialist(actualCity, 0));
+
+            bool InfectionPrevented = actualCity.TestInfectionPreventedByQuarantineSpecialist();
+
+            Assert.True(InfectionPrevented);
+        }
+
+        [Fact]
+        void InfectionPreventedByQuarantineSpecialist_QuarantineSpecialistIsInConnectedCity_True()
+        {
+            City connectedCity = new City("Miami", Colors.Yellow);
+            Role quarantineSpecialist = new QuarantineSpecialist(connectedCity, 0);
+
+            StateManager state = new StateManager(
+                Testing: true,
+                QuarantineSpecialistInGame: true,
+                Roles: new List<Role> { quarantineSpecialist });
+            City actualCity = new City("Atlanta", Colors.Blue, state);
+            actualCity.ConnectedCities.Add(connectedCity);
+
+            bool InfectionPrevented = actualCity.TestInfectionPreventedByQuarantineSpecialist();
+
+            Assert.True(InfectionPrevented);
+        }
+
+        [Fact]
+        void InfectionPreventedByMedic_MedicNotInGame_False()
+        {
+            Colors currentColor = Colors.Blue;
+            StateManager state = new StateManager(
+                Testing: true,
+                MedicInGame: false);
+            City actualCity = new City("Atlanta", currentColor, state);
+
+            Boolean InfectionPrevented = actualCity.TestInfectionPreventedByMedic(currentColor);
+
+            Assert.False(InfectionPrevented);
+        }
+
+        [Fact]
+        void InfectionPreventedByMedic_MedicNotInCityAndNoCure_False()
+        {
+            Colors currentColor = Colors.Blue;
+            City otherCity = new City("Lima", Colors.Yellow);
+            Role medic = new Medic(otherCity, 0);
+            StateManager state = new StateManager(
+                Testing: true,
+                MedicInGame: true,
+                Roles: new List<Role> { medic },
+                Cures: new Dictionary<Colors, bool> { { currentColor, false } });
+            City actualCity = new City("Atlanta", currentColor, state);
+
+            Boolean InfectionPrevented = actualCity.TestInfectionPreventedByMedic(currentColor);
+
+            Assert.False(InfectionPrevented);
+        }
+
+        [Fact]
+        void InfectionPreventedByMedic_MedicInCityAndNoCure_False()
+        {
+            Colors currentColor = Colors.Blue;
+            List<Role> roles = new List<Role>();
+            StateManager state = new StateManager(
+                Testing: true,
+                MedicInGame: true,
+                Roles: roles,
+                Cures: new Dictionary<Colors, bool> { { currentColor, false } });
+            City actualCity = new City("Atlanta", currentColor, state);
+            roles.Add(new Medic(actualCity, 0));
+            
+            Boolean InfectionPrevented = actualCity.TestInfectionPreventedByMedic(currentColor);
+
+            Assert.False(InfectionPrevented);
+        }
+
+        [Fact]
+        void InfectionPreventedByMedic_MedicNotInCityAndCure_False()
+        {
+            Colors currentColor = Colors.Blue;
+            City otherCity = new City("Lima", Colors.Yellow);
+            Role medic = new Medic(otherCity, 0);
+            StateManager state = new StateManager(
+                Testing: true,
+                MedicInGame: true,
+                Roles: new List<Role> { medic },
+                Cures: new Dictionary<Colors, bool> { { currentColor, true } });
+            City actualCity = new City("Atlanta", currentColor, state);
+
+            Boolean InfectionPrevented = actualCity.TestInfectionPreventedByMedic(currentColor);
+
+            Assert.False(InfectionPrevented);
+        }
+
+        [Fact]
+        void InfectionPreventedByMedic_MedicInCityAndCure_True()
+        {
+            Colors currentColor = Colors.Blue;
+            List<Role> roles = new List<Role>();
+            StateManager state = new StateManager(
+                Testing: true,
+                MedicInGame: true,
+                Roles: roles,
+                Cures: new Dictionary<Colors, bool> { { currentColor, true } });
+            City actualCity = new City("Atlanta", currentColor, state);
+            roles.Add(new Medic(actualCity, 0));
+
+            Boolean InfectionPrevented = actualCity.TestInfectionPreventedByMedic(currentColor);
+
+            Assert.True(InfectionPrevented);
+        }
+
+        [Fact]
+        void InfectCity_DiseaseEradicated_NoInfection()
+        {
+            Colors currentColor = Colors.Blue;
+
+            StateManager state = new StateManager(
+                Testing: true,
+                MaxCubesInCubePool: 12,
+                Cures: new Dictionary<Colors, bool> { { currentColor, true } },
+                CubePools: new Dictionary<Colors, int> { { currentColor, 12 } }
+                );
+            City actualCity = new City("Atlanta", currentColor, state);
+
+            actualCity.InfectCity(currentColor);
+
+            Assert.Equal(0, actualCity.DiseaseCubes[currentColor]);
+        }
+
+        [Fact]
+        void InfectCity_DiseasePreventedByQuarantineSpecialist_NoInfection()
+        {
+            List<Role> roles = new List<Role>();
+            StateManager state = new StateManager(
+                Testing: true,
+                QuarantineSpecialistInGame: true,
+                Roles: roles);
+
+            Colors currentColor = Colors.Blue;
+            City actualCity = new City("Atlanta", currentColor, state);
+            roles.Add(new QuarantineSpecialist(actualCity, 0));
+
+            actualCity.InfectCity(currentColor);
+
+            Assert.Equal(0, actualCity.DiseaseCubes[currentColor]);
+        }
+
+        [Fact]
+        void InfectCity_DiseasePreventedByMedic_NoInfection()
+        {
+            Colors currentColor = Colors.Blue;
+            List<Role> roles = new List<Role>();
+            StateManager state = new StateManager(
+                Testing: true,
+                MedicInGame: true,
+                Roles: roles,
+                Cures: new Dictionary<Colors, bool> { { currentColor, true } });
+            City actualCity = new City("Atlanta", currentColor, state);
+            roles.Add(new Medic(actualCity, 0));
+
+            actualCity.InfectCity(currentColor);
+
+            Assert.Equal(0, actualCity.DiseaseCubes[currentColor]);
+        }
+
+        [Fact]
+        void InfectCity_NoMoreCubesInCubePool_ThrowsException()
+        {
+            Colors currentColor = Colors.Blue;
+            StateManager state = new StateManager(
+                Testing: true,
+                CubePools: new Dictionary<Colors, int> { { currentColor, 0 } });
+            City actualCity = new City("Atlanta", currentColor, state);
+
+            Assert.Throws<TheWorldIsDeadException>(() => actualCity.InfectCity(currentColor));
+        }
+
+        [Fact]
+        void InfectCity_CubeIsCityColor_Succeeds()
+        {
+            StateManager state = new StateManager(
+                Testing: true,
+                MaxCubesInCubePool: 12);
+            ITextManager textMgr = new TestTextManager();
+
+            Colors currentColor = Colors.Blue;
+            City actualCity = new City("Atlanta", currentColor, state, textMgr);
+
+            actualCity.InfectCity(currentColor);
+
+            Assert.Equal(1, actualCity.DiseaseCubes[currentColor]);
+            Assert.Equal(11, state.CubePools[currentColor]);
+            Assert.False(actualCity.MultipleDiseases);
+        }
+
+        [Fact]
+        void InfectCity_CubeNotCityColor_Succeeds()
+        {
+            StateManager state = new StateManager(
+                Testing: true,
+                MaxCubesInCubePool: 12);
+            ITextManager textMgr = new TestTextManager();
+
+            Colors currentColor = Colors.Blue;
+            City actualCity = new City("Atlanta", currentColor, state, textMgr);
+
+            Colors infectionColor = Colors.Yellow;
+            actualCity.InfectCity(infectionColor);
+
+            Assert.Equal(1, actualCity.DiseaseCubes[currentColor]);
+            Assert.Equal(11, state.CubePools[currentColor]);
+            Assert.True(actualCity.MultipleDiseases);
+        }
+
+        [Fact]
+        void Outbreak_MaxOutbreaksReached_ThrowsException()
+        {
+            StateManager state = new StateManager(
+                Testing: true,
+                MaxOutbreaks: 8,
+                Outbreaks: 7);
+            Colors currentColor = Colors.Blue;
+            City actualCity = new City("Atlanta", currentColor, state);
+
+            Assert.Throws<TheWorldIsDeadException>(() => actualCity.TestOutbreak(currentColor));
+        }
+
+        [Fact]
+        void Outbreak_Succeeds()
+        {
+            StateManager state = new StateManager(
+                Testing: true,
+                Outbreaks: 2);
+            ITextManager textMgr = new TestTextManager();
+
+            Colors currentColor = Colors.Blue;
+            City actualCity = new City("Atlanta", currentColor, state, textMgr);
+            actualCity.ConnectedCities = new List<City>
+            {
+                new City("Washington", currentColor, state, textMgr),
+                new City("Chicago", currentColor, state, textMgr),
+                new City("Miami", currentColor, state, textMgr)
+            };
+
+            actualCity.TestOutbreak(currentColor);
+
+            Assert.Equal(3, state.Outbreaks);
+            Assert.True(state.OutbreakThisChain.Exists(City => City == actualCity));
+            Assert.Collection(actualCity.ConnectedCities,
+                item => { Assert.Equal(1, item.DiseaseCubes[currentColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[currentColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[currentColor]); });
+        }
+
+        [Fact]
+        void InfectCity_OutbreakAndNotOutbreakThisChain_Succeeds()
+        {
+            StateManager state = new StateManager(
+                Testing: true,
+                Outbreaks: 2);
+            ITextManager textMgr = new TestTextManager();
+
+            Colors currentColor = Colors.Blue;
+            City actualCity = new City("Atlanta", currentColor, state, textMgr);
+            actualCity.ConnectedCities = new List<City>
+            {
+                new City("Washington", currentColor, state, textMgr),
+                new City("Chicago", currentColor, state, textMgr),
+                new City("Miami", currentColor, state, textMgr)
+            };
+            actualCity.DiseaseCubes[currentColor] = 3;
+
+            actualCity.InfectCity(currentColor);
+
+            Assert.Equal(3, state.Outbreaks);
+            Assert.Contains(actualCity, state.OutbreakThisChain);
+            Assert.Collection(actualCity.ConnectedCities,
+                item => { Assert.Equal(1, item.DiseaseCubes[currentColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[currentColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[currentColor]); });
+        }
+
+        [Fact]
+        void InfectCity_DoubleOutbreak_Succeeds()
+        {
+            StateManager state = new StateManager(
+                Testing: true,
+                Outbreaks: 2);
+            ITextManager textMgr = new TestTextManager();
+
+            Colors currentColor = Colors.Blue;
+            City firstCity = new City("Atlanta", currentColor, state, textMgr);
+            City secondCity = new City("Washington", currentColor, state, textMgr);
+            City chicago = new City("Chicago", currentColor, state, textMgr);
+            City miami = new City("Miami", Colors.Yellow, state, textMgr);
+            City montreal = new City("Montreal", currentColor, state, textMgr);
+            City newYork = new City("New York", currentColor, state, textMgr);
+            firstCity.ConnectedCities = new List<City>
+            {
+                secondCity,
+                chicago,
+                miami
+            };
+            secondCity.ConnectedCities = new List<City>
+            {
+                firstCity,
+                miami,
+                montreal,
+                newYork
+            };
+            firstCity.DiseaseCubes[currentColor] = 3;
+            secondCity.DiseaseCubes[currentColor] = 3;
+
+            firstCity.InfectCity(currentColor);
+
+            Assert.Equal(4, state.Outbreaks);
+            Assert.Contains(firstCity, state.OutbreakThisChain);
+            Assert.Contains(secondCity, state.OutbreakThisChain);
+            Assert.Collection(firstCity.ConnectedCities,
+                item => { Assert.Equal(3, item.DiseaseCubes[currentColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[currentColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[currentColor]); 
+                          Assert.True(item.MultipleDiseases); });
+            Assert.Collection(secondCity.ConnectedCities,
+                item => { Assert.Equal(3, item.DiseaseCubes[currentColor]); },
+                item => { Assert.Equal(2, item.DiseaseCubes[currentColor]); 
+                          Assert.True(item.MultipleDiseases);},
+                item => { Assert.Equal(1, item.DiseaseCubes[currentColor]); },
+                item => { Assert.Equal(1, item.DiseaseCubes[currentColor]); });
+        }
+
+        [Fact]
+        void Equals_ObjectIsMatchingCity_True()
+        {
+            City FirstCity = new City("Atlanta", Colors.Blue);
+            City SecondCity = new City("Atlanta", Colors.Blue);
+
+            Assert.Equal(FirstCity, SecondCity);
+        }
+
+        [Fact]
+        void Equals_ObjectIsNotMatchingCity_False()
+        {
+            City FirstCity = new City("Atlanta", Colors.Blue);
+            City SecondCity = new City("Paris", Colors.Blue);
+
+            Assert.NotEqual(FirstCity, SecondCity);
+        }
+    }
+}
