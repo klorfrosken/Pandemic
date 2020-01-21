@@ -50,6 +50,7 @@ namespace Pandemic.Game
             } else
             {
                 HasResearchStation = true;
+                _state.BuildResearchStation();
             }            
         }
 

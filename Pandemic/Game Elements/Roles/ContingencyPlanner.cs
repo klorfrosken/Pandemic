@@ -11,8 +11,8 @@ namespace Pandemic.Game_Elements.Roles
     public class ContingencyPlanner : Role
     {
         readonly static string Title = "Contingency Planner";
-        Boolean HasPickedEvent = false;
-        EventCard StoredCard;
+        public Boolean hasPickedEvent = false;
+        public EventCard storedCard;
 
         public ContingencyPlanner(City StartingCity, int PlayerID, StateManager state = null, ITextManager textManager = null) : base (PlayerID, Title, StartingCity, state, textManager) 
         {
@@ -36,51 +36,51 @@ namespace Pandemic.Game_Elements.Roles
             catch { throw; }    //Throws illegalmoveexception if there are no event cards in the playerDiscard or haspickedevent
         }
 
-        public void PickEventcardFromDiscard(PlayerDeck PlayerDiscard)
+        void PickEventcardFromDiscard(PlayerDeck PlayerDiscard)
         {
-            if (!HasPickedEvent)
+            if (!hasPickedEvent)
             {            
-                List<EventCard> EligibleCards = new List<EventCard>();
-                foreach (Card  CurrentCard in PlayerDiscard)
+                List<EventCard> eligibleCards = new List<EventCard>();
+                foreach (Card  currentCard in PlayerDiscard)
                 {
-                    if (CurrentCard is EventCard)
+                    if (currentCard is EventCard)
                     {
-                        EligibleCards.Add(CurrentCard as EventCard);
+                        eligibleCards.Add(currentCard as EventCard);
                     }
                 }
                 
-                int Choice = -1;
-                if (EligibleCards.Count == 0)
+                int choice = -1;
+                if (eligibleCards.Count == 0)
                 {
                     throw new IllegalMoveException($"There are no Event cards in the discard pile for you to take");
-                } else if (EligibleCards.Count == 1)
+                } else if (eligibleCards.Count == 1)
                 {
-                    Choice = 0;
+                    choice = 0;
                 } else
                 {
-                    Choice = TextManager.ChooseItemFromList(EligibleCards, "take");
+                    choice = TextManager.ChooseItemFromList(eligibleCards, "take");
                 }
 
-                StoredCard = EligibleCards[Choice];
-                HasPickedEvent = true;
+                storedCard = eligibleCards[choice];
+                hasPickedEvent = true;
 
             } else
             {
-                throw new IllegalMoveException($"You already have {StoredCard.Name} stored. You need to use it before you can pick a new Event Card to store.");
+                throw new IllegalMoveException($"You already have {storedCard.Name} stored. You need to use it before you can pick a new Event Card to store.");
             }
         }
 
         public void UseStoredCard()
         {
-            if (StoredCard == null)
+            if (storedCard == null)
             {
                 throw new IllegalMoveException("You don't have an Event Card stored to play");
             }
             else
             {
-                StoredCard.Play(this); //Consider whether the Play method should put the card in the discard pile. If so, the contingency planner must remove it again. 
-                StoredCard = null;
-                HasPickedEvent = false;
+                storedCard.Play(this); 
+                storedCard = null; //Note that the event is now removed from the game
+                hasPickedEvent = false;
             }
         }
     }

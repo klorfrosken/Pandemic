@@ -6,6 +6,7 @@ using Pandemic.Cards;
 using Pandemic.Game_Elements.Roles;
 using Pandemic.Exceptions;
 using Pandemic.UnitTests.TestClasses;
+using Pandemic.Cards.EventCards;
 
 namespace Pandemic.UnitTests.GameElements
 {
@@ -17,8 +18,8 @@ namespace Pandemic.UnitTests.GameElements
             City currentCity = new City("Atlanta", Colors.Blue);
             List<PlayerCard> cards = new List<PlayerCard>
             {
-                new PlayerCard("Atlanta", Colors.Blue),
-                new PlayerCard("Miami", Colors.Yellow),
+                new CityCard("Atlanta", Colors.Blue),
+                new CityCard("Miami", Colors.Yellow),
             };
             ITextManager txtMgr = new TestTextManager(discard_PlayInteger: 0);
             Role player = new QuarantineSpecialist(currentCity, 0, null, txtMgr);
@@ -37,13 +38,13 @@ namespace Pandemic.UnitTests.GameElements
             List<PlayerCard> cards = new List<PlayerCard>
             {
                 new TestEvent(),
-                new PlayerCard("Miami", Colors.Yellow),
+                new CityCard("Miami", Colors.Yellow),
             };
             ITextManager txtMgr = new TestTextManager(discard_PlayInteger: 0);
             Role player = new QuarantineSpecialist(currentCity, 0, null, txtMgr);
             player.Hand = new List<PlayerCard>(cards);
 
-            Assert.Throws<TestException>(() => player.TestDiscard());
+            player.TestDiscard();
 
             Assert.Single(player.Hand);
             Assert.Contains(cards[1], player.Hand);
@@ -55,7 +56,7 @@ namespace Pandemic.UnitTests.GameElements
             StateManager state = new StateManager(Testing: true);
 
             City atlanta = new City("Atlanta", Colors.Blue, state);
-            PlayerCard testCard = new PlayerCard("Atlanta", Colors.Blue, state);
+            PlayerCard testCard = new CityCard("Atlanta", Colors.Blue, state);
             state.PlayerDeck.AddCard(testCard);
 
             Role testRole = new Scientist(atlanta, 0, state);
@@ -109,8 +110,8 @@ namespace Pandemic.UnitTests.GameElements
 
             List<PlayerCard> cards = new List<PlayerCard>
             {
-                new PlayerCard("Atlanta", Colors.Blue),
-                new PlayerCard("Miami", Colors.Yellow)
+                new CityCard("Atlanta", Colors.Blue),
+                new CityCard("Miami", Colors.Yellow)
             };
             state.PlayerDeck.AddCards(cards);
 
@@ -170,7 +171,7 @@ namespace Pandemic.UnitTests.GameElements
             City currentCity = new City("Atlanta", Colors.Blue);
             City nextCity = new City("Miami", Colors.Yellow);
 
-            PlayerCard card = new PlayerCard("Miami", Colors.Yellow);
+            PlayerCard card = new CityCard("Miami", Colors.Yellow);
 
             Role testRole = new Scientist(currentCity, 0);
             testRole.Hand.Add(card);
@@ -199,7 +200,7 @@ namespace Pandemic.UnitTests.GameElements
             City currentCity = new City("Atlanta", Colors.Blue);
             City nextCity = new City("Miami", Colors.Yellow);
 
-            PlayerCard card = new PlayerCard("Atlanta", Colors.Yellow);
+            PlayerCard card = new CityCard("Atlanta", Colors.Yellow);
 
             Role testRole = new Scientist(currentCity, 0);
             testRole.Hand.Add(card);
@@ -225,9 +226,11 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         public void ShuttleFlight_Succeeds()
         {
-            City currentCity = new City("Atlanta", Colors.Blue);
+            StateManager state = new StateManager(Testing: true);
+
+            City currentCity = new City("Atlanta", Colors.Blue, state);
             currentCity.BuildResearchStation();
-            City nextCity = new City("Miami", Colors.Yellow);
+            City nextCity = new City("Miami", Colors.Yellow, state);
             nextCity.BuildResearchStation();
 
             Role testRole = new Scientist(currentCity, 0);
@@ -241,8 +244,10 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         public void ShuttleFlight_currentCityWithoutResearchStation_ThrowsException()
         {
+            StateManager state = new StateManager(Testing: true);
+
             City currentCity = new City("Atlanta", Colors.Blue);
-            City nextCity = new City("Miami", Colors.Yellow);
+            City nextCity = new City("Miami", Colors.Yellow, state);
             nextCity.BuildResearchStation();
 
             Role testRole = new Scientist(currentCity, 0);
@@ -253,7 +258,9 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         public void ShuttleFlight_nextCityWithoutResearchStation_ThrowsException()
         {
-            City currentCity = new City("Atlanta", Colors.Blue);
+            StateManager state = new StateManager(Testing: true);
+
+            City currentCity = new City("Atlanta", Colors.Blue, state);
             currentCity.BuildResearchStation();
             City nextCity = new City("Miami", Colors.Yellow);
 
@@ -268,9 +275,9 @@ namespace Pandemic.UnitTests.GameElements
             StateManager state = new StateManager(
                 Testing: true,
                 RemainingResearchStations: 4);
-            City currentCity = new City("Atlanta", Colors.Blue);
+            City currentCity = new City("Atlanta", Colors.Blue, state);
             Role testRole = new Scientist(currentCity, 0, state);
-            PlayerCard card = new PlayerCard("Atlanta", Colors.Blue);
+            PlayerCard card = new CityCard("Atlanta", Colors.Blue);
             testRole.Hand.Add(card);
 
             testRole.BuildResearchStation();
@@ -293,7 +300,8 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         public void BuildResearchStation_alreadyResearchStationInCity_ThrowsException()
         {
-            City currentCity = new City("Atlanta", Colors.Blue);
+            StateManager state = new StateManager(Testing: true);
+            City currentCity = new City("Atlanta", Colors.Blue, state);
             currentCity.BuildResearchStation();
             Role testRole = new Scientist(currentCity, 0);
 
@@ -374,11 +382,11 @@ namespace Pandemic.UnitTests.GameElements
 
             List<PlayerCard> cards = new List<PlayerCard>
             {
-                new PlayerCard("card1", currentColor, state),
-                new PlayerCard("card2", currentColor, state),
-                new PlayerCard("card3", currentColor, state),
-                new PlayerCard("card4", currentColor, state),
-                new PlayerCard("card5", currentColor, state)
+                new CityCard("card1", currentColor, state),
+                new CityCard("card2", currentColor, state),
+                new CityCard("card3", currentColor, state),
+                new CityCard("card4", currentColor, state),
+                new CityCard("card5", currentColor, state)
             };
 
             Role currentRole = new Researcher(currentCity, 0, state);
@@ -404,10 +412,10 @@ namespace Pandemic.UnitTests.GameElements
 
             List<PlayerCard> cards = new List<PlayerCard>
             {
-                new PlayerCard("card1", currentColor, state),
-                new PlayerCard("card2", currentColor, state),
-                new PlayerCard("card3", currentColor, state),
-                new PlayerCard("card4", currentColor, state)
+                new CityCard("card1", currentColor, state),
+                new CityCard("card2", currentColor, state),
+                new CityCard("card3", currentColor, state),
+                new CityCard("card4", currentColor, state)
             };
 
             Role currentRole = new Researcher(currentCity, 0, state);
@@ -431,11 +439,11 @@ namespace Pandemic.UnitTests.GameElements
 
             List<PlayerCard> cards = new List<PlayerCard>
             {
-                new PlayerCard("card1", currentColor, state),
-                new PlayerCard("card2", currentColor, state),
-                new PlayerCard("card3", currentColor, state),
-                new PlayerCard("card4", currentColor, state),
-                new PlayerCard("card5", currentColor, state)
+                new CityCard("card1", currentColor, state),
+                new CityCard("card2", currentColor, state),
+                new CityCard("card3", currentColor, state),
+                new CityCard("card4", currentColor, state),
+                new CityCard("card5", currentColor, state)
             };
 
             Role currentRole = new Researcher(currentCity, 0, state);
@@ -457,12 +465,12 @@ namespace Pandemic.UnitTests.GameElements
 
             List<PlayerCard> cards = new List<PlayerCard>
             {
-                new PlayerCard("card1", currentColor, state),
-                new PlayerCard("card2", currentColor, state),
-                new PlayerCard("card3", currentColor, state),
-                new PlayerCard("card4", currentColor, state),
-                new PlayerCard("card5", currentColor, state),
-                new PlayerCard("card6", currentColor, state)
+                new CityCard("card1", currentColor, state),
+                new CityCard("card2", currentColor, state),
+                new CityCard("card3", currentColor, state),
+                new CityCard("card4", currentColor, state),
+                new CityCard("card5", currentColor, state),
+                new CityCard("card6", currentColor, state)
             };
 
             Role currentRole = new Researcher(currentCity, 0, state, txtMgr);
@@ -494,11 +502,11 @@ namespace Pandemic.UnitTests.GameElements
 
             List<PlayerCard> cards = new List<PlayerCard>
             {
-                new PlayerCard("card1", currentColor, state),
-                new PlayerCard("card2", currentColor, state),
-                new PlayerCard("card3", currentColor, state),
-                new PlayerCard("card4", currentColor, state),
-                new PlayerCard("card5", currentColor, state),
+                new CityCard("card1", currentColor, state),
+                new CityCard("card2", currentColor, state),
+                new CityCard("card3", currentColor, state),
+                new CityCard("card4", currentColor, state),
+                new CityCard("card5", currentColor, state),
             };
 
             Role currentRole = new Researcher(currentCity, 0, state, txtMgr);
@@ -513,13 +521,41 @@ namespace Pandemic.UnitTests.GameElements
             City currentCity = new City("Atlanta", Colors.Blue);
             ITextManager txtMgr = new TestTextManager(discard_PlayInteger: 0);
             Role player = new QuarantineSpecialist(currentCity, 0, null, txtMgr);
+            PlayerCard card = new CityCard("Atlanta", Colors.Blue);
 
+            player.ReceiveCard(card);
+
+            Assert.Single(player.Hand);
+        }
+
+        [Fact]
+        public void ReceiveCard_HandAboveLimit_Succeeds()
+        {
+            City currentCity = new City("Atlanta", Colors.Blue);
+            ITextManager txtMgr = new TestTextManager(discard_PlayInteger: 0);
+            Role player = new QuarantineSpecialist(currentCity, 0, null, txtMgr);
+            player.Hand = new List<PlayerCard>
+            {
+                new CityCard("card", Colors.Blue),
+                new CityCard("card", Colors.Blue),
+                new CityCard("card", Colors.Blue),
+                new CityCard("card", Colors.Blue),
+                new CityCard("card", Colors.Blue),
+                new CityCard("card", Colors.Blue),
+                new CityCard("card", Colors.Blue)
+            };
+            PlayerCard newCard = new CityCard("Atlanta", Colors.Blue);
+
+            player.ReceiveCard(newCard);
+
+            Assert.Equal(7, player.Hand.Count);
+            Assert.Contains(newCard, player.Hand);
         }
 
         [Fact]
         public void GiveCard_cardToGiveIsInHand_Succeeds()
         {
-            PlayerCard card = new PlayerCard("Atlanta", Colors.Blue);
+            PlayerCard card = new CityCard("Atlanta", Colors.Blue);
             City atlanta = new City("Atlanta", Colors.Blue);
             Role currentRole = new Scientist(atlanta, 0);
             Role otherRole = new Scientist(atlanta, 1);
@@ -557,7 +593,7 @@ namespace Pandemic.UnitTests.GameElements
         public void ShareKnowledge_otherRoleNotResearcher_otherRoleCardInHand_Succeeds()
         {
             City currentCity = new City("Atlanta", Colors.Blue);
-            PlayerCard card = new PlayerCard("Atlanta", Colors.Blue);
+            PlayerCard card = new CityCard("Atlanta", Colors.Blue);
             Role currentRole = new OperationsExpert(currentCity, 0);
             Role otherRole = new OperationsExpert(currentCity, 1);
             otherRole.Hand.Add(card);
@@ -574,7 +610,7 @@ namespace Pandemic.UnitTests.GameElements
         public void ShareKnowledge_otherRoleNotResearcher_currentRoleCardInHand_Succeeds()
         {
             City currentCity = new City("Atlanta", Colors.Blue);
-            PlayerCard card = new PlayerCard("Atlanta", Colors.Blue);
+            PlayerCard card = new CityCard("Atlanta", Colors.Blue);
             Role currentRole = new OperationsExpert(currentCity, 0);
             Role otherRole = new OperationsExpert(currentCity, 1);
             currentRole.Hand.Add(card);
@@ -591,47 +627,69 @@ namespace Pandemic.UnitTests.GameElements
         public void ShareKnowledge_otherRoleNotResearcher_NoRoleCardInHand_ThrowsException()
         {
             City currentCity = new City("Atlanta", Colors.Blue);
-            PlayerCard card = new PlayerCard("Atlanta", Colors.Blue);
+            PlayerCard card = new CityCard("Atlanta", Colors.Blue);
             Role currentRole = new OperationsExpert(currentCity, 0);
             Role otherRole = new OperationsExpert(currentCity, 1);
 
             Assert.Throws<IllegalMoveException>(() => currentRole.ShareKnowledge(otherRole));
         }
 
-        //Hva gj;r jeg med disse? hvordan håndtere at Scientist har en annen give card-funksjon. Må kanskje skrive de enhetstestene først?
+        [Fact]
+        public void ShareKnowledge_otherRoleIsResearcher_ResearcherGivesCard_Succeeds()
+        {
+            City currentCity = new City("Atlanta", Colors.Blue);
+            PlayerCard card = new CityCard("Atlanta", Colors.Blue);
 
-        //[Fact]
-        //public void ShareKnowledge_otherRoleIsResearcher_ResearcherGivesCard_Succeeds()
-        //{
-        //    City currentCity = new City("Atlanta", Colors.Blue);
-        //    PlayerCard card = new PlayerCard("Atlanta", Colors.Blue);
-        //    Role currentRole = new OperationsExpert(currentCity, 0);
-        //    Role otherRole = new Scientist(currentCity, 1);
-        //    otherRole.Hand.Add(card);
+            ITextManager playerTxtMgr = new TestTextManager(shareKnowledge: 1);
+            Role currentRole = new OperationsExpert(currentCity, 0, null, playerTxtMgr);
 
-        //    currentRole.ShareKnowledge(otherRole);
+            ITextManager txtMgr = new TestTextManager(itemNumber: 0);
+            Role otherRole = new Researcher(currentCity, 1, null, txtMgr);
+            otherRole.Hand.Add(card);
 
-        //    Assert.Empty(otherRole.Hand);
-        //    Assert.Single(currentRole.Hand);
-        //    Assert.Contains(card, currentRole.Hand);
-        //    Assert.Equal(3, currentRole.RemainingActions);
-        //}
+            currentRole.ShareKnowledge(otherRole);
 
-        //[Fact]
-        //public void ShareKnowledge_otherRoleIsResearcher_ResearcherReceivesCard_Succeeds()
-        //{
-        //    City currentCity = new City("Atlanta", Colors.Blue);
-        //    PlayerCard card = new PlayerCard("Atlanta", Colors.Blue);
-        //    Role currentRole = new OperationsExpert(currentCity, 0);
-        //    Role otherRole = new OperationsExpert(currentCity, 1);
-        //    currentRole.Hand.Add(card);
+            Assert.Empty(otherRole.Hand);
+            Assert.Single(currentRole.Hand);
+            Assert.Contains(card, currentRole.Hand);
+            Assert.Equal(3, currentRole.RemainingActions);
+        }
 
-        //    currentRole.ShareKnowledge(otherRole);
+        [Fact]
+        public void ShareKnowledge_otherRoleIsResearcher_ResearcherReceivesCard_Succeeds()
+        {
+            City currentCity = new City("Atlanta", Colors.Blue);
+            PlayerCard card = new CityCard("Atlanta", Colors.Blue);
 
-        //    Assert.Empty(currentRole.Hand);
-        //    Assert.Single(otherRole.Hand);
-        //    Assert.Contains(card, otherRole.Hand);
-        //    Assert.Equal(3, currentRole.RemainingActions);
-        //}
+            ITextManager playerTxtMgr = new TestTextManager(shareKnowledge: 2);
+            Role currentRole = new OperationsExpert(currentCity, 0, null, playerTxtMgr);
+
+            Role otherRole = new Researcher(currentCity, 1);
+            currentRole.Hand.Add(card);
+
+            currentRole.ShareKnowledge(otherRole);
+
+            Assert.Empty(currentRole.Hand);
+            Assert.Single(otherRole.Hand);
+            Assert.Contains(card, otherRole.Hand);
+            Assert.Equal(3, currentRole.RemainingActions);
+        }
+
+        [Fact]
+        public void NumberOfCityCardsInHand_Succeeds()
+        {
+            City currentCity = new City("Atlanta", Colors.Blue);
+            Role currentRole = new OperationsExpert(currentCity, 0);
+            currentRole.Hand = new List<PlayerCard>
+            {
+                new CityCard("Atlanta", Colors.Blue),
+                new OneQuietNight(),
+                new CityCard("Miami", Colors.Yellow)
+            };
+
+            int actual = currentRole.NumberOfCityCardsInHand();
+
+            Assert.Equal(2, actual);
+        }
     }
 }

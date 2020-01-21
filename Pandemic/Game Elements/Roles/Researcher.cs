@@ -20,6 +20,20 @@ namespace Pandemic.Game_Elements.Roles
             Console.WriteLine("The transfer _must_ be from the researcher's hand, but can occur on either player's turn.");
         }
 
+        public override void GiveCard(Role OtherPlayer)
+        {
+            List<PlayerCard> EligibleCards = Hand.FindAll(Card => Card is CityCard);
+            int Choice = TextManager.ChooseItemFromList(EligibleCards, "give");
+            PlayerCard CardToGive = Hand[Choice];
+            if (CardToGive == null)
+            {
+                throw new UnexpectedBehaviourException("An unexpected error occured in GiveCard in the Player class. The City card was not found in Hand");
+            }
+
+            Hand.Remove(CardToGive);
+            OtherPlayer.ReceiveCard(CardToGive);
+        }
+
         public override void ShareKnowledge(Role OtherPlayer)
         {
             //Dette sjekkes jo når jeg tar ibruk funksjonen, men kanskje greit å ha en ekstra sjekk allikevel?
@@ -48,20 +62,6 @@ namespace Pandemic.Game_Elements.Roles
            
             GivingPlayer.GiveCard(ReceivingPlayer);
             RemainingActions--;
-        }
-
-        public override void GiveCard(Role OtherPlayer)
-        {
-            List<PlayerCard> EligibleCards = Hand.FindAll(Card => Card is CityCard);
-            int Choice = TextManager.ChooseItemFromList(EligibleCards, "give");
-            PlayerCard CardToGive = Hand[Choice];
-            if (CardToGive == null)
-            {
-                throw new UnexpectedBehaviourException("An unexpected error occured in GiveCard in the Player class. The City card was not found in Hand");
-            }
-
-            Hand.Remove(CardToGive);
-            OtherPlayer.ReceiveCard(CardToGive);
         }
     }
 }

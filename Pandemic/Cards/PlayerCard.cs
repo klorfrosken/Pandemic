@@ -5,7 +5,7 @@ using Pandemic.Managers;
 
 namespace Pandemic.Cards
 {
-    public class PlayerCard : Card
+    public abstract class PlayerCard : Card
     {
         public PlayerCard(string name, Colors color, StateManager state = null) : base(name, color, state) { }
     }

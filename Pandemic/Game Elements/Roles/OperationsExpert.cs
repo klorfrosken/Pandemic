@@ -11,10 +11,6 @@ namespace Pandemic.Game_Elements.Roles
     {
         readonly static string Title = "Operations Expert";
         public bool UsedSpecialAbility = false;
-        public string[] SpecialActionDescription = new string[]
-        {
-
-        };
 
         public OperationsExpert(City StartingCity, int PlayerID, StateManager state = null, ITextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager)
         {
@@ -40,7 +36,6 @@ namespace Pandemic.Game_Elements.Roles
             {
                 CurrentCity.BuildResearchStation();
                 RemainingActions--;
-                State.BuildResearchStation();
             }
             else
             {
@@ -50,7 +45,10 @@ namespace Pandemic.Game_Elements.Roles
 
         void CharterFlightFromResearchStation()
         {
-            int Choice = -1;
+            if (UsedSpecialAbility)
+            {
+                throw new IllegalMoveException("You have already used your special ability this turn. You must wait for the next one, I'm afraid...");
+            }
             if (!CurrentCity.HasResearchStation)
             {
                 throw new IllegalMoveException("There needs to be a research station in the city you're in, in order to perform that action.");
@@ -58,23 +56,31 @@ namespace Pandemic.Game_Elements.Roles
             else if (NumberOfCityCardsInHand() == 0)
             {
                 throw new IllegalMoveException("You need to be able to discard a City Card from your hand in order to perform that move.");
-            } else if(NumberOfCityCardsInHand() == 1)
-            {
-                Choice = 0;
             }
             else
             {
-                Choice = TextManager.ChooseItemFromList(State.Cities.Values, "go to");
+                int cardChoice = -1;
+                if (NumberOfCityCardsInHand() == 1)
+                {
+                    cardChoice = 0;
+                }
+                else
+                {
+                    List<PlayerCard> EligibleCards = Hand.FindAll(Card => Card is CityCard);
+                    cardChoice = TextManager.ChooseItemFromList(EligibleCards, "discard");
+                }
+
+                List<City> availableCities = new List<City>(State.Cities.Values);
+                availableCities.Remove(CurrentCity);
+                int cityChoice = TextManager.ChooseItemFromList(availableCities, "go to");
+
+                City NextCity = availableCities[cityChoice];
+
+                CurrentCity = NextCity;
+                Discard(cardChoice);
+                UsedSpecialAbility = true;
             }
 
-            City NextCity = State.GetCity(Choice);
-
-            List<PlayerCard> EligibleCards = Hand.FindAll(Card => Card is CityCard);
-            Choice = TextManager.ChooseItemFromList(EligibleCards, "discard");
-
-            CurrentCity = NextCity;
-            Discard(Choice);
-            UsedSpecialAbility = true;
         }
 
         public override void Reset()

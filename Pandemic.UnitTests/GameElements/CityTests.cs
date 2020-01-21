@@ -484,8 +484,8 @@ namespace Pandemic.UnitTests.GameElements
             Colors infectionColor = Colors.Yellow;
             actualCity.InfectCity(infectionColor);
 
-            Assert.Equal(1, actualCity.DiseaseCubes[currentColor]);
-            Assert.Equal(11, state.CubePools[currentColor]);
+            Assert.Equal(1, actualCity.DiseaseCubes[infectionColor]);
+            Assert.Equal(11, state.CubePools[infectionColor]);
             Assert.True(actualCity.MultipleDiseases);
         }
 

@@ -160,7 +160,7 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void StateManager_PlayerDeckNotNull_Succeeds()
         {
-            PlayerCard testCard = new PlayerCard("Atlanta", Colors.Blue);
+            PlayerCard testCard = new CityCard("Atlanta", Colors.Blue);
 
             StateManager state = new StateManager(
                 Testing: true,
@@ -175,7 +175,7 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void StateManager_PlayerDiscardNotNull_Succeeds()
         {
-            PlayerCard testCard = new PlayerCard("Atlanta", Colors.Blue);
+            PlayerCard testCard = new CityCard("Atlanta", Colors.Blue);
 
             StateManager state = new StateManager(
                 Testing: true,

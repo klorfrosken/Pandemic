@@ -12,9 +12,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Draw_DrawOneCard_TopCardDrawn()
         {
-            PlayerCard topCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard middleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard bottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard topCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard middleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard bottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> playerDeckCards = new List<PlayerCard>
             {
@@ -41,10 +41,10 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Draw_DrawMultipleCards_TopCardsDrawn()
         {
-            PlayerCard topCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard middleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard bottomCard = new PlayerCard("BottomCard", Colors.Blue);
-            PlayerCard undrawnCard = new PlayerCard("UndrawnCard", Colors.Blue);
+            PlayerCard topCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard middleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard bottomCard = new CityCard("BottomCard", Colors.Blue);
+            PlayerCard undrawnCard = new CityCard("UndrawnCard", Colors.Blue);
 
             List<PlayerCard> playerDeckCards = new List<PlayerCard>
             {
@@ -79,10 +79,10 @@ namespace Pandemic.UnitTests.Cards
         public void Shuffle_CardsAreShuffled()
         {
             //Note that this test might, in rare cases, fail due to the deck being reshuffled into the exact same order as it was before shuffling
-            PlayerCard topCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard middleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard bottomCard = new PlayerCard("BottomCard", Colors.Blue);
-            PlayerCard undrawnCard = new PlayerCard("UndrawnCard", Colors.Blue);
+            PlayerCard topCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard middleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard bottomCard = new CityCard("BottomCard", Colors.Blue);
+            PlayerCard undrawnCard = new CityCard("UndrawnCard", Colors.Blue);
 
             List<PlayerCard> playerDeckCards = new List<PlayerCard>
             {
@@ -103,9 +103,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Remove_specificCardEntered_cardIsRemoved()
         {
-            PlayerCard topCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard middleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard bottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard topCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard middleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard bottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> playerDeckCards = new List<PlayerCard>
             {
@@ -127,9 +127,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Remove_cardNotInDeck_ThrowsException()
         {
-            PlayerCard topCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard middleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard bottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard topCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard middleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard bottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> playerDeckCards = new List<PlayerCard>
             {
@@ -147,9 +147,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Remove_cardIndexSpecified_cardIsRemoved()
         {
-            PlayerCard topCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard middleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard bottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard topCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard middleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard bottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> playerDeckCards = new List<PlayerCard>
             {
@@ -170,9 +170,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Remove_specifiedIndexOutOfRange_throwsException()
         {
-            PlayerCard topCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard middleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard bottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard topCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard middleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard bottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> playerDeckCards = new List<PlayerCard>
             {
@@ -197,9 +197,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Count_ReturnsCorrectNumberOfCards()
         {
-            PlayerCard topCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard middleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard bottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard topCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard middleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard bottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> playerDeckCards = new List<PlayerCard>
             {
@@ -219,7 +219,7 @@ namespace Pandemic.UnitTests.Cards
         public void AddCard_singleCardAdded_succeeds()
         {
             PlayerDeck testDeck = new PlayerDeck();
-            PlayerCard newCard = new PlayerCard("testCard", Colors.Blue);
+            PlayerCard newCard = new CityCard("testCard", Colors.Blue);
 
             testDeck.AddCard(newCard);
 
@@ -238,9 +238,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void AddCards_ListOfCardsAdded_Succeeds()
         {
-            PlayerCard topCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard middleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard bottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard topCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard middleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard bottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> playerDeckCards = new List<PlayerCard>
             {
@@ -282,9 +282,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void CombineDecks_DecksCombined_Succeeds()
         {
-            PlayerCard firstTopCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard firstMiddleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard firstBottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard firstTopCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard firstMiddleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard firstBottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> firstPile = new List<PlayerCard>
             {
@@ -295,9 +295,9 @@ namespace Pandemic.UnitTests.Cards
 
             PlayerDeck firstDeck = new PlayerDeck(firstPile);
 
-            PlayerCard secondTopCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard secondMiddleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard secondBottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard secondTopCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard secondMiddleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard secondBottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> secondPile = new List<PlayerCard>
             {
@@ -323,9 +323,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void CombineDecks_DecksIsEmpty_Succeeds()
         {
-            PlayerCard firstTopCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard firstMiddleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard firstBottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard firstTopCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard firstMiddleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard firstBottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> firstPile = new List<PlayerCard>
             {
@@ -344,9 +344,9 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Clear_DeckEmptied()
         {
-            PlayerCard firstTopCard = new PlayerCard("TopCard", Colors.Blue);
-            PlayerCard firstMiddleCard = new PlayerCard("MiddleCard", Colors.Blue);
-            PlayerCard firstBottomCard = new PlayerCard("BottomCard", Colors.Blue);
+            PlayerCard firstTopCard = new CityCard("TopCard", Colors.Blue);
+            PlayerCard firstMiddleCard = new CityCard("MiddleCard", Colors.Blue);
+            PlayerCard firstBottomCard = new CityCard("BottomCard", Colors.Blue);
 
             List<PlayerCard> firstPile = new List<PlayerCard>
             {

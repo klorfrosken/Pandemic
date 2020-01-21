@@ -12,7 +12,7 @@ namespace Pandemic.UnitTests.TestClasses
         public override void Play(Role roleWithCard)
         {
             roleWithCard.Hand.Remove(this);
-            throw new TestException();
+            //throw new TestException();
         }
     }
 }

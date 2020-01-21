@@ -139,7 +139,6 @@ namespace Pandemic.Game
                     CurrentCity.BuildResearchStation();
                     Discard(CurrentCity.Name);
                     RemainingActions--;
-                    State.BuildResearchStation();
                 } else
                 {
                     throw new IllegalMoveException($"You need to have the city card for {CurrentCity.Name} in your hand, in order to build a research station in this city");
@@ -240,7 +239,6 @@ namespace Pandemic.Game
 
         public virtual void ShareKnowledge(Role OtherPlayer)
         {
-            //Dette sjekkes jo når jeg tar ibruk funksjonen, men kanskje greit å ha en ekstra sjekk allikevel?
             if (OtherPlayer.CurrentCity != CurrentCity)
             {
                 throw new IllegalMoveException($"You need to be in the same city in order to share knowledge. {OtherPlayer.RoleName} is not in {CurrentCity.Name}.");
@@ -333,7 +331,7 @@ namespace Pandemic.Game
             throw new IllegalMoveException($"The {RoleName} don't have any active special abilities to play");
         }
 
-        public virtual void PlaySecondSpecialAbility(  )
+        public virtual void PlaySecondSpecialAbility()
         {
             throw new IllegalMoveException($"The {RoleName} don't have any active special abilities to play");
         }
