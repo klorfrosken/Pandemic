@@ -12,7 +12,7 @@ namespace Pandemic.Managers
         public string UserName { get; private set; }
         public Role CurrentRole = null;
 
-        Dictionary<string, GameStatistics> RoleStatistics = new Dictionary<string, GameStatistics>
+        public Dictionary<string, GameStatistics> RoleStatistics = new Dictionary<string, GameStatistics>
         {
             { "ContingencyPlanner", new GameStatistics() },
             { "Dispatcher", new GameStatistics() },
@@ -31,14 +31,13 @@ namespace Pandemic.Managers
 
         public void UpdateStatistics(string WonLostError)
         {
-            RoleStatistics[CurrentRole.RoleName].IncreaseGamesPlayed();
             if (WonLostError.Equals("Won"))
             {
-                RoleStatistics[CurrentRole.RoleName].IncreaseGamesLost();
+                RoleStatistics[CurrentRole.RoleName].IncreaseGamesWon();
             }
             else if (WonLostError.Equals("Lost"))
             {
-                RoleStatistics[CurrentRole.RoleName].IncreaseGamesPlayed();
+                RoleStatistics[CurrentRole.RoleName].IncreaseGamesLost();
             }
             else if (WonLostError.Equals("Error"))
             {
@@ -48,6 +47,7 @@ namespace Pandemic.Managers
             {
                 throw new UnexpectedBehaviourException("An unexpected error occured during the updating of the statistics");
             }
+            RoleStatistics[CurrentRole.RoleName].IncreaseGamesPlayed();
         }
     }
 }

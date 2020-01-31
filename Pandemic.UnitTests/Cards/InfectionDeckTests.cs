@@ -387,7 +387,7 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Infect_CityIsInfected()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
             ITextManager textMgr = new TestTextManager();
 
             Colors currentColor = Colors.Blue;

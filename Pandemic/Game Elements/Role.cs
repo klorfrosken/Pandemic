@@ -12,29 +12,30 @@ namespace Pandemic.Game
     {
         public int PlayerID { get; private set; } 
         public string RoleName { get; private set; }
-        public int MaxActions = 4;
+        protected internal int maxActions = 4;
         public int SpecialActions = 0;
-        protected int CardsNecessaryForCure = 5;
+        protected int cardsNecessaryForCure = 5;
         public int RemainingActions { get; private protected set; } 
         public City CurrentCity { get; private protected set; }
         public List<PlayerCard> Hand = new List<PlayerCard>();
 
-        protected internal StateManager State;
-        protected internal ITextManager TextManager;
+        protected internal StateManager state;
+        protected internal ITextManager textManager;
 
         public Role (int PlayerID, String RoleName, City StartingCity, StateManager state = null, ITextManager textManager = null)
         {
             this.PlayerID = PlayerID;
             this.RoleName = RoleName;
             CurrentCity = StartingCity;
-            RemainingActions = MaxActions;
-            State = state;
-            TextManager = textManager;
+            this.state = state;
+            this.textManager = textManager;
+            if(state != null) { maxActions = state.MaxPlayerActions; }
+            RemainingActions = maxActions;
         }
 
         void Discard()
         {
-            int Choice = TextManager.DiscardOrPlay(Hand);
+            int Choice = textManager.DiscardOrPlay(Hand);
 
             if (Hand[Choice] is EventCard)
             {
@@ -55,7 +56,7 @@ namespace Pandemic.Game
         {
             try
             {
-                PlayerCard drawnCard = State.PlayerDeck.Draw();
+                PlayerCard drawnCard = state.PlayerDeck.Draw();
 
                 if (drawnCard is EpidemicCard)
                 {
@@ -126,7 +127,7 @@ namespace Pandemic.Game
                 RemainingActions--;
             } else
             {
-                throw new IllegalMoveException("There needs to be a research station in both the city you are moving from and the city you are moving to, for you to build a research station.");
+                throw new IllegalMoveException("There needs to be a research station in both the city you are moving from and the city you are moving to, for you to shuttle a flight.");
             }
         }
 
@@ -170,7 +171,7 @@ namespace Pandemic.Game
                 foreach (Card CurrentCard in Hand)
                 {
                     CardCount[(int)CurrentCard.Color]++;
-                    if (CardCount[(int)CurrentCard.Color] == CardsNecessaryForCure)
+                    if (CardCount[(int)CurrentCard.Color] == cardsNecessaryForCure)
                     {
                         CureColor = CurrentCard.Color;
                     }
@@ -178,9 +179,9 @@ namespace Pandemic.Game
 
                 if (CureColor == Colors.None)
                 {
-                    throw new IllegalMoveException($"You don't have enough cards of the same color in your hand. You need {CardsNecessaryForCure} cards of the same color, to discover a cure.");
+                    throw new IllegalMoveException($"You don't have enough cards of the same color in your hand. You need {cardsNecessaryForCure} cards of the same color, to discover a cure.");
                 }
-                else if (State.Cures[CureColor] == true)
+                else if (state.Cures[CureColor] == true)
                 {
                     throw new IllegalMoveException($"The {CureColor} cure has already been discovered");
                 }
@@ -195,14 +196,14 @@ namespace Pandemic.Game
                         }
                     }
 
-                    if (AvailableCardsForCure.Count > CardsNecessaryForCure)
+                    if (AvailableCardsForCure.Count > cardsNecessaryForCure)
                     {
-                        int Choice = TextManager.ChooseItemFromList(AvailableCardsForCure, "keep");
+                        int Choice = textManager.ChooseItemFromList(AvailableCardsForCure, "keep");
                         AvailableCardsForCure.RemoveAt(Choice);
                     }
 
                     Discard(AvailableCardsForCure);
-                    State.Cures[CureColor] = true;
+                    state.Cures[CureColor] = true;
                     if (GameWon())
                     {
                         throw new GameWonException();
@@ -248,7 +249,7 @@ namespace Pandemic.Game
             Role ReceivingPlayer;
             if(OtherPlayer is Researcher)
             {
-                int Choice = TextManager.ShareKnowledgeWithResearcher();
+                int Choice = textManager.ShareKnowledgeWithResearcher();
                 if (Choice == 1)
                 {
                     GivingPlayer = OtherPlayer;
@@ -338,14 +339,14 @@ namespace Pandemic.Game
 
         public virtual void Reset()
         {
-            RemainingActions = MaxActions;
+            RemainingActions = maxActions;
         }
 
         protected Boolean GameWon()
         {
             for (int i = 1; i<5; i++)
             {
-                if (!State.Cures[(Colors)i])
+                if (!state.Cures[(Colors)i])
                 {
                     return false;
                 }

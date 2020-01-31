@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Pandemic.Game;
 using Pandemic.Managers;
 using Pandemic.Exceptions;
@@ -27,23 +25,28 @@ namespace Pandemic.Game_Elements.Roles
 
         public override void TreatDisease(Colors Color)
         {
-            Boolean NotCleared = true;
-            do
+            if (CurrentCity.DiseaseCubes[Color] == 0)
             {
-                try
+                throw new IllegalMoveException($"There are no {Color} cubes in {CurrentCity} to remove.");
+            } else
+            {
+                Boolean NotCleared = true;
+                do
                 {
-                    CurrentCity.TreatDisease(Color);
-                }
-                catch (IllegalMoveException)
-                {
-                    NotCleared = false;
-                }
-                catch (UnexpectedBehaviourException) { throw; }
-            } while (NotCleared);
+                    try
+                    {
+                        CurrentCity.TreatDisease(Color);
+                    }
+                    catch (IllegalMoveException)
+                    {
+                        NotCleared = false;
+                    }
+                } while (NotCleared);
 
-            if (!State.Cures[CurrentCity.Color])
-            {
-                RemainingActions--;
+                if (!state.Cures[CurrentCity.Color])
+                {
+                    RemainingActions--;
+                }
             }
         }
 
@@ -53,15 +56,11 @@ namespace Pandemic.Game_Elements.Roles
             Boolean CubesToCureInCity;
             for (int i = 1; i < 5; i++)
             {
-                CureDiscovered = State.Cures[(Colors)i];
+                CureDiscovered = state.Cures[(Colors)i];
                 CubesToCureInCity = CurrentCity.DiseaseCubes[(Colors)i] > 0;
                 if (CureDiscovered && CubesToCureInCity)
                 {
-                    try
-                    {
-                        TreatDisease((Colors)i);
-                    }
-                    catch { throw; }
+                    TreatDisease((Colors)i);
                 }
             }
         }

@@ -13,8 +13,8 @@ namespace Pandemic.Managers
 {
     public class StateManager
     {
-        readonly string CitiesFilePath;
-        readonly string StartingCityName;
+        readonly string citiesFilePath;
+        readonly string startingCityName;
 
         //Constants to be set upon initialization
         public int NumberOfPlayers { get; private set; }
@@ -24,6 +24,7 @@ namespace Pandemic.Managers
         public bool MedicInGame { get; private set; }
         public List<Role> Roles = new List<Role>();
         public Dictionary<string, City> Cities = new Dictionary<string, City>();
+        public int MaxPlayerActions;
 
         //Global game constants
         public int[] InfectionRates = new int[] { 2, 2, 2, 3, 3, 4, 4 };
@@ -53,77 +54,79 @@ namespace Pandemic.Managers
         public PlayerDeck PlayerDiscard = new PlayerDeck();
 
         public StateManager(
-            string CitiesFilePath = "Pandemic.Managers.Cities.txt",
-            string StartingCityName = "Atlanta",
-            int NumberOfEpidemics = 5,
-            bool RandomRoles = true,
-            bool QuarantineSpecialistInGame = false,
-            bool MedicInGame = false,
-            List<Role> Roles = null,
-            int InfectionIndex = 0,
-            int MaxOutbreaks = 8,
-            int MaxCubesInCubePool = 24,
-            int RemainingResearchStations = 6,
-            int Outbreaks = 0,
+            string citiesFilePath = "Pandemic.Managers.Cities.txt",
+            string startingCityName = "Atlanta",
+            int numberOfEpidemics = 5,
+            bool randomRoles = true,
+            bool quarantineSpecialistInGame = false,
+            bool medicInGame = false,
+            List<Role> roles = null,
+            int infectionIndex = 0,
+            int maxOutbreaks = 8,
+            int maxCubesInCubePool = 24,
+            int remainingResearchStations = 6,
+            int outbreaks = 0,
+            int maxPlayerActions = 4,
 
-            Dictionary<string, City> Cities = null,
-            Dictionary<Colors, bool> Cures = null,
-            Dictionary<Colors, int> CubePools = null,
-            List<City> OutbreakThisChain = null,
-            InfectionDeck InfectionDeck = null,
-            InfectionDeck InfectionDiscard = null,
-            PlayerDeck PlayerDeck = null,
-            PlayerDeck PlayerDiscard = null,
-            bool Testing = false,
-            List<User> Users = null, 
-            TextManager textManager = null
+            Dictionary<string, City> cities = null,
+            Dictionary<Colors, bool> cures = null,
+            Dictionary<Colors, int> cubePools = null,
+            List<City> outbreakThisChain = null,
+            InfectionDeck infectionDeck = null,
+            InfectionDeck infectionDiscard = null,
+            PlayerDeck olayerDeck = null,
+            PlayerDeck playerDiscard = null,
+            bool testing = false,
+            List<User> users = null, 
+            ITextManager textManager = null
             )
         {
 
-            this.CitiesFilePath = CitiesFilePath;
-            this.StartingCityName = StartingCityName;
-            this.NumberOfEpidemics = NumberOfEpidemics;
-            this.RandomRoles = RandomRoles;
-            this.QuarantineSpecialistInGame = QuarantineSpecialistInGame;
-            this.MedicInGame = MedicInGame;
-            if (Roles != null) { this.Roles = Roles; NumberOfPlayers = this.Roles.Count; }
-            this.InfectionIndex = InfectionIndex;
-            this.MaxOutbreaks = MaxOutbreaks;
-            this.MaxCubesInCubePool = MaxCubesInCubePool;
-            this.RemainingResearchStations = RemainingResearchStations;
-            this.Outbreaks = Outbreaks;
-            if (Cities != null) { this.Cities = Cities; }
-            if (Cures != null) { this.Cures = Cures; }
-            if (OutbreakThisChain != null) { this.OutbreakThisChain = OutbreakThisChain; }
-            if (InfectionDeck != null) { this.InfectionDeck = InfectionDeck; }
-            if (InfectionDiscard != null) { this.InfectionDiscard = InfectionDiscard; }
-            if (PlayerDeck != null) { this.PlayerDeck = PlayerDeck; }
-            if (PlayerDiscard != null) { this.PlayerDiscard = PlayerDiscard; }
-            if (Users != null) { NumberOfPlayers = Users.Count; }
+            this.citiesFilePath = citiesFilePath;
+            this.startingCityName = startingCityName;
+            this.NumberOfEpidemics = numberOfEpidemics;
+            this.RandomRoles = randomRoles;
+            this.QuarantineSpecialistInGame = quarantineSpecialistInGame;
+            this.MedicInGame = medicInGame;
+            if (roles != null) { this.Roles = roles; NumberOfPlayers = this.Roles.Count; }
+            this.InfectionIndex = infectionIndex;
+            this.MaxOutbreaks = maxOutbreaks;
+            this.MaxCubesInCubePool = maxCubesInCubePool;
+            this.RemainingResearchStations = remainingResearchStations;
+            this.Outbreaks = outbreaks;
+            this.MaxPlayerActions = maxPlayerActions;
+            if (cities != null) { this.Cities = cities; }
+            if (cures != null) { this.Cures = cures; }
+            if (outbreakThisChain != null) { this.OutbreakThisChain = outbreakThisChain; }
+            if (infectionDeck != null) { this.InfectionDeck = infectionDeck; }
+            if (infectionDiscard != null) { this.InfectionDiscard = infectionDiscard; }
+            if (olayerDeck != null) { this.PlayerDeck = olayerDeck; }
+            if (playerDiscard != null) { this.PlayerDiscard = playerDiscard; }
+            if (users != null) { NumberOfPlayers = users.Count; }
 
-            if (CubePools != null)
+            if (cubePools != null)
             {
-                this.CubePools = CubePools;
+                this.CubePools = cubePools;
             }
             else
             {
                 this.CubePools = new Dictionary<Colors, int>
                 {
-                    {Colors.Yellow, MaxCubesInCubePool },
-                    {Colors.Red, MaxCubesInCubePool },
-                    {Colors.Blue, MaxCubesInCubePool },
-                    {Colors.Black, MaxCubesInCubePool }
+                    {Colors.Yellow, maxCubesInCubePool },
+                    {Colors.Red, maxCubesInCubePool },
+                    {Colors.Blue, maxCubesInCubePool },
+                    {Colors.Black, maxCubesInCubePool }
                 };
             }
 
-            if(!Testing)
+            if(!testing)
             {
-                Setup(Users, textManager);
+                Setup(users, textManager);
             } 
         }
 
         //Setup methods
-        void Setup(List<User> Users, TextManager textManager)
+        void Setup(List<User> users, ITextManager textManager)
         {
             List<string> InputStrings = GetInput();
             CleanInput(InputStrings);
@@ -139,10 +142,10 @@ namespace Pandemic.Managers
             PlayerDeck.Shuffle();
 
             //Add Player Roles
-            City StartingCity = Cities[StartingCityName];
+            City StartingCity = Cities[startingCityName];
             StartingCity.HasResearchStation = true;
             RemainingResearchStations--;
-            AssignPlayerRoles(Users, textManager);
+            AssignPlayerRoles(users, textManager);
             DealPlayerCards();
    
             //Initial Infection
@@ -150,17 +153,17 @@ namespace Pandemic.Managers
             AddEpidemicsToDeck();
         }
 
-        List<string> GetInput(Stream CitiesResource = null)
+        List<string> GetInput(Stream citiesResource = null)
         {
-            if (CitiesResource == null)
+            if (citiesResource == null)
             {
-                CitiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(CitiesFilePath);
+                citiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(citiesFilePath);
             }
 
             List<string> InputStrings = new List<string>();
             try
             {
-                StreamReader stream = new StreamReader(CitiesResource);
+                StreamReader stream = new StreamReader(citiesResource);
                 using (stream)
                 {
                     string Line;
@@ -184,11 +187,11 @@ namespace Pandemic.Managers
             }
         }
 
-        void CleanInput(List<string> InputStrings)
+        void CleanInput(List<string> inputStrings)
         {
             List<int> RowsToRemove = new List<int>();
             int Counter = 0;
-            foreach(string CurrentString in InputStrings)
+            foreach(string CurrentString in inputStrings)
             {
                 bool IsComment = CurrentString.StartsWith('*');
                 bool IsEmpty = string.IsNullOrWhiteSpace(CurrentString);
@@ -224,16 +227,16 @@ namespace Pandemic.Managers
 
             for (int i = RowsToRemove.Count-1; i>=0; i--)
             {
-                InputStrings.RemoveAt(RowsToRemove[i]);
+                inputStrings.RemoveAt(RowsToRemove[i]);
                 
-                if (InputStrings.Count == 0)
+                if (inputStrings.Count == 0)
                 {
                     throw new UnexpectedBehaviourException("There are no valid Strings of Cities and connected cities in your input file. Error in CleanInput in StateManager");
                 }
             }
         }
 
-        Dictionary<string, City> CreateCities(List<string> inputStrings, TextManager textManager)
+        Dictionary<string, City> CreateCities(List<string> inputStrings, ITextManager textManager)
         {
             Dictionary<string, City> cities = new Dictionary<string, City>();
 
@@ -303,7 +306,7 @@ namespace Pandemic.Managers
             }
         }
 
-        void AddEventsToPlayerDeck(TextManager textManager)
+        void AddEventsToPlayerDeck(ITextManager textManager)
         {
             List<PlayerCard> EventCards = new List<PlayerCard>
             {
@@ -317,9 +320,9 @@ namespace Pandemic.Managers
             PlayerDeck.AddCards(EventCards);
         }
 
-        void AssignPlayerRoles(List<User> Users, TextManager textManager)
+        void AssignPlayerRoles(List<User> users, ITextManager textManager)
         {
-            City StartingCity = Cities[StartingCityName];
+            City StartingCity = Cities[startingCityName];
             if (StartingCity == null)
             {
                 throw new UnexpectedBehaviourException("Unable to find the starting city in the cities list in AssignPlayerRoles in StateManager.");
@@ -328,7 +331,7 @@ namespace Pandemic.Managers
                 List<int> AvailableRoleIndexes = new List<int> { 0, 1, 2, 3, 4, 5, 6 };
                 Random rnd = new Random();
                 int CurrentRoleIndex;
-                foreach (User CurrentUser in Users)
+                foreach (User CurrentUser in users)
                 {
                     CurrentRoleIndex = AvailableRoleIndexes[rnd.Next(AvailableRoleIndexes.Count)];
                     Role CurrentRole = null;
@@ -464,16 +467,16 @@ namespace Pandemic.Managers
 
 
         //public methods
-        public City GetCity(Card CityToFind)
+        public City GetCity(Card cityToFind)
         {
             try
             {
-                City foundCity = Cities[CityToFind.Name];
+                City foundCity = Cities[cityToFind.Name];
                 return foundCity;
             }
             catch (Exception ex)
             {
-                throw new UnexpectedBehaviourException($"{CityToFind.Name} wasn't found on the board in GetCity of StateManager.", ex);
+                throw new UnexpectedBehaviourException($"{cityToFind.Name} wasn't found on the board in GetCity of StateManager.", ex);
             }
         }
 
@@ -500,22 +503,22 @@ namespace Pandemic.Managers
 
         public List<City> GetCitiesWithResearchStation()
         {
-            List<City> TempCities = new List<City>();
+            List<City> currentCitiesWithResearchStation = new List<City>();
 
             foreach (City CurrentCity in Cities.Values)
             {
                 if (CurrentCity.HasResearchStation)
                 {
-                    TempCities.Add(CurrentCity);
+                    currentCitiesWithResearchStation.Add(CurrentCity);
                 }
             }
 
-            if (TempCities.Count == 0)
+            if (currentCitiesWithResearchStation.Count == 0)
             {
                 throw new UnexpectedBehaviourException("There are no cities with researchstations in GetCitiesWithResearchStation of StateManager. Something must have gone wrong somewhere.");
             } else
             {
-                return TempCities;
+                return currentCitiesWithResearchStation;
             }
         }
 
@@ -544,25 +547,25 @@ namespace Pandemic.Managers
 
 
         //Unit Test methods
-        public List<string> TestGetInput(Stream CitiesResource)
+        public List<string> TestGetInput(Stream citiesResource)
         {
-            return GetInput(CitiesResource);
+            return GetInput(citiesResource);
         }
 
-        public void TestCleanInput(List<string> InputStrings)
+        public void TestCleanInput(List<string> inputStrings)
         {
-            CleanInput(InputStrings);
+            CleanInput(inputStrings);
         }
 
-        public Dictionary<string, City> TestCreateCities(List<string> InputStrings)
+        public Dictionary<string, City> TestCreateCities(List<string> inputStrings)
         {
             TextManager temp = new TextManager();
-            return CreateCities(InputStrings, temp);
+            return CreateCities(inputStrings, temp);
         }
 
-        public void TestAddConnectedCities(List<String> InputStrings)
+        public void TestAddConnectedCities(List<String> inputStrings)
         {
-            AddConnectedCities(InputStrings);
+            AddConnectedCities(inputStrings);
         }
 
         public void TestAddCitiesToDecks()
@@ -576,10 +579,10 @@ namespace Pandemic.Managers
             AddEventsToPlayerDeck(temp);
         }
 
-        public void TestAssignPlayerRoles(List<User> Users)
+        public void TestAssignPlayerRoles(List<User> users)
         {
             TextManager temp = new TextManager();
-            AssignPlayerRoles(Users, temp);
+            AssignPlayerRoles(users, temp);
         }
 
         public void TestDealPlayerCards()

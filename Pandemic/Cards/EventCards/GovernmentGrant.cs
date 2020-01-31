@@ -10,7 +10,7 @@ namespace Pandemic.Cards.EventCards
         readonly static string _eventName = "Government Grant";
         readonly static string _eventDescription = $"Build a research station in any city";
 
-        public GovernmentGrant(StateManager state = null, TextManager textManager = null) : base(_eventName, _eventDescription, state, textManager) { }
+        public GovernmentGrant(StateManager state = null, ITextManager textManager = null) : base(_eventName, _eventDescription, state, textManager) { }
 
         public override void Play(Role playerWithCard)
         {
@@ -19,7 +19,7 @@ namespace Pandemic.Cards.EventCards
                 throw new IllegalMoveException($"The {playerWithCard.RoleName} does not have {_eventName} in their hand to play.");
             } else if (_state.RemainingResearchStations == 0)
             {
-                throw new IllegalMoveException($"There are no research stations left to build. You'll have to make do with the ones you have.");
+                throw new IllegalMoveException("There are no research stations left to build. You'll have to make do with the ones you have.");
             } else
             {
                 textManager.PrintEventDescription(this);
@@ -36,6 +36,7 @@ namespace Pandemic.Cards.EventCards
                 int choice = textManager.ChooseItemFromList(eligibleCities, "build a research station in");
                 City chosenCity = eligibleCities[choice];
                 chosenCity.BuildResearchStation();
+                playerWithCard.Hand.Remove(this);
             }
         }
     }

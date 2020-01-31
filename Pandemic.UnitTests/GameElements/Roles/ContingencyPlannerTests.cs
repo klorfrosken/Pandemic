@@ -14,8 +14,8 @@ namespace Pandemic.UnitTests.GameElements.Roles
         public void PickEventCardFromDiscard_HasNotPickedEvent_EventAvailable_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                PlayerDiscard: new PlayerDeck());
+                testing: true,
+                playerDiscard: new PlayerDeck());
             ITextManager txtMgr = new TestTextManager(itemNumber: 0);
             City currentCity = new City("Atlanta", Colors.Blue);
             ContingencyPlanner role = new ContingencyPlanner(currentCity, 0, state, txtMgr);
@@ -33,8 +33,8 @@ namespace Pandemic.UnitTests.GameElements.Roles
         public void PickEventCardFromDiscard_HasNotPickedEvent_NoEventAvailable_ThrowsException()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                PlayerDiscard: new PlayerDeck());
+                testing: true,
+                playerDiscard: new PlayerDeck());
             ITextManager txtMgr = new TestTextManager(itemNumber: 0);
             City currentCity = new City("Atlanta", Colors.Blue);
             ContingencyPlanner role = new ContingencyPlanner(currentCity, 0, state, txtMgr);
@@ -46,8 +46,8 @@ namespace Pandemic.UnitTests.GameElements.Roles
         public void PickEventCardFromDiscard_HasAlreadyPickedEvent_ThrowsException()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                PlayerDiscard: new PlayerDeck());
+                testing: true,
+                playerDiscard: new PlayerDeck());
             ITextManager txtMgr = new TestTextManager(itemNumber: 0);
             City currentCity = new City("Atlanta", Colors.Blue);
             ContingencyPlanner role = new ContingencyPlanner(currentCity, 0, state, txtMgr);

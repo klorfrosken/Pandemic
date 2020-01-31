@@ -23,7 +23,7 @@ namespace Pandemic.Game_Elements.Roles
         public override void GiveCard(Role OtherPlayer)
         {
             List<PlayerCard> EligibleCards = Hand.FindAll(Card => Card is CityCard);
-            int Choice = TextManager.ChooseItemFromList(EligibleCards, "give");
+            int Choice = textManager.ChooseItemFromList(EligibleCards, "give");
             PlayerCard CardToGive = Hand[Choice];
             if (CardToGive == null)
             {
@@ -44,7 +44,7 @@ namespace Pandemic.Game_Elements.Roles
 
             Role GivingPlayer;
             Role ReceivingPlayer;
-            int Choice = TextManager.ShareKnowledgeWithResearcher();
+            int Choice = textManager.ShareKnowledgeWithResearcher();
             if (Choice == 1)
             {
                 GivingPlayer = OtherPlayer;

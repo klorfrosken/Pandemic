@@ -21,8 +21,8 @@ namespace Pandemic.UnitTests.Managers
             Role testRole = new Medic(new City("Atlanta", Colors.Blue), 0);
             
             StateManager state = new StateManager(
-                Testing: true, 
-                Roles: new List<Role>
+                testing: true, 
+                roles: new List<Role>
                 {
                     testRole
                 });
@@ -37,8 +37,8 @@ namespace Pandemic.UnitTests.Managers
             string testCityName = "Atlanta";
 
             StateManager state = new StateManager(
-                Testing: true,
-                Cities: new Dictionary<string, City> { { testCityName, new City(testCityName, Colors.Blue) } }
+                testing: true,
+                cities: new Dictionary<string, City> { { testCityName, new City(testCityName, Colors.Blue) } }
                 );
 
             Assert.Contains(testCityName, (IDictionary<string, City>)state.Cities);
@@ -56,8 +56,8 @@ namespace Pandemic.UnitTests.Managers
                 };
 
             StateManager state = new StateManager(
-                Testing: true,
-                Cures: initialCures
+                testing: true,
+                cures: initialCures
                 );
 
             Assert.Equal(initialCures, state.Cures);
@@ -75,8 +75,8 @@ namespace Pandemic.UnitTests.Managers
             };
 
             StateManager state = new StateManager(
-                Testing: true,
-                CubePools: initialCubePools
+                testing: true,
+                cubePools: initialCubePools
                 );
 
             Assert.Equal(initialCubePools, state.CubePools);
@@ -87,8 +87,8 @@ namespace Pandemic.UnitTests.Managers
         {
             int maxCubesInCubePool = 12;
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: maxCubesInCubePool
+                testing: true,
+                maxCubesInCubePool: maxCubesInCubePool
                 );
 
             Assert.Collection(state.CubePools,
@@ -120,8 +120,8 @@ namespace Pandemic.UnitTests.Managers
             City testCity = new City("Atlanta", Colors.Blue);
 
             StateManager state = new StateManager(
-                Testing: true,
-                OutbreakThisChain: new List<City> { testCity }
+                testing: true,
+                outbreakThisChain: new List<City> { testCity }
                 );
 
             Assert.Contains(testCity, state.OutbreakThisChain);
@@ -133,8 +133,8 @@ namespace Pandemic.UnitTests.Managers
             InfectionCard testCard = new InfectionCard("Atlanta", Colors.Blue);
 
             StateManager state = new StateManager(
-                Testing: true,
-                InfectionDeck: new InfectionDeck(new List<InfectionCard>
+                testing: true,
+                infectionDeck: new InfectionDeck(new List<InfectionCard>
                 {
                     testCard
                 }));
@@ -148,8 +148,8 @@ namespace Pandemic.UnitTests.Managers
             InfectionCard testCard = new InfectionCard("Atlanta", Colors.Blue);
 
             StateManager state = new StateManager(
-                Testing: true,
-                InfectionDiscard: new InfectionDeck(new List<InfectionCard>
+                testing: true,
+                infectionDiscard: new InfectionDeck(new List<InfectionCard>
                 {
                         testCard
                 }));
@@ -163,8 +163,8 @@ namespace Pandemic.UnitTests.Managers
             PlayerCard testCard = new CityCard("Atlanta", Colors.Blue);
 
             StateManager state = new StateManager(
-                Testing: true,
-                PlayerDeck: new PlayerDeck(new List<PlayerCard>
+                testing: true,
+                olayerDeck: new PlayerDeck(new List<PlayerCard>
                 {
                         testCard
                 }));
@@ -178,8 +178,8 @@ namespace Pandemic.UnitTests.Managers
             PlayerCard testCard = new CityCard("Atlanta", Colors.Blue);
 
             StateManager state = new StateManager(
-                Testing: true,
-                PlayerDiscard: new PlayerDeck(new List<PlayerCard>
+                testing: true,
+                playerDiscard: new PlayerDeck(new List<PlayerCard>
                 {
                         testCard
                 }));
@@ -193,8 +193,8 @@ namespace Pandemic.UnitTests.Managers
             int actualNumberOfPlayers = 2;
 
             StateManager state = new StateManager(
-                Testing: true,
-                Users: new List<User>
+                testing: true,
+                users: new List<User>
                 {
                         new User(0, "Testperson 1"),
                         new User(1, "Testperson 2")
@@ -216,8 +216,8 @@ namespace Pandemic.UnitTests.Managers
             TextManager textMgr = new TextManager();
 
             StateManager state = new StateManager(
-                Testing: false,
-                Users: testUsers,
+                testing: false,
+                users: testUsers,
                 textManager: textMgr);
 
             int numberOfCities = 48;
@@ -329,7 +329,7 @@ namespace Pandemic.UnitTests.Managers
         {
             string citiesFilePath = "Pandemic.UnitTests.Managers.GameManager_TestFile.txt";
             Stream citiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(citiesFilePath);
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             List<string> expectedStrings = new List<string>
                 {
@@ -367,8 +367,8 @@ namespace Pandemic.UnitTests.Managers
         public void GetInput_InvalidFilePath_ThorwsException()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                CitiesFilePath: @"C:\WrongFileName.txt");
+                testing: true,
+                citiesFilePath: @"C:\WrongFileName.txt");
 
             Assert.Throws<UnexpectedBehaviourException>(() => state.TestGetInput(null));
         }
@@ -379,8 +379,8 @@ namespace Pandemic.UnitTests.Managers
             string citiesFilePath = "Pandemic.UnitTests.Managers.GameManager_EmptyFile.txt";
             Stream citiesResource = Assembly.GetExecutingAssembly().GetManifestResourceStream(citiesFilePath);
             StateManager state = new StateManager(
-                Testing: true,
-                CitiesFilePath: "Pandemic.UnitTests.Managers.GameManager_EmptyFile.txt");
+                testing: true,
+                citiesFilePath: "Pandemic.UnitTests.Managers.GameManager_EmptyFile.txt");
 
             Assert.Throws<UnexpectedBehaviourException>(() => state.TestGetInput(citiesResource));
         }
@@ -388,7 +388,7 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void CleanInput_FileIsCleaned_Succeeds()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             List<string> inputStrings = new List<string>
                 {
@@ -430,7 +430,7 @@ namespace Pandemic.UnitTests.Managers
         [InlineData("*Only comments or empty strings in file")]
         public void CleanInput_FileIncorrectlyFormatted_ThrowsException(string misformattedString)
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             List<string> inputStrings = new List<string> { misformattedString };
 
@@ -440,7 +440,7 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void CreateCities_DifferentColoredCities_Succeeds()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             List<string> inputStrings = new List<string>
                 {
@@ -499,8 +499,8 @@ namespace Pandemic.UnitTests.Managers
             };
                
             StateManager state = new StateManager(
-                Testing: true,
-                Cities: cities
+                testing: true,
+                cities: cities
                 );
 
             List<string> InputStrings = new List<string>
@@ -522,8 +522,8 @@ namespace Pandemic.UnitTests.Managers
         public void AddConnectedCities_ConnectedCityDoesNotExist_ThrowsException()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                Cities: new Dictionary<string, City>
+                testing: true,
+                cities: new Dictionary<string, City>
                 {
                         { "Atlanta", new City("Atlanta", Colors.Blue) },
                         { "Chicago", new City("Chicago", Colors.Blue) },
@@ -555,8 +555,8 @@ namespace Pandemic.UnitTests.Managers
             City testCity5 = new City(cityName5, Colors.Blue);
 
             StateManager state = new StateManager(
-                Testing: true,
-                Cities: new Dictionary<string, City>
+                testing: true,
+                cities: new Dictionary<string, City>
                 {
                         { cityName1, testCity1},
                         { cityName2, testCity2},
@@ -587,7 +587,7 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void AddEventsToPlayerDeck_Succeeds()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             PlayerDeck expectedPlayerDeck = new PlayerDeck(new List<PlayerCard>
                 {
@@ -613,8 +613,8 @@ namespace Pandemic.UnitTests.Managers
         public void AssignPlayerRoles_FourPlayersAreAssignedRandomNonEqualRoles()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                Cities: new Dictionary<string, City> { { "Atlanta", new City("Atlanta", Colors.Blue) } });
+                testing: true,
+                cities: new Dictionary<string, City> { { "Atlanta", new City("Atlanta", Colors.Blue) } });
 
             List<User> testUsers = new List<User>
                 {
@@ -671,13 +671,13 @@ namespace Pandemic.UnitTests.Managers
 
             City startingCity = new City("Atlanta", Colors.Blue);
             StateManager state = new StateManager(
-                Testing: true,
-                Roles: new List<Role>
+                testing: true,
+                roles: new List<Role>
                 {
                     new Medic(startingCity, 0),
                     new QuarantineSpecialist(startingCity, 1)
                 },
-                PlayerDeck: new PlayerDeck(expectedCards));
+                olayerDeck: new PlayerDeck(expectedCards));
 
             expectedCards.Reverse();    //because draw pulls from end of deck. 
 
@@ -722,14 +722,14 @@ namespace Pandemic.UnitTests.Managers
 
             City startingCity = new City("Atlanta", Colors.Blue);
             StateManager state = new StateManager(
-                Testing: true,
-                Roles: new List<Role>
+                testing: true,
+                roles: new List<Role>
                 {
                     new Medic(startingCity, 0),
                     new QuarantineSpecialist(startingCity, 1),
                     new Scientist(startingCity, 2)
                 },
-                PlayerDeck: new PlayerDeck(expectedCards));
+                olayerDeck: new PlayerDeck(expectedCards));
 
             expectedCards.Reverse();    //because draw pulls from end of deck. 
 
@@ -780,15 +780,15 @@ namespace Pandemic.UnitTests.Managers
 
             City startingCity = new City("Atlanta", Colors.Blue);
             StateManager state = new StateManager(
-                Testing: true,
-                Roles: new List<Role>
+                testing: true,
+                roles: new List<Role>
                 {
                         new Medic(startingCity, 0),
                         new QuarantineSpecialist(startingCity, 1),
                         new Scientist(startingCity, 2),
                         new Researcher(startingCity, 3)
                 },
-                PlayerDeck: new PlayerDeck(expectedCards));
+                olayerDeck: new PlayerDeck(expectedCards));
 
             expectedCards.Reverse();    //because draw pulls from end of deck. 
 
@@ -831,7 +831,7 @@ namespace Pandemic.UnitTests.Managers
         {
             City startingCity = new City("Atlanta", Colors.Blue);
             StateManager state = new StateManager(
-                Testing: true);
+                testing: true);
 
             Assert.Throws<UnexpectedBehaviourException>(() => state.TestDealPlayerCards());
         }
@@ -841,8 +841,8 @@ namespace Pandemic.UnitTests.Managers
         {
             City startingCity = new City("Atlanta", Colors.Blue);
             StateManager state = new StateManager(
-                Testing: true,
-                Roles: new List<Role>
+                testing: true,
+                roles: new List<Role>
                 {
                         new Medic(startingCity, 0),
                         new QuarantineSpecialist(startingCity, 1),
@@ -850,7 +850,7 @@ namespace Pandemic.UnitTests.Managers
                         new QuarantineSpecialist(startingCity, 3),
                         new Researcher(startingCity, 4)
                 },
-                PlayerDeck: new PlayerDeck(new List<PlayerCard>
+                olayerDeck: new PlayerDeck(new List<PlayerCard>
                 {
                         new CityCard("TestCity1", Colors.Yellow),
                         new CityCard("TestCity2", Colors.Yellow),
@@ -870,13 +870,13 @@ namespace Pandemic.UnitTests.Managers
         {
             City startingCity = new City("Atlanta", Colors.Blue);
             StateManager state = new StateManager(
-                Testing: true,
-                Roles: new List<Role>
+                testing: true,
+                roles: new List<Role>
                 {
                         new Medic(startingCity, 0),
                         new QuarantineSpecialist(startingCity, 1),
                 },
-                PlayerDeck: new PlayerDeck(new List<PlayerCard>
+                olayerDeck: new PlayerDeck(new List<PlayerCard>
                 {
                         new CityCard("TestCity1", Colors.Yellow),
                         new CityCard("TestCity2", Colors.Yellow),
@@ -919,9 +919,9 @@ namespace Pandemic.UnitTests.Managers
             };
 
             StateManager state = new StateManager(
-                Testing: true,
-                NumberOfEpidemics: 2,
-                PlayerDeck: new PlayerDeck(initialDeck));
+                testing: true,
+                numberOfEpidemics: 2,
+                olayerDeck: new PlayerDeck(initialDeck));
 
             state.TestAddEpidemicsToDeck();
 
@@ -1003,8 +1003,8 @@ namespace Pandemic.UnitTests.Managers
         public void AddEpidemicsToDeck_PlayerDeckNotCreated_ThrowsException()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                NumberOfEpidemics: 2
+                testing: true,
+                numberOfEpidemics: 2
                 );
 
             Assert.Throws<UnexpectedBehaviourException>(() => state.TestAddEpidemicsToDeck());
@@ -1026,8 +1026,8 @@ namespace Pandemic.UnitTests.Managers
             string cityName9 = "TestCity9";
 
             StateManager state = new StateManager(
-                Testing: true,
-                InfectionDeck: new InfectionDeck(new List<InfectionCard>
+                testing: true,
+                infectionDeck: new InfectionDeck(new List<InfectionCard>
                 {
                     new InfectionCard(cityName1 , testColor),
                     new InfectionCard(cityName2 , testColor),
@@ -1039,7 +1039,7 @@ namespace Pandemic.UnitTests.Managers
                     new InfectionCard(cityName8 , testColor),
                     new InfectionCard(cityName9 , testColor)
                 }),
-                Cities: new Dictionary<string, City>
+                cities: new Dictionary<string, City>
                 {
                     {cityName1 , new City(cityName1, testColor) },
                     {cityName2 , new City(cityName2, testColor) },
@@ -1083,8 +1083,8 @@ namespace Pandemic.UnitTests.Managers
             string cityName9 = "TestCity9";
 
             StateManager state = new StateManager(
-                Testing: true,
-                Cities: new Dictionary<string, City>
+                testing: true,
+                cities: new Dictionary<string, City>
                 {
                     {cityName1 , new City(cityName1, testColor) },
                     {cityName2 , new City(cityName2, testColor) },
@@ -1104,8 +1104,8 @@ namespace Pandemic.UnitTests.Managers
         public void InitialInfection_NoCitiesInState_ThrowsException()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                InfectionDeck: new InfectionDeck(new List<InfectionCard>
+                testing: true,
+                infectionDeck: new InfectionDeck(new List<InfectionCard>
                 {
                         new InfectionCard("TestCity1", Colors.Yellow),
                 }));
@@ -1119,8 +1119,8 @@ namespace Pandemic.UnitTests.Managers
             string testName = "Atlanta";
             City testCity = new City(testName, Colors.Blue);
             StateManager state = new StateManager(
-                Testing: true,
-                Cities: new Dictionary<string, City>{
+                testing: true,
+                cities: new Dictionary<string, City>{
                     {testName, testCity } });
 
             CityCard cardToFind = new CityCard(testName, Colors.Blue);
@@ -1133,7 +1133,7 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void GetCity_CityNotFound_ThrowsException()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             CityCard cityToFind = new CityCard("Atlanta", Colors.Blue);
 
@@ -1164,8 +1164,8 @@ namespace Pandemic.UnitTests.Managers
             };
 
             StateManager state = new StateManager(
-                Testing: true,
-                Cities: new Dictionary<string, City>
+                testing: true,
+                cities: new Dictionary<string, City>
                 {
                     {cityName1 , new City(cityName1, testColor) },
                     {cityName2 , new City(cityName2, testColor) },
@@ -1180,6 +1180,7 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void GetCitiesWithResearchStation_CitiesAreReturned_Succeeds()
         {
+            StateManager state = new StateManager(testing: true);
             Colors testColor = Colors.Blue;
 
             string cityName1 = "TestCity1";
@@ -1187,14 +1188,14 @@ namespace Pandemic.UnitTests.Managers
             string cityName3 = "TestCity3";
             string cityName4 = "TestCity4";
 
-            City testCity1 = new City(cityName1, testColor);
-            City testCity2 = new City(cityName2, testColor);
-            City testCity3 = new City(cityName3, testColor);
-            City testCity4 = new City(cityName4, testColor);
+            City testCity1 = new City(cityName1, testColor, state);
+            City testCity2 = new City(cityName2, testColor, state);
+            City testCity3 = new City(cityName3, testColor, state);
+            City testCity4 = new City(cityName4, testColor, state);
 
             StateManager State = new StateManager(
-                Testing: true,
-                Cities: new Dictionary<string, City>{
+                testing: true,
+                cities: new Dictionary<string, City>{
                     {cityName1, testCity1 },
                     {cityName2, testCity2 },
                     {cityName3, testCity3 },
@@ -1225,8 +1226,8 @@ namespace Pandemic.UnitTests.Managers
             City testCity1 = new City(cityName1, Colors.Blue);
 
             StateManager State = new StateManager(
-                Testing: true,
-                Cities: new Dictionary<string, City>{
+                testing: true,
+                cities: new Dictionary<string, City>{
                     {cityName1, testCity1 },
                 });
 
@@ -1237,8 +1238,8 @@ namespace Pandemic.UnitTests.Managers
         public void BuildResearchStation_Succeeds()
         {
             StateManager State = new StateManager(
-                Testing: true,
-                RemainingResearchStations: 2);
+                testing: true,
+                remainingResearchStations: 2);
 
             State.BuildResearchStation();
 
@@ -1249,8 +1250,8 @@ namespace Pandemic.UnitTests.Managers
         public void BuildResearchStation_NoStationsLeft_ThrowsException()
         {
             StateManager State = new StateManager(
-                Testing: true,
-                RemainingResearchStations: 0);
+                testing: true,
+                remainingResearchStations: 0);
 
             Assert.Throws<UnexpectedBehaviourException>(() => State.BuildResearchStation());
         }
@@ -1258,7 +1259,7 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void IncreaseInfectionRate_Succeeds()
         {
-            StateManager State = new StateManager(Testing: true, InfectionIndex: 0);
+            StateManager State = new StateManager(testing: true, infectionIndex: 0);
 
             State.IncreaseInfectionRate();
             Assert.True(State.InfectionIndex == 1);
@@ -1267,7 +1268,7 @@ namespace Pandemic.UnitTests.Managers
         [Fact]
         public void IncreaseInfectionRate_IndexIsTooLarge_ThrowsException()
         {
-            StateManager State = new StateManager(Testing: true, InfectionIndex: 7);
+            StateManager State = new StateManager(testing: true, infectionIndex: 7);
 
             Assert.Throws<UnexpectedBehaviourException>(() => State.IncreaseInfectionRate());
         }

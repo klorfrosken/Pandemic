@@ -1,40 +1,55 @@
-﻿//using Xunit;
-//using Pandemic.Cards.EventCards;
-//using Pandemic.Game;
-//using Pandemic.Managers;
+﻿using Xunit;
+using Pandemic.Managers;
+using Pandemic.Cards.EventCards;
+using Pandemic.Game;
+using Pandemic.Game_Elements.Roles;
+using Pandemic.Exceptions;
+using Pandemic.UnitTests.TestClasses;
+using System;
 
+namespace Pandemic.UnitTests.Cards.EventCards
+{
+    public class GovernmentGrantTests
+    {
+        [Fact]
+        public void Play_CardNotInHand_ThrowsException()
+        {
+            City currentCity = new City("Atlanta", Colors.Blue);
+            Scientist player = new Scientist(currentCity, 0);
+            GovernmentGrant card = new GovernmentGrant();
 
-//namespace Pandemic.UnitTests.Cards
-//{
-//    public class GovernmentGrantTests
-//    {
-//        [Fact]
-//        public void Play_ThereIsAlreadyResearchStationInCity_Fails()
-//        {
-//            //Arrange
-//            GovernmentGrant EventCard = new GovernmentGrant();
-//            City CityToBuildIn = new City("Atlanta", Colors.Blue);
-//            CityToBuildIn.ResearchStation = true;
+            Exception ex = Assert.Throws<IllegalMoveException>(() => card.Play(player));
+            Assert.Equal($"The {player.RoleName} does not have Government Grant in their hand to play.", ex.Message);
+        }
 
-//            //Act
-//            bool Actual = EventCard.PlayHandler(CityToBuildIn);
+        [Fact]
+        public void Play_NoMoreResearchStations_ThrowsException()
+        {
+            StateManager state = new StateManager(testing: true, remainingResearchStations: 0);
+            City currentCity = new City("Atlanta", Colors.Blue);
+            Scientist player = new Scientist(currentCity, 0);
+            GovernmentGrant card = new GovernmentGrant(state);
+            player.Hand.Add(card);
 
-//            //Assert
-//            Assert.False(Actual);
-//        }
+            Exception ex = Assert.Throws<IllegalMoveException>(() => card.Play(player));
+            Assert.Equal("There are no research stations left to build. You'll have to make do with the ones you have.", ex.Message);
+        }
 
-//        [Fact]
-//        public void Play_BuildIsAchieved_Succeeds()
-//        {
-//            //Arrange
-//            GovernmentGrant EventCard = new GovernmentGrant();
-//            City CityToBuildIn = new City("Atlanta", Colors.Blue);
+        [Fact]
+        public void Play_Succeeds()
+        {
+            StateManager state = new StateManager(testing: true);
+            ITextManager txtMgr = new TestTextManager(itemNumber:0);
+            City currentCity = new City("Atlanta", Colors.Blue, state);
+            state.Cities["Atlanta"] = currentCity;
+            Scientist player = new Scientist(currentCity, 0);
+            GovernmentGrant card = new GovernmentGrant(state, txtMgr);
+            player.Hand.Add(card);
 
-//            //Act
-//            bool Actual = EventCard.PlayHandler(CityToBuildIn);
+            card.Play(player);
 
-//            //Assert
-//            Assert.True(Actual);
-//        }
-//    }
-//}
+            Assert.True(currentCity.HasResearchStation);
+            Assert.Empty(player.Hand);
+        }
+    }
+}

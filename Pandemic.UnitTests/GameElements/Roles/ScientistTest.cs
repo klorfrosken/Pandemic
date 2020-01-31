@@ -15,8 +15,8 @@ namespace Pandemic.UnitTests.GameElements.Roles
         public void DiscoverCure_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                Cures: new Dictionary<Colors, bool>{
+                testing: true,
+                cures: new Dictionary<Colors, bool>{
                     {Colors.Yellow, false },
                     {Colors.Red, false },
                     {Colors.Blue, false },

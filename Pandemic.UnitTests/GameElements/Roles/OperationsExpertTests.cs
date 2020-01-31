@@ -14,7 +14,7 @@ namespace Pandemic.UnitTests.GameElements.Roles
         [Fact]
         public void BuildResearchStation_Succeeds()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
             City currentCity = new City("Atlanta", Colors.Blue, state);
             OperationsExpert player = new OperationsExpert(currentCity, 0, state);
 
@@ -27,7 +27,7 @@ namespace Pandemic.UnitTests.GameElements.Roles
         [Fact]
         public void BuildResearchStation_researchStationAlready_ThrowsException()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
             City currentCity = new City("Atlanta", Colors.Blue, state);
             currentCity.BuildResearchStation();
             OperationsExpert player = new OperationsExpert(currentCity, 0, state);
@@ -57,7 +57,7 @@ namespace Pandemic.UnitTests.GameElements.Roles
         [Fact]
         public void CharterFlightFromResearchStation_NoCardsInHand_ThrowsException()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
             City currentCity = new City("Atlanta", Colors.Blue, state);
             currentCity.BuildResearchStation();
             OperationsExpert player = new OperationsExpert(currentCity, 0);
@@ -68,7 +68,7 @@ namespace Pandemic.UnitTests.GameElements.Roles
         [Fact]
         public void CharterFlightFromResearchStation_OneCardInHand_Succeeds()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
             ITextManager txtMgr = new TestTextManager(itemNumber: 0);
 
             City currentCity = new City("Atlanta", Colors.Blue, state);
@@ -94,7 +94,7 @@ namespace Pandemic.UnitTests.GameElements.Roles
         [Fact]
         public void CharterFlightFromResearchStation_MultipleCardsInHand_Succeeds()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
             ITextManager txtMgr = new TestTextManager(itemNumber: 0);
 
             City currentCity = new City("Atlanta", Colors.Blue, state);

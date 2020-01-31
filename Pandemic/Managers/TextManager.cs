@@ -128,6 +128,9 @@ namespace Pandemic.Managers
 
             currentRole.PrintSpecialAbilities();
 
+            //note that playEvent will not work for roles with less than 2 special-actions, however it's a wase of efforts to fix this in the console app as the switch will most likely not survive to the final product
+            Console.WriteLine($"{AvailableStandardActions + currentRole.SpecialActions + 1}: PLAY EVENT - Any player with an event card in their hand, may play that card");
+
             Console.WriteLine("--------------------------------------------------------");
             Console.WriteLine($"You are in {currentRole.CurrentCity} and have {currentRole.RemainingActions} actions left.");
             PrintHand(currentRole);
@@ -225,19 +228,21 @@ namespace Pandemic.Managers
         {
             Boolean InputNotValid = true;
             int UserInput = -1;
-            while (InputNotValid)
+            do
             {
-                UserInput = Int32.Parse(Console.ReadLine());
-
-                if (UserInput < LowerRange || UserInput > UpperRange)
+                try
                 {
-                    Console.WriteLine($"{UserInput} is not valid input. Please enter a number between {LowerRange} and {UpperRange}");
+                    UserInput = Int32.Parse(Console.ReadLine());
+                    if (UserInput >= LowerRange && UserInput <= UpperRange)
+                    {
+                        InputNotValid = false;
+                    } 
                 }
-                else
+                catch
                 {
-                    InputNotValid = false;
+                    Console.WriteLine($"That is not valid input. Please enter a number between {LowerRange} and {UpperRange}");
                 }
-            }
+            } while (InputNotValid);
             return UserInput;
         }
         

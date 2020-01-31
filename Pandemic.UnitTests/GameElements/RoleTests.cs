@@ -53,7 +53,7 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         public void Draw_cardIsCityCard_Succeeds()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             City atlanta = new City("Atlanta", Colors.Blue, state);
             PlayerCard testCard = new CityCard("Atlanta", Colors.Blue, state);
@@ -70,8 +70,8 @@ namespace Pandemic.UnitTests.GameElements
         public void Draw_cardIsEpidemic_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                InfectionIndex: 2);
+                testing: true,
+                infectionIndex: 2);
 
             List<PlayerCard> cards = new List<PlayerCard>
             {
@@ -94,7 +94,7 @@ namespace Pandemic.UnitTests.GameElements
         public void Draw_PlayerDeckIsEmpty_ThrowsException()
         {
             StateManager state = new StateManager(
-                Testing: true);
+                testing: true);
 
             City atlanta = new City("Atlanta", Colors.Blue, state);
             Role testRole = new Scientist(atlanta, 0, state);
@@ -105,8 +105,8 @@ namespace Pandemic.UnitTests.GameElements
         public void Draw_multipleCardsDrawn_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                InfectionIndex: 2);
+                testing: true,
+                infectionIndex: 2);
 
             List<PlayerCard> cards = new List<PlayerCard>
             {
@@ -226,7 +226,7 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         public void ShuttleFlight_Succeeds()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             City currentCity = new City("Atlanta", Colors.Blue, state);
             currentCity.BuildResearchStation();
@@ -244,7 +244,7 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         public void ShuttleFlight_currentCityWithoutResearchStation_ThrowsException()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             City currentCity = new City("Atlanta", Colors.Blue);
             City nextCity = new City("Miami", Colors.Yellow, state);
@@ -258,7 +258,7 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         public void ShuttleFlight_nextCityWithoutResearchStation_ThrowsException()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             City currentCity = new City("Atlanta", Colors.Blue, state);
             currentCity.BuildResearchStation();
@@ -273,8 +273,8 @@ namespace Pandemic.UnitTests.GameElements
         public void BuildResearchStation_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                RemainingResearchStations: 4);
+                testing: true,
+                remainingResearchStations: 4);
             City currentCity = new City("Atlanta", Colors.Blue, state);
             Role testRole = new Scientist(currentCity, 0, state);
             PlayerCard card = new CityCard("Atlanta", Colors.Blue);
@@ -300,7 +300,7 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         public void BuildResearchStation_alreadyResearchStationInCity_ThrowsException()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
             City currentCity = new City("Atlanta", Colors.Blue, state);
             currentCity.BuildResearchStation();
             Role testRole = new Scientist(currentCity, 0);
@@ -317,8 +317,8 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = color;
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12);
+                testing: true,
+                maxCubesInCubePool: 12);
             City currentCity = new City("Atlanta", Colors.Blue, state);
             currentCity.DiseaseCubes[currentColor]++;
 
@@ -336,8 +336,8 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = Colors.None;
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12);
+                testing: true,
+                maxCubesInCubePool: 12);
             City currentCity = new City("Atlanta", Colors.Blue, state);
 
             Role currentRole = new Scientist(currentCity, 0, state);
@@ -350,8 +350,8 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = Colors.Yellow;
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12);
+                testing: true,
+                maxCubesInCubePool: 12);
             City currentCity = new City("Atlanta", Colors.Blue, state);
 
             Role currentRole = new Scientist(currentCity, 0, state);
@@ -374,7 +374,7 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = Colors.Yellow;
             StateManager state = new StateManager(
-                Testing: true);
+                testing: true);
             ITextManager txtMgr = new TestTextManager();
             City currentCity = new City("Atlanta", Colors.Blue, state, txtMgr);
             currentCity.BuildResearchStation();
@@ -404,7 +404,7 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = Colors.Yellow;
             StateManager state = new StateManager(
-                Testing: true);
+                testing: true);
             ITextManager txtMgr = new TestTextManager();
             City currentCity = new City("Atlanta", Colors.Blue, state, txtMgr);
             currentCity.BuildResearchStation();
@@ -429,8 +429,8 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = Colors.Yellow;
             StateManager state = new StateManager(
-                Testing: true,
-                Cures: new Dictionary<Colors, bool>{
+                testing: true,
+                cures: new Dictionary<Colors, bool>{
                     {currentColor, true } });
             ITextManager txtMgr = new TestTextManager();
             City currentCity = new City("Atlanta", Colors.Blue, state, txtMgr);
@@ -457,7 +457,7 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = Colors.Yellow;
             StateManager state = new StateManager(
-                Testing: true);
+                testing: true);
             ITextManager txtMgr = new TestTextManager(itemNumber: 1);
             City currentCity = new City("Atlanta", Colors.Blue, state, txtMgr);
             currentCity.BuildResearchStation();
@@ -489,8 +489,8 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = Colors.Yellow;
             StateManager state = new StateManager(
-                Testing: true,
-                Cures: new Dictionary<Colors, bool>{
+                testing: true,
+                cures: new Dictionary<Colors, bool>{
                     {Colors.Yellow, false },
                     {Colors.Red, true },
                     {Colors.Blue, true },

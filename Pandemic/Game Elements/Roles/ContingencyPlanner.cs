@@ -21,7 +21,7 @@ namespace Pandemic.Game_Elements.Roles
 
         public override void PrintSpecialAbilities()
         {
-            int i = TextManager.AvailableStandardActions;
+            int i = textManager.AvailableStandardActions;
             Console.WriteLine("SPECIAL ABILITIES:");
             Console.WriteLine($"{i+1}: TAKE EVENT CARD - Take an event card from anywhere in the Player Discard Pile and store it. Only one event card can be stored at a time.");
             Console.WriteLine("When the stored event card is played it is removed from the game instead of discarded.");
@@ -31,7 +31,7 @@ namespace Pandemic.Game_Elements.Roles
         {
             try
             {
-                PickEventcardFromDiscard(State.PlayerDiscard);
+                PickEventcardFromDiscard(state.PlayerDiscard);
             }
             catch { throw; }    //Throws illegalmoveexception if there are no event cards in the playerDiscard or haspickedevent
         }
@@ -58,7 +58,7 @@ namespace Pandemic.Game_Elements.Roles
                     choice = 0;
                 } else
                 {
-                    choice = TextManager.ChooseItemFromList(eligibleCards, "take");
+                    choice = textManager.ChooseItemFromList(eligibleCards, "take");
                 }
 
                 storedCard = eligibleCards[choice];

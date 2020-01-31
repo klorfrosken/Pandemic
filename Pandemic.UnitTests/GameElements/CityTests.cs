@@ -64,7 +64,8 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         void BuildResearchStation_ResearchStationIsBuilt_True()
         {
-            City actualCity = new City("Paris", Colors.Blue);
+            StateManager state = new StateManager(testing: true);
+            City actualCity = new City("Paris", Colors.Blue, state);
 
             actualCity.BuildResearchStation();
 
@@ -74,7 +75,8 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         void BuildResearchStation_CityAlreadyHasResearchStation_ThrowsException()
         {
-            City actualCity = new City("Paris", Colors.Blue);
+            StateManager state = new StateManager(testing: true);
+            City actualCity = new City("Paris", Colors.Blue, state);
             actualCity.BuildResearchStation();
 
             Assert.Throws<IllegalMoveException>(() => actualCity.BuildResearchStation());
@@ -98,7 +100,7 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         void TreatDisease_YellowIsCured_True()
         {
-            StateManager state = new StateManager(Testing: true, MaxCubesInCubePool: 12);
+            StateManager state = new StateManager(testing: true, maxCubesInCubePool: 12);
             City actualCity = new City("Miami", Colors.Yellow, state);
             Colors ColorCubeToRemove = Colors.Yellow;
             actualCity.DiseaseCubes[ColorCubeToRemove] = 2;
@@ -115,7 +117,7 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         void TreatDisease_RedIsCured_True()
         {
-            StateManager state = new StateManager(Testing: true, MaxCubesInCubePool: 12);
+            StateManager state = new StateManager(testing: true, maxCubesInCubePool: 12);
             City actualCity = new City("Miami", Colors.Yellow, state);
             Colors ColorCubeToRemove = Colors.Red;
             actualCity.DiseaseCubes[ColorCubeToRemove] = 2;
@@ -132,7 +134,7 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         void TreatDisease_BlueIsCured_True()
         {
-            StateManager state = new StateManager(Testing: true, MaxCubesInCubePool: 12);
+            StateManager state = new StateManager(testing: true, maxCubesInCubePool: 12);
             City actualCity = new City("Miami", Colors.Yellow, state);
             Colors ColorCubeToRemove = Colors.Blue;
             actualCity.DiseaseCubes[ColorCubeToRemove] = 2;
@@ -149,7 +151,7 @@ namespace Pandemic.UnitTests.GameElements
         [Fact]
         void TreatDisease_BlackIsCured_True()
         {
-            StateManager state = new StateManager(Testing: true, MaxCubesInCubePool: 12);
+            StateManager state = new StateManager(testing: true, maxCubesInCubePool: 12);
             City actualCity = new City("Miami", Colors.Yellow, state);
             Colors ColorCubeToRemove = Colors.Black;
             actualCity.DiseaseCubes[ColorCubeToRemove] = 2;
@@ -169,10 +171,10 @@ namespace Pandemic.UnitTests.GameElements
             Colors currentColor = Colors.Blue;
 
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12,
-                Cures: new Dictionary<Colors, bool> { { currentColor, true } },
-                CubePools: new Dictionary<Colors, int> { { currentColor, 5 } }
+                testing: true,
+                maxCubesInCubePool: 12,
+                cures: new Dictionary<Colors, bool> { { currentColor, true } },
+                cubePools: new Dictionary<Colors, int> { { currentColor, 5 } }
                 );
             City actualCity = new City("Atlanta", currentColor, state);
 
@@ -187,10 +189,10 @@ namespace Pandemic.UnitTests.GameElements
             Colors currentColor = Colors.Blue;
 
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12,
-                Cures: new Dictionary<Colors, bool> { { currentColor, true } },
-                CubePools: new Dictionary<Colors, int> { { currentColor, 12 } }
+                testing: true,
+                maxCubesInCubePool: 12,
+                cures: new Dictionary<Colors, bool> { { currentColor, true } },
+                cubePools: new Dictionary<Colors, int> { { currentColor, 12 } }
                 );
             City actualCity = new City("Atlanta", currentColor, state);
 
@@ -205,10 +207,10 @@ namespace Pandemic.UnitTests.GameElements
             Colors currentColor = Colors.Blue;
 
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12,
-                Cures: new Dictionary<Colors, bool> { { currentColor, false } },
-                CubePools: new Dictionary<Colors, int> { { currentColor, 5 } }
+                testing: true,
+                maxCubesInCubePool: 12,
+                cures: new Dictionary<Colors, bool> { { currentColor, false } },
+                cubePools: new Dictionary<Colors, int> { { currentColor, 5 } }
                 );
             City actualCity = new City("Atlanta", currentColor, state);
 
@@ -223,10 +225,10 @@ namespace Pandemic.UnitTests.GameElements
             Colors currentColor = Colors.Blue;
 
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12,
-                Cures: new Dictionary<Colors, bool> { { currentColor, false } },
-                CubePools: new Dictionary<Colors, int> { { currentColor, 12 } }
+                testing: true,
+                maxCubesInCubePool: 12,
+                cures: new Dictionary<Colors, bool> { { currentColor, false } },
+                cubePools: new Dictionary<Colors, int> { { currentColor, 12 } }
                 );
             City actualCity = new City("Atlanta", currentColor, state);
 
@@ -239,8 +241,8 @@ namespace Pandemic.UnitTests.GameElements
         void InfectionPreventedByQuarantineSpecialist_QuarantineSpecialistIsNotInGame_False()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                QuarantineSpecialistInGame: false);
+                testing: true,
+                quarantineSpecialistInGame: false);
             City actualCity = new City("Atlanta", Colors.Blue, state);
 
             bool InfectionPrevented = actualCity.TestInfectionPreventedByQuarantineSpecialist();
@@ -255,9 +257,9 @@ namespace Pandemic.UnitTests.GameElements
             Role quarantineSpecialist = new QuarantineSpecialist(otherCity, 0);
             
             StateManager state = new StateManager(
-                Testing: true,
-                QuarantineSpecialistInGame: true,
-                Roles: new List<Role> { quarantineSpecialist });
+                testing: true,
+                quarantineSpecialistInGame: true,
+                roles: new List<Role> { quarantineSpecialist });
             City actualCity = new City("Atlanta", Colors.Blue, state);
 
             bool InfectionPrevented = actualCity.TestInfectionPreventedByQuarantineSpecialist();
@@ -270,9 +272,9 @@ namespace Pandemic.UnitTests.GameElements
         {
             List<Role> roles = new List<Role>();
             StateManager state = new StateManager(
-                Testing: true,
-                QuarantineSpecialistInGame: true,
-                Roles: roles);
+                testing: true,
+                quarantineSpecialistInGame: true,
+                roles: roles);
 
             City actualCity = new City("Atlanta", Colors.Blue, state);
             roles.Add(new QuarantineSpecialist(actualCity, 0));
@@ -289,9 +291,9 @@ namespace Pandemic.UnitTests.GameElements
             Role quarantineSpecialist = new QuarantineSpecialist(connectedCity, 0);
 
             StateManager state = new StateManager(
-                Testing: true,
-                QuarantineSpecialistInGame: true,
-                Roles: new List<Role> { quarantineSpecialist });
+                testing: true,
+                quarantineSpecialistInGame: true,
+                roles: new List<Role> { quarantineSpecialist });
             City actualCity = new City("Atlanta", Colors.Blue, state);
             actualCity.ConnectedCities.Add(connectedCity);
 
@@ -305,8 +307,8 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = Colors.Blue;
             StateManager state = new StateManager(
-                Testing: true,
-                MedicInGame: false);
+                testing: true,
+                medicInGame: false);
             City actualCity = new City("Atlanta", currentColor, state);
 
             Boolean InfectionPrevented = actualCity.TestInfectionPreventedByMedic(currentColor);
@@ -321,10 +323,10 @@ namespace Pandemic.UnitTests.GameElements
             City otherCity = new City("Lima", Colors.Yellow);
             Role medic = new Medic(otherCity, 0);
             StateManager state = new StateManager(
-                Testing: true,
-                MedicInGame: true,
-                Roles: new List<Role> { medic },
-                Cures: new Dictionary<Colors, bool> { { currentColor, false } });
+                testing: true,
+                medicInGame: true,
+                roles: new List<Role> { medic },
+                cures: new Dictionary<Colors, bool> { { currentColor, false } });
             City actualCity = new City("Atlanta", currentColor, state);
 
             Boolean InfectionPrevented = actualCity.TestInfectionPreventedByMedic(currentColor);
@@ -338,10 +340,10 @@ namespace Pandemic.UnitTests.GameElements
             Colors currentColor = Colors.Blue;
             List<Role> roles = new List<Role>();
             StateManager state = new StateManager(
-                Testing: true,
-                MedicInGame: true,
-                Roles: roles,
-                Cures: new Dictionary<Colors, bool> { { currentColor, false } });
+                testing: true,
+                medicInGame: true,
+                roles: roles,
+                cures: new Dictionary<Colors, bool> { { currentColor, false } });
             City actualCity = new City("Atlanta", currentColor, state);
             roles.Add(new Medic(actualCity, 0));
             
@@ -357,10 +359,10 @@ namespace Pandemic.UnitTests.GameElements
             City otherCity = new City("Lima", Colors.Yellow);
             Role medic = new Medic(otherCity, 0);
             StateManager state = new StateManager(
-                Testing: true,
-                MedicInGame: true,
-                Roles: new List<Role> { medic },
-                Cures: new Dictionary<Colors, bool> { { currentColor, true } });
+                testing: true,
+                medicInGame: true,
+                roles: new List<Role> { medic },
+                cures: new Dictionary<Colors, bool> { { currentColor, true } });
             City actualCity = new City("Atlanta", currentColor, state);
 
             Boolean InfectionPrevented = actualCity.TestInfectionPreventedByMedic(currentColor);
@@ -374,10 +376,10 @@ namespace Pandemic.UnitTests.GameElements
             Colors currentColor = Colors.Blue;
             List<Role> roles = new List<Role>();
             StateManager state = new StateManager(
-                Testing: true,
-                MedicInGame: true,
-                Roles: roles,
-                Cures: new Dictionary<Colors, bool> { { currentColor, true } });
+                testing: true,
+                medicInGame: true,
+                roles: roles,
+                cures: new Dictionary<Colors, bool> { { currentColor, true } });
             City actualCity = new City("Atlanta", currentColor, state);
             roles.Add(new Medic(actualCity, 0));
 
@@ -392,10 +394,10 @@ namespace Pandemic.UnitTests.GameElements
             Colors currentColor = Colors.Blue;
 
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12,
-                Cures: new Dictionary<Colors, bool> { { currentColor, true } },
-                CubePools: new Dictionary<Colors, int> { { currentColor, 12 } }
+                testing: true,
+                maxCubesInCubePool: 12,
+                cures: new Dictionary<Colors, bool> { { currentColor, true } },
+                cubePools: new Dictionary<Colors, int> { { currentColor, 12 } }
                 );
             City actualCity = new City("Atlanta", currentColor, state);
 
@@ -409,9 +411,9 @@ namespace Pandemic.UnitTests.GameElements
         {
             List<Role> roles = new List<Role>();
             StateManager state = new StateManager(
-                Testing: true,
-                QuarantineSpecialistInGame: true,
-                Roles: roles);
+                testing: true,
+                quarantineSpecialistInGame: true,
+                roles: roles);
 
             Colors currentColor = Colors.Blue;
             City actualCity = new City("Atlanta", currentColor, state);
@@ -428,10 +430,10 @@ namespace Pandemic.UnitTests.GameElements
             Colors currentColor = Colors.Blue;
             List<Role> roles = new List<Role>();
             StateManager state = new StateManager(
-                Testing: true,
-                MedicInGame: true,
-                Roles: roles,
-                Cures: new Dictionary<Colors, bool> { { currentColor, true } });
+                testing: true,
+                medicInGame: true,
+                roles: roles,
+                cures: new Dictionary<Colors, bool> { { currentColor, true } });
             City actualCity = new City("Atlanta", currentColor, state);
             roles.Add(new Medic(actualCity, 0));
 
@@ -445,8 +447,8 @@ namespace Pandemic.UnitTests.GameElements
         {
             Colors currentColor = Colors.Blue;
             StateManager state = new StateManager(
-                Testing: true,
-                CubePools: new Dictionary<Colors, int> { { currentColor, 0 } });
+                testing: true,
+                cubePools: new Dictionary<Colors, int> { { currentColor, 0 } });
             City actualCity = new City("Atlanta", currentColor, state);
 
             Assert.Throws<TheWorldIsDeadException>(() => actualCity.InfectCity(currentColor));
@@ -456,8 +458,8 @@ namespace Pandemic.UnitTests.GameElements
         void InfectCity_CubeIsCityColor_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12);
+                testing: true,
+                maxCubesInCubePool: 12);
             ITextManager textMgr = new TestTextManager();
 
             Colors currentColor = Colors.Blue;
@@ -474,8 +476,8 @@ namespace Pandemic.UnitTests.GameElements
         void InfectCity_CubeNotCityColor_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                MaxCubesInCubePool: 12);
+                testing: true,
+                maxCubesInCubePool: 12);
             ITextManager textMgr = new TestTextManager();
 
             Colors currentColor = Colors.Blue;
@@ -493,9 +495,9 @@ namespace Pandemic.UnitTests.GameElements
         void Outbreak_MaxOutbreaksReached_ThrowsException()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                MaxOutbreaks: 8,
-                Outbreaks: 7);
+                testing: true,
+                maxOutbreaks: 8,
+                outbreaks: 7);
             Colors currentColor = Colors.Blue;
             City actualCity = new City("Atlanta", currentColor, state);
 
@@ -506,8 +508,8 @@ namespace Pandemic.UnitTests.GameElements
         void Outbreak_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                Outbreaks: 2);
+                testing: true,
+                outbreaks: 2);
             ITextManager textMgr = new TestTextManager();
 
             Colors currentColor = Colors.Blue;
@@ -533,8 +535,8 @@ namespace Pandemic.UnitTests.GameElements
         void InfectCity_OutbreakAndNotOutbreakThisChain_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                Outbreaks: 2);
+                testing: true,
+                outbreaks: 2);
             ITextManager textMgr = new TestTextManager();
 
             Colors currentColor = Colors.Blue;
@@ -561,8 +563,8 @@ namespace Pandemic.UnitTests.GameElements
         void InfectCity_DoubleOutbreak_Succeeds()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                Outbreaks: 2);
+                testing: true,
+                outbreaks: 2);
             ITextManager textMgr = new TestTextManager();
 
             Colors currentColor = Colors.Blue;

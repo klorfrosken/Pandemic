@@ -13,8 +13,8 @@ namespace Pandemic.UnitTests.Cards
         public void Increase_InfectionRateIncreased()
         {
             StateManager state = new StateManager(
-                Testing: true,
-                InfectionIndex: 2);
+                testing: true,
+                infectionIndex: 2);
 
             EpidemicCard testCard = new EpidemicCard(state);
 
@@ -27,7 +27,7 @@ namespace Pandemic.UnitTests.Cards
         public void Infect_NewCityInfected()
         {
             StateManager state = new StateManager(
-                Testing: true);
+                testing: true);
             ITextManager textMgr = new TestTextManager();
 
             InfectionCard infectionCard = new InfectionCard("Atlanta", Colors.Blue, state);
@@ -48,7 +48,7 @@ namespace Pandemic.UnitTests.Cards
         [Fact]
         public void Intensify_Succeeds()
         {
-            StateManager state = new StateManager(Testing: true);
+            StateManager state = new StateManager(testing: true);
 
             InfectionCard topCard = new InfectionCard("TopCard", Colors.Blue);
             InfectionCard middleCard = new InfectionCard("MiddleCard", Colors.Blue);

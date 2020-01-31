@@ -19,7 +19,7 @@ namespace Pandemic.Game_Elements.Roles
 
         public override void PrintSpecialAbilities()
         {
-            int i = TextManager.AvailableStandardActions;
+            int i = textManager.AvailableStandardActions;
             Console.WriteLine("SPECIAL ABILITIES:");
             Console.WriteLine($"{i + 1}: RESEARCH STATION MOVE - Once per turn, move from a reasearch station to any city by discarding any City card.");
             Console.WriteLine($"Build a research station in your current city, _without_ discarding a City card.");
@@ -67,12 +67,12 @@ namespace Pandemic.Game_Elements.Roles
                 else
                 {
                     List<PlayerCard> EligibleCards = Hand.FindAll(Card => Card is CityCard);
-                    cardChoice = TextManager.ChooseItemFromList(EligibleCards, "discard");
+                    cardChoice = textManager.ChooseItemFromList(EligibleCards, "discard");
                 }
 
-                List<City> availableCities = new List<City>(State.Cities.Values);
+                List<City> availableCities = new List<City>(state.Cities.Values);
                 availableCities.Remove(CurrentCity);
-                int cityChoice = TextManager.ChooseItemFromList(availableCities, "go to");
+                int cityChoice = textManager.ChooseItemFromList(availableCities, "go to");
 
                 City NextCity = availableCities[cityChoice];
 
@@ -85,7 +85,7 @@ namespace Pandemic.Game_Elements.Roles
 
         public override void Reset()
         {
-            RemainingActions = MaxActions;
+            RemainingActions = maxActions;
             UsedSpecialAbility = false;
         }
     }

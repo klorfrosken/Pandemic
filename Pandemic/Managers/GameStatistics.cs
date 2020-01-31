@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Pandemic.Managers
 {
-    class GameStatistics
+    public class GameStatistics
     {
         public int GamesPlayed { get; private set; }
         public int GamesNotCompleted { get; private set; }

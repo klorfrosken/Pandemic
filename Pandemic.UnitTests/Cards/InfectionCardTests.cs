@@ -16,9 +16,9 @@ namespace Pandemic.UnitTests.Cards
             Dictionary<string, City> cities = new Dictionary<string, City>();
             List<City> outbreakThisChain = new List<City>();
             StateManager state = new StateManager(
-                Testing: true, 
-                Cities: cities,
-                OutbreakThisChain: outbreakThisChain);
+                testing: true, 
+                cities: cities,
+                outbreakThisChain: outbreakThisChain);
             ITextManager textMgr = new TestTextManager();
             City cityToInfect = new City("testCity", Colors.Blue, state, textMgr);
             cities["testCity"] = cityToInfect;
@@ -37,7 +37,7 @@ namespace Pandemic.UnitTests.Cards
         public void Infect_NoCorrespondingCity_ThrowsException()
         {
             StateManager state = new StateManager(
-                Testing: true);
+                testing: true);
 
             InfectionCard testCard = new InfectionCard("testCity", Colors.Blue, state);
 

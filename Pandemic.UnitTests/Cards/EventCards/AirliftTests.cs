@@ -1,47 +1,44 @@
-//using Xunit;
-//using Pandemic.Managers;
-//using Pandemic.Cards.EventCards;
-//using Pandemic.Game;
-//using Pandemic.Game_Elements.Roles;
+using Xunit;
+using Pandemic.Managers;
+using Pandemic.Cards.EventCards;
+using Pandemic.Game;
+using Pandemic.Game_Elements.Roles;
+using Pandemic.Exceptions;
+using Pandemic.UnitTests.TestClasses;
 
-//namespace Pandemic.UnitTests.Cards
-//{
-//Husk å legge inn at kortet må discardes!
-//    public class AirliftTests
-//    {
-//        [Fact]
-//        public void Play_PlayerToMoveAlreadyInCity_Fails()
-//        {
-//            //Arrange
-//            Airlift EventCard = new Airlift();
-//            City CurrentCity = new City("Atlanta", Colors.Blue);
-//            Role PlayerToMove = new Scientist(CurrentCity);
-//            City NewCity = CurrentCity;
+namespace Pandemic.UnitTests.Cards.EventCards
+{
+    public class AirliftTests
+    {
+        [Fact]
+        public void Play_CardNotInHand_ThrowsException()
+        {
+            City currentCity = new City("Atlanta", Colors.Blue);
+            Airlift card = new Airlift();
+            Scientist player = new Scientist(currentCity, 0);
 
-//            //Act
-//            bool Actual = EventCard.PlayHandler(PlayerToMove, NewCity);
+            Assert.Throws<IllegalMoveException>(() => card.Play(player));
+        }
 
-//            //Assert
-//            Assert.False(Actual);
-//        }
+        [Fact]
+        public void Play_PlayerIsMoved_Succeeds()
+        {
+            StateManager state = new StateManager(testing: true);
+            ITextManager txtMgr = new TestTextManager(itemNumber: 0);
+            City currentCity = new City("Atlanta", Colors.Blue, state);
+            City newCity = new City("Lima", Colors.Yellow, state);
+            state.Cities["Atlanta"] = currentCity;
+            state.Cities["Lima"] = newCity;
 
-//        [Fact]
-//        public void Play_PlayerToMoveIsMoved_Succeeds()
-//        {
-//            //Arrange
-//            Airlift EventCard = new Airlift();
-//            City CurrentCity = new City("Atlanta", Colors.Blue);
-//            City CityToMoveTo = new City("Paris", Colors.Blue);
-//            Role PlayerToMove = new Scientist(CurrentCity);
+            Airlift card = new Airlift(state, txtMgr);
+            Scientist player = new Scientist(currentCity, 0, state, txtMgr);
+            state.Roles.Add(player);
+            player.Hand.Add(card);
 
-//            //Act
-//            bool PlayHandlerWorks = EventCard.PlayHandler(PlayerToMove, CityToMoveTo);
-//            bool PlayerIsMoved = PlayerToMove.CurrentCity == CityToMoveTo;
-//            bool Actual = PlayHandlerWorks && PlayerIsMoved;
+            card.Play(player);
 
-//            //Assert
-//            Assert.True(Actual);
-
-//        }
-//    }
-//}
+            Assert.Equal(newCity, player.CurrentCity);
+            Assert.Empty(player.Hand);
+        }
+    }
+}

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Pandemic.Cards;
 using Pandemic.Game;
 using Pandemic.Managers;
@@ -12,17 +11,17 @@ namespace Pandemic.Game_Elements.Roles
     {
         readonly static string Title = "Dispatcher";
 
-        public Dispatcher (City StartingCity, int PlayerID, StateManager state = null, ITextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager) 
+        public Dispatcher(City StartingCity, int PlayerID, StateManager state = null, ITextManager textManager = null) : base(PlayerID, Title, StartingCity, state, textManager) 
         {
             SpecialActions = 2;
         }
 
         public override void PrintSpecialAbilities()
         {
-            int i = TextManager.AvailableStandardActions;
+            int i = textManager.AvailableStandardActions;
             Console.WriteLine("SPECIAL ABILITIES:");
             Console.WriteLine($"{i + 1}: CONNECT PAWNS - Move any pawn, if its owner agrees, to any city containing another pawn.");
-            Console.WriteLine($"{i + 2}: MOVE ANOTHER PLAYER - Move another player's pawn, if its owner agrees, as if it were their own.");
+            Console.WriteLine($"{i + 2}: MOVE ANOTHER PLAYER - Move another player's pawn, if its owner agrees, as if it were your own.");
             Console.WriteLine("When mvoing a player's pawn as if it were your own, discard cards from _your_ hand when applicable. You may not use other players' special ability for the movement.");
         }
 
@@ -40,227 +39,228 @@ namespace Pandemic.Game_Elements.Roles
 
         public override void PlayFirstSpecialAbility()
         {
-            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, "move");
-            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
+            int choiceOfOtherPlayer = textManager.ChooseItemFromList(state.Roles, "move");
+            Role OtherPlayer = state.Roles[choiceOfOtherPlayer];
 
-            List<Role> EligibleTargetPlayers = new List<Role>(State.Roles);
-            EligibleTargetPlayers.Remove(OtherPlayer);
+            List<Role> eligibleTargetPlayers = new List<Role>(state.Roles);
+            eligibleTargetPlayers.Remove(OtherPlayer);
 
-            int ChoiceOfTargetPlayer = TextManager.ChooseItemFromList(EligibleTargetPlayers, "move to");
-            Role TargetPlayer = EligibleTargetPlayers[ChoiceOfTargetPlayer];
+            int choiceOfTargetPlayer = textManager.ChooseItemFromList(eligibleTargetPlayers, "move to");
+            Role targetPlayer = eligibleTargetPlayers[choiceOfTargetPlayer];
 
-            try
-            {
-                ConnectPawns(OtherPlayer, TargetPlayer, State);
-            }
-            catch { throw; }    //throws illegalmoveexception if the two players are already in the same city.
+            ConnectPawns(OtherPlayer, targetPlayer);     //throws illegalmoveexception if the two players are already in the same city.
         }
 
         public override void PlaySecondSpecialAbility()
-        {
+        {         
+            PrintMoveAnotherPlayer();
+            int chosenIndex = textManager.GetValidInteger(1, 4);
 
-            Boolean ActionPerformed = false;
-            do
-            {            
-                PrintMoveAnotherPlayer();
-                int ChosenIndex = TextManager.GetValidInteger(1, 4);
+            switch (chosenIndex)
+            {
+                case 1:
+                    //DRIVE/FERRY - Move another to a city connected by a white line to their current city
+                    {
+                        int choiceOfOtherPlayer = textManager.ChooseItemFromList(state.Roles, "move");
+                        Role otherPlayer = state.Roles[choiceOfOtherPlayer];
 
-                switch (ChosenIndex)
-                {
-                    case 1:
-                        //DRIVE/FERRY - Move another to a city connected by a white line to their current city
-                        try
+                        int choiceOfTargetCity = textManager.ChooseItemFromList(otherPlayer.CurrentCity.ConnectedCities, "move them to");
+                        City nextCity = otherPlayer.CurrentCity.ConnectedCities[choiceOfTargetCity];
+
+                        DriveFerryForPlayer(nextCity, otherPlayer);
+                    }
+                    break;
+                case 2:
+                    //DIRECT FLIGHT - Discard one of your city cards to move another player to the city named on that card"
+                    {
+                        List<CityCard> eligibleCards = new List<CityCard>();
+                        foreach (PlayerCard currentCard in Hand)
                         {
-                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, "move");
-                            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
-
-                            int ChoiceOfTargetCity = TextManager.ChooseItemFromList(OtherPlayer.CurrentCity.ConnectedCities, "move them to");
-                            City NextCity = OtherPlayer.CurrentCity.ConnectedCities[ChoiceOfTargetCity];
-
-                            DriveFerryForPlayer(NextCity, OtherPlayer, State);
-                            ActionPerformed = true;
-                        }
-                        catch (IllegalMoveException ex)
-                        {
-                            ex.ToString();
-                        }
-                        catch { throw; }
-                        break;
-                    case 2:
-                        //DIRECT FLIGHT - Discard one of your city cards to move another player to the city named on that card"
-                        try
-                        {
-                            List<CityCard> EligibleCards = new List<CityCard>();
-                            foreach (Card CurrentCard in Hand)
+                            if (currentCard is CityCard)
                             {
-                                if (CurrentCard is CityCard)
-                                {
-                                    EligibleCards.Add(CurrentCard as CityCard);
-                                }
-                            }
-
-                            int ChoiceOfTargetCity = -1;
-                            if (EligibleCards.Count == 0)
-                            {
-                                throw new IllegalMoveException("You don't have any cards you can discard for a direct flight");
-                            }
-                            else if (EligibleCards.Count == 1)
-                            {
-                                ChoiceOfTargetCity = 0;
-                            }
-                            else
-                            {
-                                ChoiceOfTargetCity = TextManager.ChooseItemFromList(EligibleCards, "move another player to");
-                            }
-
-                            City NextCity = State.GetCity(EligibleCards[ChoiceOfTargetCity]);
-
-                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, "players to move");
-                            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
-
-                            DirectFlightForPlayer(NextCity, OtherPlayer, State);
-                            ActionPerformed = true;
-                        }
-                        catch (IllegalMoveException ex)
-                        {
-                            ex.ToString();
-                        }
-                        catch { throw; }
-                        break;
-                    case 3:
-                        //CHARTER FLIGHT - Discard the city card that matches the city another player is in to move that player to _any_ city"
-                        try
-                        {
-                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, " players to move");
-                            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
-
-                            if (CardInHand(OtherPlayer.CurrentCity.Name))
-                            {
-                                int ChoiceOfTargetCity = TextManager.ChooseItemFromList(State.Cities.Values, "go to");
-                                City NextCity = State.GetCity(ChoiceOfTargetCity);
-                                CharterFlightForPlayer(NextCity, OtherPlayer, State);
-                                ActionPerformed = true;
-                            }
-                            else
-                            {
-                                throw new IllegalMoveException($"You need to have the City Card for your current city, {OtherPlayer.CurrentCity.Name} in your hand in order to charter a flight from there.");
+                                eligibleCards.Add(currentCard as CityCard);
                             }
                         }
-                        catch (IllegalMoveException ex)
-                        {
-                            ex.ToString();
-                        }
-                        catch { throw; }
-                        break;
-                    case 4:
-                        //SHUTTLE FLIGHT - Move another player from a city with a research station to any other city that has a research station
-                        try
-                        {
-                            int ChoiceOfOtherPlayer = TextManager.ChooseItemFromList(State.Roles, " players to move");
-                            Role OtherPlayer = State.Roles[ChoiceOfOtherPlayer];
 
-                            List<City> ResearchStations = State.GetCitiesWithResearchStation();
-                            if (!OtherPlayer.CurrentCity.HasResearchStation)
+                        int choiceOfTargetCity = -1;
+                        if (eligibleCards.Count == 0)
+                        {
+                            throw new IllegalMoveException("You don't have any cards you can discard for a direct flight");
+                        }
+                        else if (eligibleCards.Count == 1)
+                        {
+                            choiceOfTargetCity = 0;
+                        }
+                        else
+                        {
+                            choiceOfTargetCity = textManager.ChooseItemFromList(eligibleCards, "move another player to");
+                        }
+
+                        City nextCity = state.GetCity(eligibleCards[choiceOfTargetCity]);
+
+                        int choiceOfOtherPlayer = textManager.ChooseItemFromList(state.Roles, "players to move");
+                        Role otherPlayer = state.Roles[choiceOfOtherPlayer];
+
+                        DirectFlightForPlayer(nextCity, otherPlayer);
+                    }
+                    break;
+                case 3:
+                    //CHARTER FLIGHT - Discard the city card that matches the city another player is in to move that player to _any_ city"
+                    {
+                        int choiceOfOtherPlayer = textManager.ChooseItemFromList(state.Roles, "move");
+                        Role otherPlayer = state.Roles[choiceOfOtherPlayer];
+
+                        int choiceOfTargetCity = textManager.ChooseItemFromList(state.Cities.Values, "go to");
+                        City nextCity = state.GetCity(choiceOfTargetCity);
+                        CharterFlightForPlayer(nextCity, otherPlayer);
+                    }
+                    break;
+                case 4:
+                    //SHUTTLE FLIGHT - Move another player from a city with a research station to any other city that has a research station
+                    {
+                        List<Role> eligiblePlayers = new List<Role>();
+                        foreach (Role currentPlayer in state.Roles)
+                        {
+                            if (currentPlayer.CurrentCity.HasResearchStation)
                             {
-                                throw new IllegalMoveException("The player you want to move must be in a city with a research station in order for you to shuttle a flight for them.");
-                            } else if (ResearchStations.Count == 0)
+                                eligiblePlayers.Add(currentPlayer);
+                            }
+                        }
+
+                        List<City> researchStationCities = state.GetCitiesWithResearchStation();
+
+                        if (eligiblePlayers.Count == 0)
+                        {
+                            throw new IllegalMoveException("No players have research stations in the cities they are in, so they cannot be shuttled anywhere");
+                        } else if (researchStationCities.Count == 1)
+                        {
+                            throw new IllegalMoveException("There needs to be a research station in both the city someone is moving from and the city they are moving to, for you to shuttle a flight. \nCurrently there's only one research station in the game...");
+                        } else
+                        {
+                            int choiceOfOtherPlayer;
+                            Role otherPlayer;
+                            if (eligiblePlayers.Count == 1)
                             {
-                                throw new IllegalMoveException("There are no other research stations for that player to shuttle to.");
+                                choiceOfOtherPlayer = 0;
                             } else
                             {
-                                ResearchStations.Remove(OtherPlayer.CurrentCity);
-                                int Choice = -1;
-                                if (ResearchStations.Count == 1)
-                                {
-                                    Choice = 0;
-                                } else
-                                {
-                                    Choice = TextManager.ChooseItemFromList(ResearchStations, "move the player to");
-                                }
-
-                                City NextCity = ResearchStations[Choice];
-                                ShuttleFlightForPlayer(NextCity, OtherPlayer, State);
-                                ActionPerformed = true;
+                                choiceOfOtherPlayer = textManager.ChooseItemFromList(eligiblePlayers, " players to move");
                             }
+
+                            otherPlayer = eligiblePlayers[choiceOfOtherPlayer];
+
+                            researchStationCities.Remove(otherPlayer.CurrentCity);
+                            int choiceOfNextCity;
+                            if (researchStationCities.Count == 1)
+                            {
+                                choiceOfNextCity = 0;
+                            }
+                            else
+                            {
+                                choiceOfNextCity = textManager.ChooseItemFromList(researchStationCities, "move the player to");
+                            }
+
+                            City nextCity = researchStationCities[choiceOfNextCity];
+                            ShuttleFlightForPlayer(nextCity, otherPlayer);
                         }
-                        catch (IllegalMoveException ex)
-                        {
-                            ex.ToString();
-                        }
-                        catch { throw; }
-                        break;
-                    default:
-                        throw new UnexpectedBehaviourException($"The program crashed unexpectedly due to an invalid argument in the PlaySecondSpecialAbility method of {Title}. \nThe switch received an invalid case");
-                }
-            } while (!ActionPerformed);
+                    }
+                    break;
+                default:
+                    throw new UnexpectedBehaviourException($"The program crashed unexpectedly due to an invalid argument in the PlaySecondSpecialAbility method of {Title}. \nThe switch received an invalid case");
+            }
         }
 
-        void ConnectPawns(Role OtherPlayer, Role TargetPlayer, StateManager State)
+        void ConnectPawns(Role otherPlayer, Role targetPlayer)
         {
-            if (OtherPlayer.CurrentCity != TargetPlayer.CurrentCity)
+            if (otherPlayer.CurrentCity != targetPlayer.CurrentCity)
             {
-                OtherPlayer.ChangeCity(TargetPlayer.CurrentCity);
+                otherPlayer.ChangeCity(targetPlayer.CurrentCity);
                 RemainingActions--;
             }
             else
             {
-                throw new IllegalMoveException($"The {OtherPlayer.RoleName} is already in the same city as the {TargetPlayer.RoleName}");
+                throw new IllegalMoveException($"The {otherPlayer.RoleName} is already in the same city as the {targetPlayer.RoleName}");
             }
         }
 
-        void DriveFerryForPlayer(City NextCity, Role OtherPlayer, StateManager State)
+        void DriveFerryForPlayer(City nextCity, Role otherPlayer)
         {
-            if (OtherPlayer.CurrentCity.IsConnectedTo(NextCity))
+            if (otherPlayer.CurrentCity.IsConnectedTo(nextCity))
             {
-                OtherPlayer.ChangeCity(NextCity);
+                otherPlayer.ChangeCity(nextCity);
                 RemainingActions--;
             }
             else
             {
-                throw new IllegalMoveException($"{NextCity.Name} is not connected to {CurrentCity.Name} and you cannot move there.");
+                throw new IllegalMoveException($"{nextCity.Name} is not connected to {otherPlayer.CurrentCity} and they cannot be moved there.");
             }
         }
 
-        void DirectFlightForPlayer(City NextCity, Role OtherPlayer, StateManager State)
+        void DirectFlightForPlayer(City nextCity, Role otherPlayer)
         {
-            if (CardInHand(NextCity.Name))
+            if (CardInHand(nextCity.Name))
             {
-                OtherPlayer.ChangeCity(NextCity);
-                Discard(NextCity.Name);
+                otherPlayer.ChangeCity(nextCity);
+                Discard(nextCity.Name);
                 RemainingActions--;
              }
             else 
             {
-                throw new IllegalMoveException($"You need to have the {NextCity.Name} City Card in _your_ hand in order to move another player to {NextCity.Name}");
+                throw new IllegalMoveException($"You need to have the {nextCity} City Card in _your_ hand in order to move another player to {nextCity}");
             }
         }
 
-        void CharterFlightForPlayer(City NextCity, Role OtherPlayer, StateManager State)
+        void CharterFlightForPlayer(City nextcity, Role otherPlayer)
         {
             if (CardInHand(CurrentCity.Name))
             {
                 Discard(CurrentCity.Name);
-                OtherPlayer.ChangeCity(NextCity);
+                otherPlayer.ChangeCity(nextcity);
                 RemainingActions--;
             }
             else
             {
-                throw new IllegalMoveException($"You need to have the {CurrentCity.Name} City Card in _your_ hand in order to charter a flight for another player");
+                throw new IllegalMoveException($"You need to have the {otherPlayer.CurrentCity} City Card in _your_ hand in order to charter a flight for another player");
 
             }
         }
 
-        void ShuttleFlightForPlayer(City NextCity, Role OtherPlayer, StateManager State)
+        void ShuttleFlightForPlayer(City nextCity, Role otherPlayer)
         {
-            if (OtherPlayer.CurrentCity.HasResearchStation && NextCity.HasResearchStation)
+            if (!otherPlayer.CurrentCity.HasResearchStation)
             {
-                OtherPlayer.ChangeCity(NextCity);
-                RemainingActions--;
+                throw new IllegalMoveException($"There needs to be a research station in both the city someone is moving from and the city they are moving to, for you to charter a flight for another player. \n{otherPlayer.CurrentCity}, where {otherPlayer} is, doesn't have one");
+            } else if (!nextCity.HasResearchStation)
+            {
+                throw new IllegalMoveException($"There needs to be a research station in both the city someone is moving from and the city they are moving to, for you to charter a flight for another player. \n{nextCity}, where {otherPlayer} is to go, doesn't have one");
             }
             else
             {
-                throw new IllegalMoveException("There needs to be a research station in both the city you are moving from and the city you are moving to, for you to build a research station.");
+                otherPlayer.ChangeCity(nextCity);
+                RemainingActions--;
             }
+        }
+
+        //Unit test methods
+        public void TestConnectPawns(Role otherPlayer, Role targetPlayer)
+        {
+            ConnectPawns(otherPlayer, targetPlayer);
+        }
+        public void TestDriveFerryForPlayer(City nextCity, Role otherPlayer)
+        {
+            DriveFerryForPlayer(nextCity, otherPlayer);
+        }
+        public void TestDirectFlightForPlayer(City nextCity, Role otherPlayer)
+        {
+            DirectFlightForPlayer(nextCity, otherPlayer);
+        }
+        public void TestCharterFlightForPlayer(City nextCity, Role otherPlayer)
+        {
+            CharterFlightForPlayer(nextCity, otherPlayer);
+        }
+        public void TestShuttleFlightForPlayer(City nextCity, Role otherPlayer)
+        {
+            ShuttleFlightForPlayer(nextCity, otherPlayer);
         }
     }
 }
