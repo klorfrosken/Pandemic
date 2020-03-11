@@ -8,7 +8,7 @@ namespace Pandemic.Managers
 {
     public class GameManager
     {
-        StateManager _state;
+        public StateManager State;
         readonly ITextManager _textManager = new TextManager();
 
         public List<User> Users = new List<User>
@@ -28,7 +28,7 @@ namespace Pandemic.Managers
 
             if(state != null)
             {
-                _state = state;
+                State = state;
             }
 
             if (!testing)
@@ -40,7 +40,7 @@ namespace Pandemic.Managers
         void InitiateGame()
         {
             int numberOfEpidemics = _textManager.GetDifficulty();
-            _state = new StateManager(numberOfEpidemics: numberOfEpidemics, users: Users, textManager: _textManager);
+            State = new StateManager(numberOfEpidemics: numberOfEpidemics, users: Users, textManager: _textManager);
             _textManager.PrintBeginGame(Users);
 
             try
@@ -91,10 +91,10 @@ namespace Pandemic.Managers
                         throw new TheWorldIsDeadException("There are no more cards in the player deck. You were too slow and the world is now suffering for it");
                     }
 
-                    int infectionRate = _state.InfectionRates[_state.InfectionIndex];
+                    int infectionRate = State.InfectionRates[State.InfectionIndex];
                     for (int i = 0; i<infectionRate; i++)
                     {
-                        _state.InfectionDeck.Infect();
+                        State.InfectionDeck.Infect();
                     }
                 }
             } while (!donePlaying);
@@ -102,7 +102,7 @@ namespace Pandemic.Managers
 
         void DoActions(Role currentPlayer)
         {
-            _textManager.PrintNewTurn(_state);
+            _textManager.PrintNewTurn(State);
 
             do
             {
@@ -197,7 +197,7 @@ namespace Pandemic.Managers
                 choice = _textManager.ChooseItemFromList(eligibleCards, "go to");
             }
 
-            City nextCity = _state.GetCity(eligibleCards[choice]);
+            City nextCity = State.GetCity(eligibleCards[choice]);
             currentPlayer.DirectFlight(nextCity);
             _textManager.PrintPlayerMoved(currentPlayer, nextCity);
         }
@@ -207,8 +207,8 @@ namespace Pandemic.Managers
             //CHARTER FLIGHT - Discard the city card that matches the city you are in to move to _any_ city
             if (currentPlayer.CardInHand(currentPlayer.CurrentCity.Name))
             {
-                int choice = _textManager.ChooseItemFromList(_state.Cities.Values, "go to");
-                City nextCity = _state.GetCity(choice);
+                int choice = _textManager.ChooseItemFromList(State.Cities.Values, "go to");
+                City nextCity = State.GetCity(choice);
                 currentPlayer.CharterFlight(nextCity);
                 _textManager.PrintPlayerMoved(currentPlayer, nextCity);
             }
@@ -221,7 +221,7 @@ namespace Pandemic.Managers
         void ShuttleFlight(Role currentPlayer)
         {
             //SHUTTLE FLIGHT - Move from a city with a research station to any other city that has a research station
-            List<City> researchStations = _state.GetCitiesWithResearchStation();
+            List<City> researchStations = State.GetCitiesWithResearchStation();
             if (!currentPlayer.CurrentCity.HasResearchStation)
             {
                 throw new IllegalMoveException("There has to be a research station in the city you are in for you to shuttle a flight.");
@@ -297,7 +297,7 @@ namespace Pandemic.Managers
         {
             //SHARE KNOWLEDGE - Either: _give_ the card that _matches_ the city that you are in to another player, or _take_ that card from another player. The other player must also be in the city with you
             List<Role> playersInCity = new List<Role>();
-            foreach (Role currentOtherPlayer in _state.Roles)
+            foreach (Role currentOtherPlayer in State.Roles)
             {
                 if (currentOtherPlayer.CurrentCity == currentPlayer.CurrentCity)
                 {

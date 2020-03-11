@@ -164,7 +164,7 @@ namespace Pandemic.UnitTests.Managers
 
             StateManager state = new StateManager(
                 testing: true,
-                olayerDeck: new PlayerDeck(new List<PlayerCard>
+                playerDeck: new PlayerDeck(new List<PlayerCard>
                 {
                         testCard
                 }));
@@ -677,7 +677,7 @@ namespace Pandemic.UnitTests.Managers
                     new Medic(startingCity, 0),
                     new QuarantineSpecialist(startingCity, 1)
                 },
-                olayerDeck: new PlayerDeck(expectedCards));
+                playerDeck: new PlayerDeck(expectedCards));
 
             expectedCards.Reverse();    //because draw pulls from end of deck. 
 
@@ -729,7 +729,7 @@ namespace Pandemic.UnitTests.Managers
                     new QuarantineSpecialist(startingCity, 1),
                     new Scientist(startingCity, 2)
                 },
-                olayerDeck: new PlayerDeck(expectedCards));
+                playerDeck: new PlayerDeck(expectedCards));
 
             expectedCards.Reverse();    //because draw pulls from end of deck. 
 
@@ -788,7 +788,7 @@ namespace Pandemic.UnitTests.Managers
                         new Scientist(startingCity, 2),
                         new Researcher(startingCity, 3)
                 },
-                olayerDeck: new PlayerDeck(expectedCards));
+                playerDeck: new PlayerDeck(expectedCards));
 
             expectedCards.Reverse();    //because draw pulls from end of deck. 
 
@@ -850,7 +850,7 @@ namespace Pandemic.UnitTests.Managers
                         new QuarantineSpecialist(startingCity, 3),
                         new Researcher(startingCity, 4)
                 },
-                olayerDeck: new PlayerDeck(new List<PlayerCard>
+                playerDeck: new PlayerDeck(new List<PlayerCard>
                 {
                         new CityCard("TestCity1", Colors.Yellow),
                         new CityCard("TestCity2", Colors.Yellow),
@@ -876,7 +876,7 @@ namespace Pandemic.UnitTests.Managers
                         new Medic(startingCity, 0),
                         new QuarantineSpecialist(startingCity, 1),
                 },
-                olayerDeck: new PlayerDeck(new List<PlayerCard>
+                playerDeck: new PlayerDeck(new List<PlayerCard>
                 {
                         new CityCard("TestCity1", Colors.Yellow),
                         new CityCard("TestCity2", Colors.Yellow),
@@ -921,7 +921,7 @@ namespace Pandemic.UnitTests.Managers
             StateManager state = new StateManager(
                 testing: true,
                 numberOfEpidemics: 2,
-                olayerDeck: new PlayerDeck(initialDeck));
+                playerDeck: new PlayerDeck(initialDeck));
 
             state.TestAddEpidemicsToDeck();
 

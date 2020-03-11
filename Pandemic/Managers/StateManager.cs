@@ -74,7 +74,7 @@ namespace Pandemic.Managers
             List<City> outbreakThisChain = null,
             InfectionDeck infectionDeck = null,
             InfectionDeck infectionDiscard = null,
-            PlayerDeck olayerDeck = null,
+            PlayerDeck playerDeck = null,
             PlayerDeck playerDiscard = null,
             bool testing = false,
             List<User> users = null, 
@@ -100,7 +100,7 @@ namespace Pandemic.Managers
             if (outbreakThisChain != null) { this.OutbreakThisChain = outbreakThisChain; }
             if (infectionDeck != null) { this.InfectionDeck = infectionDeck; }
             if (infectionDiscard != null) { this.InfectionDiscard = infectionDiscard; }
-            if (olayerDeck != null) { this.PlayerDeck = olayerDeck; }
+            if (playerDeck != null) { this.PlayerDeck = playerDeck; }
             if (playerDiscard != null) { this.PlayerDiscard = playerDiscard; }
             if (users != null) { NumberOfPlayers = users.Count; }
 

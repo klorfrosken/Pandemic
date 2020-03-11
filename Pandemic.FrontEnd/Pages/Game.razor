@@ -1,0 +1,84 @@
+﻿@page "/game"
+@inherits GameBase
+
+    <div id="game-page">
+        <div class="row" id="header">
+            <div class="col">
+                #Outbreaks <br />
+                @currentState.Outbreaks<br />
+                (of max @currentState.MaxOutbreaks)
+            </div>
+
+            @for (int i = 1; i < 5; i++)
+            {
+                <div class="col">
+                    <img class="cureBottles" src=@cureBottles[i-1][getCureState(i)].png alt=@($"{(Colors)i} disease not cured") srcset="@cureBottles[i-1][getCureState(i)].svg" />
+                </div>
+            }
+
+            <div class="col">
+                Infection Rate<br />
+                @currentState.InfectionRates[currentState.InfectionIndex]
+            </div>
+
+            @for (int i = 1; i < 5; i++)
+            {
+                <div class="col">
+                    <img class="cubePools" src=@cubePools[i-1].png alt="@($"{(Colors)i} cube pool")" srcset="@cubePools[i-1].svg" />
+                </div>
+            }
+        </div>
+
+        <div class="row" id="content">
+            <div id="map">
+                @foreach (City city in currentState.Cities.Values)
+                {
+                    <div class="city-div" id="@setCityID(city)">
+                        <span class="city-icon-and-disease">
+                            <img class="city-image" src="/css/icons/Gamma AlfaDisease.png" alt=@city.Name srcset="/css/icons/Gamma AlfaDisease.svg" />
+                            <span class="city-disease-cubes">{@city.DiseaseCubes[city.Color]}</span>
+                        </span>
+
+                        <span class="city-name">@city.Name</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="row" id="footer">
+            <div class="col">
+                <img class="cards" src="/css/icons/Back PlayerCard.png" alt="the Player deck currently has @currentState.PlayerDeck.Count() cards in it" srcset="/css/icons/Back PlayerCard.svg" />
+            </div>
+
+            <div class="col">
+                <img class="cards" src="/css/icons/No PlayerCards.png" alt="the Player deck discard pile" srcset="/css/icons/No PlayerCards.svg" />
+            </div>
+
+            <div class="player-icon">
+                <img src="/css/icons/Player1.png" alt="Player 1" srcset="/css/icons/Player1.svg" />
+            </div>
+
+            <div class="player-icon">
+                <img src="/css/icons/Player2.png" alt="Player 1" srcset="/css/icons/Player2.svg" />
+            </div>
+
+            <div class="player-icon">
+                <img src="/css/icons/Player3.png" alt="Player 1" srcset="/css/icons/Player3.svg" />
+            </div>
+
+            <div class="player-icon">
+                <img src="/css/icons/Player4.png" alt="Player 1" srcset="/css/icons/Player4.svg" />
+            </div>
+
+            <div class="player-icon">
+                <img src="/css/icons/Chat.png" alt="Chat" srcset="/css/icons/Chat.svg" />
+            </div>
+        </div>
+
+            @*Available actions: <br />
+            - something <br />
+            - something else <br />
+            - other available action <br />
+            - fourth option <br />
+            - there are all them options <br />*@
+        </div>
