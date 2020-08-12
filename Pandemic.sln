@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pandemic", "Pandemic\Pandem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pandemic.UnitTests", "Pandemic.UnitTests\Pandemic.UnitTests.csproj", "{24BDB910-A5D8-4457-AC7E-BDC72D866E2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pandemic.FrontEnd", "Pandemic.FrontEnd\Pandemic.FrontEnd.csproj", "{D962E5BA-50EE-497C-B974-8D407E6E3751}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pandemic.FrontEnd", "Pandemic.FrontEnd\Pandemic.FrontEnd.csproj", "{D962E5BA-50EE-497C-B974-8D407E6E3751}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

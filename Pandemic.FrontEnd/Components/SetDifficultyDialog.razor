@@ -1,0 +1,21 @@
+﻿@inherits SetDifficultyDialogBase
+
+@if (ShowDialog)
+{
+    <div class="modal">
+        <div id="welcome-box">
+            <h3>Choose your difficulty for this game</h3>
+
+            <button @onclick="@IntroductoryGame">
+                Introductory
+            </button>
+            <button @onclick="@StandardGame">
+                Standard
+            </button>
+            <button @onclick="@HeroicGame">
+                Heroic
+            </button>
+        </div>
+    </div>
+
+}

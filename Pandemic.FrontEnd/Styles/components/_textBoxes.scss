@@ -1,0 +1,14 @@
+﻿#what-to-do-next-box {
+    width: 20%;
+    height: auto;
+    align-self: end;
+    background: rgba(255,255,242, 0.7);
+    text-align: left;
+}
+
+#welcome-box {
+    align-items: center;
+    > * {
+        text-align: center;
+    }
+}

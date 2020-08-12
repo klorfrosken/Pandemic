@@ -1,6 +1,7 @@
 ﻿@page "/"
+@inherits IndexBase
 
-<div>
+<div id="welcome-box">
     <h1>Welcome!</h1>
     <div>
         Let's play Pandemic; <br />
@@ -8,8 +9,11 @@
         the world (most likely) <br />
         DIES.<br />
 
-        <button>
-            <a href="@("game")">Play</a>
+        <button @onclick="LetsGetStarted">
+            @*<a href="@("game")">Play</a>*@
+            Begin Game
         </button>
     </div>
 </div>
+
+<SetDifficultyDialog @ref="SetDifficultyDialog" ></SetDifficultyDialog>

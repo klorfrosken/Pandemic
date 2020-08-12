@@ -1,0 +1,272 @@
+﻿@mixin position-icon ($left, $top) {
+    left: $left;
+    top: $top;
+}
+.city-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*background-color: aquamarine;*/
+}
+
+.city-icon-and-disease {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*background-color: antiquewhite;*/
+}
+
+.city-image {
+    height: 4vh;
+    width: auto;
+}
+
+.city-name {
+    /*position: absolute;*/
+}
+
+.city-disease-cubes {
+    position: absolute;
+    top: 25%;
+    color: white;
+    /*background-color: chocolate;*/
+}
+
+/*Yellow Cities*/
+#los-angeles {
+    @include position-icon(88%, 5%);
+}
+
+#mexico-city {
+    left: 88%;
+    top: 5%;
+}
+
+#miami {
+    @include position-icon(21.6%, 43.6%);
+}
+
+#bogota {
+    left: 88%;
+    top: 5%;
+}
+
+#lima {
+    left: 88%;
+    top: 5%;
+}
+
+#santiago {
+    left: 88%;
+    top: 5%;
+}
+
+#buenos-aires {
+    left: 88%;
+    top: 5%;
+}
+
+#sao-paulo {
+    left: 88%;
+    top: 5%;
+}
+
+#lagos {
+    left: 88%;
+    top: 5%;
+}
+
+#khartoum {
+    left: 88%;
+    top: 5%;
+}
+
+#kinshasa {
+    left: 88%;
+    top: 5%;
+}
+
+#johannesburg {
+    left: 88%;
+    top: 5%;
+}
+
+/*Red Cities*/
+#bangkok {
+    left: 88%;
+    top: 5%;
+}
+
+#jakarta {
+    left: 88%;
+    top: 5%;
+}
+
+#hong-kong {
+    left: 88%;
+    top: 5%;
+}
+
+#ho-chi-minh-city {
+    left: 88%;
+    top: 5%;
+}
+
+#shanghai {
+    left: 88%;
+    top: 5%;
+}
+
+#beijing {
+    left: 88%;
+    top: 5%;
+}
+
+#seoul {
+    left: 88%;
+    top: 5%;
+}
+
+#tokyo {
+    left: 88%;
+    top: 5%;
+}
+
+#osaka {
+    left: 88%;
+    top: 5%;
+}
+
+#taipei {
+    left: 88%;
+    top: 5%;
+}
+
+#manila {
+    left: 88%;
+    top: 5%;
+}
+
+#sydney {
+    left: 88%;
+    top: 5%;
+}
+
+/*Blue Cities*/
+#san-francisco {
+    left: 88%;
+    top: 5%;
+}
+
+#chicago {
+    @include position-icon(12.1%, 22.3%);
+}
+
+#atlanta {
+    @include position-icon(16.1%, 33.4%);
+}
+
+#montreal {
+    left: 88%;
+    top: 5%;
+}
+
+#new York {
+    left: 88%;
+    top: 5%;
+}
+
+#washington {
+    @include position-icon(23%, 34%);
+}
+
+#london {
+    left: 88%;
+    top: 5%;
+}
+
+#madrid {
+    left: 88%;
+    top: 5%;
+}
+
+#paris {
+    left: 88%;
+    top: 5%;
+}
+
+#essen {
+    left: 88%;
+    top: 5%;
+}
+
+#milan {
+    left: 88%;
+    top: 5%;
+}
+
+#st-petersburg {
+    left: 88%;
+    top: 5%;
+}
+
+/*Black Cities*/
+#algiers {
+    left: 88%;
+    top: 5%;
+}
+
+#istanbul {
+    left: 88%;
+    top: 5%;
+}
+
+#cairo {
+    left: 88%;
+    top: 5%;
+}
+
+#moscow {
+    left: 88%;
+    top: 5%;
+}
+
+#baghdad {
+    left: 88%;
+    top: 5%;
+}
+
+#riyadh {
+    left: 88%;
+    top: 5%;
+}
+
+#tehran {
+    left: 88%;
+    top: 5%;
+}
+
+#karachi {
+    left: 88%;
+    top: 5%;
+}
+
+#mumbai {
+    left: 88%;
+    top: 5%;
+}
+
+#delhi {
+    left: 88%;
+    top: 5%;
+}
+
+#chennai {
+    left: 88%;
+    top: 5%;
+}
+
+#kolkata {
+    left: 88%;
+    top: 5%;
+}

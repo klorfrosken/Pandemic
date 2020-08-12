@@ -1,4 +1,4 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+/*@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');*/
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -182,7 +182,7 @@ app {
     }
 }*/
 
-.alfa-disease {
+/*.alfa-disease {
     color: rgb(88, 42, 42)
 }
 
@@ -196,7 +196,7 @@ app {
 
 .delta-disease {
     color: rgb(42, 80, 88)
-}
+}*/
 
 .cureBottles {
     max-width: 52%;
@@ -324,7 +324,7 @@ app {
         /*background-color: chocolate;*/
     }
 
-    /*Yellow Cities*/
+    /*
     #los-angeles {
         left: 88%;
         top: 5%;
@@ -334,8 +334,8 @@ app {
         top: 5%;
     }
     #miami {
-        left: 22.5%;
-        top: 47.5%;
+        left: 21.6%;
+        top: 43.6%;
     }
 
     #bogota {
@@ -375,7 +375,8 @@ app {
         top: 5%;
     }
 
-    /*Red Cities*/
+
+
     #bangkok {
         left: 88%;
         top: 5%;
@@ -425,18 +426,19 @@ app {
         top: 5%;
     }
 
-    /*Blue Cities*/
+
+
     #san-francisco {
         left: 88%;
         top: 5%;
     }
     #chicago {
-        left: 13.1%;
-        top: 33.7%;
+        left: 12.1%;
+        top: 22.3%;
     }
     #atlanta {
-        left: 17.8%;
-        top: 40.7%;
+        left: 16.1%;
+        top: 33.4%;
     }
     #montreal {
         left: 88%;
@@ -447,8 +449,8 @@ app {
         top: 5%;
     }
     #washington {
-        left: 23.1%;
-        top: 40.9%;
+        left: 23%;
+        top: 34%;
     }
     #london {
         left: 88%;
@@ -475,7 +477,8 @@ app {
         top: 5%;
     }
 
-/*Black Cities*/
+
+
     #algiers {
         left: 88%;
         top: 5%;
@@ -523,4 +526,4 @@ app {
     #kolkata {
         left: 88%;
         top: 5%;
-    }
+    }*/
